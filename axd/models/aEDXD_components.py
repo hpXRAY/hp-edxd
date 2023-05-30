@@ -181,7 +181,7 @@ class structureFactor(Calculator):
         sq_smoothing_factor = self.params['sq_smoothing_factor']
         q_spacing = self.params['q_spacing']
 
-        print(sq_par)
+        #print(sq_par)
       
         S_q = []
         #tth_used = []

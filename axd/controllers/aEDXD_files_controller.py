@@ -340,7 +340,7 @@ class aEDXDFilesController(QObject):
                 files_use.append(f_u)
                 f_b = os.path.basename(f)
                 files_base.append(f_b)
-            tth = str(t)
+            tth = str(t*1.0)
             c_str = '#%02x%02x%02x' % colors[t]
             self.files_window.file_trw.add_file_group(files_base,c_str,tth,files_use)
         

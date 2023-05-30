@@ -333,22 +333,29 @@ class treeWidget(QtWidgets.QTreeWidget):
         else :
             return None
 
-    def identify_item(self,item):
-
+    def identify_item(self,item:QtWidgets.QTreeWidgetItem):
+        txt = str(item)
+        print(txt)
         ind=[0]
         if item in self.top_level_items:
             p_ind = self.top_level_items.index(item)
             ind = [p_ind]
+            #print('item in self.top_level_items' + str(ind))
         if item in self.file_items:
             p = item.parent()
             c_ind = p.indexOfChild(item)
             p_ind = self.top_level_items.index(p)
             ind = [p_ind,c_ind]
+            #print('item in self.file_items' + str(ind))
         tth = float(self.tth_items[ind[0]].tthItem.text()) 
+        #print('tth ' + str(tth))
         files = [tth]
-        if len(ind)==2:
+        #print('files ' + str(files))
+        if len(ind)==2:  
             filename = self.files[str(tth)][ind[1]]
             files.append(filename)
+            #print('len(ind)== 2')
+            #print('files '+ str(files))
         return ind, files
 
     def add_file_group(self, filenames, color, tth,use):
