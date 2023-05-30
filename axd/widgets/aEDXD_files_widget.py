@@ -334,8 +334,8 @@ class treeWidget(QtWidgets.QTreeWidget):
             return None
 
     def identify_item(self,item:QtWidgets.QTreeWidgetItem):
-        txt = str(item)
-        print(txt)
+        #txt = str(item)
+        #print(txt)
         ind=[0]
         if item in self.top_level_items:
             p_ind = self.top_level_items.index(item)
