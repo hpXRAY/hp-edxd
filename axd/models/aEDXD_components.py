@@ -103,7 +103,7 @@ class primaryBeam(Calculator):
         print('xqpp '+ str(qp[0]) + ' ... '+str(qp[-1]))
         print('qpc '+ str(qpc[0]) + ' ... '+str(qpc[-1]))'''
         
-        print('sq_par primary beam '+ str (sq_par))
+        #print('sq_par primary beam '+ str (sq_par))
         mean_fqsquare,mean_fq,mean_I_inc = I_base_calc(qp,qpc,sq_par)
         
         
@@ -111,7 +111,7 @@ class primaryBeam(Calculator):
         #for itr in range(itr_comp):
         # re-adjust the primary beam model to fit mean_fqsqure + mean_I_inc 
         Iq_base = mean_fqsquare + fs*mean_I_inc 
-        pg.plot(Iq_base, title="Iq_base")
+        #pg.plot(Iq_base, title="Iq_base")
         # custom fit(func,x,y,p0,yb):
         ypb = np.sqrt(yp) # Poisson distribution error
         p_opt,p_stdev,p_cov,p_corp,schi2,r = \
@@ -204,11 +204,11 @@ class structureFactor(Calculator):
             print('xpc '+ str(xnc[0]) + ' ... '+str(xnc[-1]))
             print('qi '+ str(qi[0]) + ' ... '+str(qi[-1]))
             print('qic '+ str(qic[0]) + ' ... '+str(qic[-1]))'''
-            print('sq_par sq ' + str(i)+ ' ' + str (sq_par))
+            #print('sq_par sq ' + str(i)+ ' ' + str (sq_par))
             mean_fqsquare,mean_fq,mean_I_inc = I_base_calc(qi,qic,sq_par)
             y_primary = model_func(xn,*p_opt)
             Iq_base = mean_fqsquare + mean_I_inc
-            pg.plot(Iq_base, title="Iq_base "+ str(i))
+            #pg.plot(Iq_base, title="Iq_base "+ str(i))
             s = (Iq_base*y_primary).mean()/yn.mean()
             sqi = (s*yn-Iq_base*y_primary)/y_primary/mean_fq**2 + 1.0
             sqi_err = s*yn/y_primary/mean_fq**2*np.sqrt(1.0/yn+(model_mre/y_primary)**2)
