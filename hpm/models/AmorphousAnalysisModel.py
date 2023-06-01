@@ -15,7 +15,7 @@
 
 
 from fileinput import filelineno
-
+import pyqtgraph as pg
 from axd.models import aEDXD_atomic_parameters
 #import imp
 #from this import d
@@ -518,6 +518,8 @@ class AmorphousAnalysisModel(QtCore.QObject):  #
             self.steps['(mean_fq)^2'].calculate()
             mean_fq_squared = self.steps['(mean_fq)^2'].get_data_out()
 
+            pg.plot(mean_fq_squared[0],mean_fq_squared[1])
+            
             self.steps['S(q)'].set_data_in(I_t)
             self.steps['S(q)'].set_param({'I_base':I_base,'I_t-I_base':I_t_minus_I_base , '(mean_fq)^2':mean_fq_squared, 'a':scale_in,  'unit_in':'q','scale_in':self.scale_q})
             self.steps['S(q)'].calculate()
@@ -643,7 +645,9 @@ class AmorphousAnalysisModel(QtCore.QObject):  #
         I_base = args['I_base'][1]
         a = args['a']
         mean_fq_squared = args['(mean_fq)^2'][1]
-        mean_fq_squared[mean_fq_squared<1] =  1
+        mean_fq_squared_max = max(mean_fq_squared)
+        print('mean_fq_squared_max '+str(mean_fq_squared_max))
+        mean_fq_squared[mean_fq_squared<mean_fq_squared_max*0.005] =  mean_fq_squared_max*0.005
 
         unit = args['unit_in']
         
