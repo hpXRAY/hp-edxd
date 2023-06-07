@@ -114,9 +114,19 @@ class plotController(QObject):
     def get_data_label(self):
         dx_type = self.calibration.dx_type
 
+        total_counts = sum(self.data)
+
+        elapsed = self.mca.get_elapsed()[0].real_time
+        if elapsed > 0:
+            cps = total_counts / elapsed
+        else:
+            cps = 0
+
+        
+
         if dx_type == 'edx':
             
-            data_label = 'MCA, '
+            data_label = 'MCA, ' + str(int(cps)) + 'ct/s, '
             if hasattr(self.calibration, 'two_theta'):
                 tth = self.calibration.two_theta
                 if tth != None:
