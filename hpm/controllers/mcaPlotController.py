@@ -23,6 +23,7 @@ from utilities.HelperModule import getInterpolatedCounts
 from hpm.models.mcaModel import MCA
 from hpm.models.UnitConversions import *
 from hpm.models.mcaComponents import McaCalibration
+from hpm.widgets.PltWidget import PltWidget
 
 class plotController(QObject):
 
@@ -34,7 +35,7 @@ class plotController(QObject):
     dataPlotUpdated=pyqtSignal(dict)
     envUpdated=pyqtSignal(list)
 
-    def __init__(self, plotWidget, mcaModel, mainController, horzScale='E'):
+    def __init__(self, plotWidget:PltWidget, mcaModel:MCA, mainController, horzScale='E'):
         super().__init__()
         self.mca : MCA
         self.mca = mcaModel
@@ -117,8 +118,13 @@ class plotController(QObject):
         total_counts = sum(self.data)
 
         elapsed = self.mca.get_elapsed()[0].real_time
+        cps_label = 'cps, '
         if elapsed > 0:
-            cps = total_counts / elapsed
+            cps = total_counts / elapsed 
+            if cps > 10000:
+                cps = cps * 0.001
+                cps_label = 'kcps, '
+
         else:
             cps = 0
 
@@ -126,20 +132,20 @@ class plotController(QObject):
 
         if dx_type == 'edx':
             
-            data_label = 'MCA, ' + str(int(cps)) + 'ct/s, '
+            data_label = 'MCA, ' + str(int(cps)) + cps_label
             if hasattr(self.calibration, 'two_theta'):
                 tth = self.calibration.two_theta
                 if tth != None:
-                    data_label += '\n'+ f'2\N{GREEK SMALL LETTER THETA}='+ str(round(tth,4)) + f'\N{SUPERSCRIPT ZERO}'
-            data_label += '\n' + self.elapsed.start_time[:-3]
+                    data_label += f' 2\N{GREEK SMALL LETTER THETA}='+ str(round(tth,4)) + f'\N{SUPERSCRIPT ZERO} '
+            data_label += self.elapsed.start_time[:-3]
         elif dx_type == 'adx':
             
             data_label = 'ADXD, '
             if hasattr(self.calibration, 'wavelength'):
                 wavelength = self.calibration.wavelength
                 if wavelength != None:
-                    data_label += '\n'+ f'\N{GREEK SMALL LETTER LAMDA}='+ str(round(wavelength,4))+f'\N{LATIN CAPITAL LETTER A WITH RING ABOVE}'
-            data_label += '\n'+ self.name 
+                    data_label += f' \N{GREEK SMALL LETTER LAMDA}='+ str(round(wavelength,4))+f'\N{LATIN CAPITAL LETTER A WITH RING ABOVE} '
+            data_label += self.name 
         else:
             data_label = 'MCA'
         return data_label
