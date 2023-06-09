@@ -265,6 +265,21 @@ class structureFactor(Calculator):
 
         # TODO use bins and a weighted average for all the points that fall into bins
 
+        '''0) Redo spline functionality
+        1) g(r) -> coordination #'s
+                    - implement all options
+        2) option to pick lorch damping/lp filter
+            lowpall_FIR.py (devel, Tyler), Fig. 3.1 in report
+            * make sure input params are clear
+        3)Kaplow-style low-r correction (lok for Yu Shu code?)
+                                |--> Tyler code
+        4) MonteCarlo white beam estimate optimization
+            * develop convergence criteria
+            * examples using Fe & SiO2 using
+            iterative "code running"'''
+	  
+	  
+
         #weight = weight / max(weight) * 550
         spl = interpolate.UnivariateSpline(
             q_sort,sq_sort,w=weight,bbox=[None,None],k=3,s=None)
