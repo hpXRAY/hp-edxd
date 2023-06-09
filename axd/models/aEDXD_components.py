@@ -257,6 +257,15 @@ class structureFactor(Calculator):
         
         # make evenly spaced [q,sq,sq_err] array using spline interpolation
         weight = sq_smoothing_factor/sq_sort_err
+        print('sq_smoothing_factor '+str(sq_smoothing_factor))
+        print('max w ' + str(max(weight)))
+        print('min w ' + str(min(weight)))
+        '''pg.plot(weight, title="weight ")
+        pg.plot(sq_sort_err, title="sq_sort_err ")'''
+
+        # TODO use bins and a weighted average for all the points that fall into bins
+
+        #weight = weight / max(weight) * 550
         spl = interpolate.UnivariateSpline(
             q_sort,sq_sort,w=weight,bbox=[None,None],k=3,s=None)
         q_even = np.arange(q_sort[0],q_sort[-1],q_spacing) # evenly spaced q
