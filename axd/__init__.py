@@ -15,6 +15,19 @@ from PyQt5 import QtWidgets
 
 
 
+'''0) Redo spline functionality
+1) g(r) -> coordination #'s
+            - implement all options
+2) option to pick lorch damping/lp filter
+    lowpall_FIR.py (devel, Tyler), Fig. 3.1 in report
+    * make sure input params are clear
+3)Kaplow-style low-r correction (lok for Yu Shu code?)
+                        |--> Tyler code
+4) MonteCarlo white beam estimate optimization
+    * develop convergence criteria
+    * examples using Fe & SiO2 using
+    iterative "code running"'''
+
 resources_path = os.path.join(os.path.dirname(__file__), 'resources')
 calibrants_path = os.path.join(resources_path, 'calibrants')
 icons_path = os.path.join(resources_path, 'icons')

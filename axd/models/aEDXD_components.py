@@ -254,6 +254,8 @@ class structureFactor(Calculator):
         q_sort = np.array(q_sort)
         sq_sort = np.array(sq_sort)
         sq_sort_err = np.array(sq_sort_err)
+
+        q_even = np.arange(q_sort[0],q_sort[-1],q_spacing) # evenly spaced q
         
         # make evenly spaced [q,sq,sq_err] array using spline interpolation
         weight = sq_smoothing_factor/sq_sort_err
@@ -264,26 +266,13 @@ class structureFactor(Calculator):
         pg.plot(sq_sort_err, title="sq_sort_err ")'''
 
         # TODO use bins and a weighted average for all the points that fall into bins
-
-        '''0) Redo spline functionality
-        1) g(r) -> coordination #'s
-                    - implement all options
-        2) option to pick lorch damping/lp filter
-            lowpall_FIR.py (devel, Tyler), Fig. 3.1 in report
-            * make sure input params are clear
-        3)Kaplow-style low-r correction (lok for Yu Shu code?)
-                                |--> Tyler code
-        4) MonteCarlo white beam estimate optimization
-            * develop convergence criteria
-            * examples using Fe & SiO2 using
-            iterative "code running"'''
 	  
 	  
 
         #weight = weight / max(weight) * 550
         spl = interpolate.UnivariateSpline(
             q_sort,sq_sort,w=weight,bbox=[None,None],k=3,s=None)
-        q_even = np.arange(q_sort[0],q_sort[-1],q_spacing) # evenly spaced q
+        
         sq_even = spl(q_even) # evenly spaced I(q)
         # estimate the root mean squre error for each spline smoothed point
         sq_even_err = []
