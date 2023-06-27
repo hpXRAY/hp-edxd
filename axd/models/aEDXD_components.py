@@ -20,10 +20,11 @@ import os
 import time
 import pyqtgraph as pg
 
+
 from utilities.hpMCAutilities import compare
 from utilities.hpMCAutilities import Preferences as Calculator
+from scipy.interpolate import interp1d
 
-            
 class primaryBeam(Calculator):
     def __init__(self):
         params = ['inputdataformat',
@@ -259,9 +260,7 @@ class structureFactor(Calculator):
         
         # make evenly spaced [q,sq,sq_err] array using spline interpolation
         weight = sq_smoothing_factor/sq_sort_err
-        print('sq_smoothing_factor '+str(sq_smoothing_factor))
-        print('max w ' + str(max(weight)))
-        print('min w ' + str(min(weight)))
+
         '''pg.plot(weight, title="weight ")
         pg.plot(sq_sort_err, title="sq_sort_err ")'''
 
@@ -277,9 +276,12 @@ class structureFactor(Calculator):
         8. Plot the rebinned data.
         '''
 
-        #weight = weight / max(weight) * 550
-        spl = interpolate.UnivariateSpline(
-            q_sort,sq_sort,w=weight,bbox=[None,None],k=3,s=None)
+        q_rebinned, sq_rebinned = rebin_weighted(q_sort,sq_sort,weight,q_even)
+
+
+        spl = interp1d(q_rebinned,sq_rebinned, kind='linear', fill_value='extrapolate' )
+        #spl = interpolate.UnivariateSpline(
+        #    q_rebinned,sq_rebinned,bbox=[None,None],k=3,s=None)
         
         sq_even = spl(q_even) # evenly spaced I(q)
         # estimate the root mean squre error for each spline smoothed point

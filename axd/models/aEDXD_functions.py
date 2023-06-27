@@ -25,7 +25,10 @@ import numpy as np
 from scipy import interpolate
 from scipy.special import erfc
 from scipy.optimize import curve_fit
+from scipy import signal
 import json
+import matplotlib.pyplot as plt
+import copy
 
 def fversion():
     return __version__
@@ -182,3 +185,108 @@ def is_e(val):
         return True
     return False
 
+
+def rebin_weighted(x,y,weights, rebin_x):
+    rebin_x_bkp = copy.deepcopy(rebin_x)
+
+    first_value_A = rebin_x[0]
+    last_value_A = (rebin_x[-1] - rebin_x[0]) * 0.3
+    last_value_B = (rebin_x[-1] - rebin_x[0]) * 0.6
+    last_value_C = rebin_x[-1]
+    step_A = rebin_x[1] - rebin_x[0]
+    step_C = step_A * 10
+
+    q_range = rebin_x[-1] - rebin_x[0]
+    first_value_A = rebin_x[0]
+    last_value_A = rebin_x[0] + q_range * 0.1
+    last_value_B = rebin_x[0] + q_range * 0.3
+    last_value_C = rebin_x[0] + q_range * 0.4
+    last_value_D = rebin_x[0] + q_range * 0.6
+    last_value_E = rebin_x[-1]
+    step_A = rebin_x[1] - rebin_x[0]
+    step_B = step_A * 3
+    step_C = step_A * 6
+    step_D = step_A * 12
+    step_E = step_A * 18
+
+    variable_bins, t = generate_array_with_index(first_value_A, last_value_A, last_value_B, last_value_C, last_value_D, last_value_E, step_A, step_B, step_C, step_D, step_E)
+
+    '''plt.plot(t, variable_bins, '-o')
+    plt.xlabel('Index')
+    plt.ylabel('x')
+    plt.title('Array Plot')
+    plt.grid(True)
+    plt.show()'''
+
+    num_bins = len(variable_bins)
+    # get first step
+    step = variable_bins[1]-variable_bins[0]
+    
+
+    # Calculate the bin edges
+    bin_edges = []
+    bin_edges.append(variable_bins[0]-step/2)
+    for i,r_x in enumerate(variable_bins):
+        if i < len(variable_bins)-1:
+            step = variable_bins[i+1]-variable_bins[i]
+        bin_edges.append(r_x+step/2)
+        
+    # Initialize empty lists for rebinned data
+    rebin_x = []
+    rebin_y = []
+
+    # Distribute data into bins
+    for i in range(num_bins):
+        mask = (x >= bin_edges[i]) & (x < bin_edges[i + 1])
+        if np.sum(weights[mask]) != 0:  # Check if the weights sum to zero
+            rebin_x.append((bin_edges[i] + bin_edges[i + 1]) / 2)  # Use bin centers as rebinned x values
+            rebin_y.append(np.average(y[mask], weights=weights[mask]))  # Weighted average of y values within each bin
+
+    last_step = rebin_x[-1]-rebin_x[-2]
+    for i in range(20):
+        rebin_x.append(rebin_x[-1] + last_step)
+        rebin_y.append(rebin_y[-1])
+
+    spl = interpolate.interp1d(rebin_x,rebin_y,kind='quadratic', fill_value='extrapolate')
+
+    sq_even = spl(rebin_x_bkp) # evenly spaced I(q)
+
+    #sq_even = np.array(variable_cutoff_filter(np.array(sq_even) -1, .99999, 0.5)) + 1
+    
+    return rebin_x_bkp, sq_even
+
+def quadratic_sequence(start, end, num_points):
+    x = np.linspace(0, 1, num_points)
+    y = x**2
+    sequence = start + (end - start) * y
+    sequence[-1] = end  # Set the last value to the specified end_value
+    return x, sequence
+
+def generate_array_with_index(first_value_A, last_value_A, last_value_B, last_value_C, last_value_D, last_value_E, step_A, step_B, step_C, step_D, step_E):
+    
+
+    # Generate array A with the specified first and last values and step size
+    array_A = np.arange(first_value_A, last_value_A, step_A)
+
+    # Generate array B with the calculated average step size, matching the last value of array A
+    array_B = np.arange(array_A[-1], last_value_B, step_B)
+
+    # Generate array C with the specified last value and step size
+    array_C = np.arange(array_B[-1], last_value_C, step_C)
+
+    # Generate array D with the specified last value and step size
+    array_D = np.arange(array_C[-1], last_value_D, step_D)
+
+    # Generate array E with the calculated average step size, matching the last value of array D
+    array_E = np.arange(array_D[-1], last_value_E, step_E)
+
+    array_A = array_A[:-1]
+    array_B = array_B[:-1]
+    array_C = array_C[:-1]
+    array_D = array_D[:-1]
+    
+    # Concatenate arrays A, B, C, D, and E
+    result_array = np.concatenate((array_A, array_B, array_C, array_D, array_E))
+    result_index = np.arange(len(result_array))
+
+    return result_array, result_index
