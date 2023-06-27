@@ -266,8 +266,16 @@ class structureFactor(Calculator):
         pg.plot(sq_sort_err, title="sq_sort_err ")'''
 
         # TODO use bins and a weighted average for all the points that fall into bins
-	  
-	  
+        '''
+        1. Sort the input arrays based on the x-values.
+        2. Calculate the cumulative sum of the weights.
+        3. Determine the bin edges for the evenly spaced bins.
+        4. Compute the indices of the input data points that fall into each bin.
+        5. Calculate the weighted sum of the y-values for each bin.
+        6. Compute the weighted average y-values for each bin.
+        7. Create evenly spaced x-values for the bins.
+        8. Plot the rebinned data.
+        '''
 
         #weight = weight / max(weight) * 550
         spl = interpolate.UnivariateSpline(
