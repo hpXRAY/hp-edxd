@@ -221,7 +221,7 @@ def rebin_weighted(x,y,weights, rebin_x, a=1, vertex=2.5):
     last_value= rebin_x[-1]
     initial_step = rebin_x[1] - rebin_x[0]
     
-
+    #variable_bins = rebin_x # for testing, dont use
     variable_bins, t = generate_array_with_index( first_value, last_value, initial_step, a, vertex)
 
     '''first_value_A = rebin_x[0]
