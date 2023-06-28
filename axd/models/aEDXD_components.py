@@ -276,7 +276,9 @@ class structureFactor(Calculator):
         8. Plot the rebinned data.
         '''
 
-        q_rebinned, sq_rebinned = rebin_weighted(q_sort,sq_sort,weight,q_even)
+        a = sq_smoothing_factor
+        vertex = 2.5
+        q_rebinned, sq_rebinned = rebin_weighted(q_sort,sq_sort,weight,q_even,a,vertex)
 
 
         spl = interp1d(q_rebinned,sq_rebinned, kind='linear', fill_value='extrapolate' )

@@ -186,10 +186,45 @@ def is_e(val):
     return False
 
 
-def rebin_weighted(x,y,weights, rebin_x):
+def rebin_weighted(x,y,weights, rebin_x, a=1, vertex=2.5):
+
+    '''
+    This algorithm allows for the rebinning of unevenly spaced data based on custom bin centers. 
+    By considering the weights associated with each data point, the resulting rebinned data accurately 
+    represents the distribution of the original data in the new binning scheme.
+
+    Rebinning Algorithm for Unevenly Spaced Data with Custom Bin Centers
+
+    * Compute the bin centers where the data will be rebinned. Ensure that the bin centers are arranged in ascending order.
+    * Calculate the bin edges based on the bin centers. The bin edges are determined by taking the average of adjacent bin centers.
+    * Initialize empty arrays to store the rebinned data.
+    * For each bin:
+        * Create a mask to identify the data points that fall within the current bin.
+        * Check if the sum of weights for the data points in the bin is non-zero.
+        * If the sum of weights is non-zero, calculate the weighted average of the y-values within the bin.
+        * Append the bin center to the rebinned x array.
+        * Append the weighted average to the rebinned y array.
+    * Finally interpolate evenly spaced x and y arrrays in case there are any missing bins.
+    * Return the interpolated x and y arrays.
+
+
+    '''
+
     rebin_x_bkp = copy.deepcopy(rebin_x)
 
-    first_value_A = rebin_x[0]
+    '''
+    For x < a: f(x) = 0
+
+    For x >= a: f(x) = a(x - a)^2
+    '''
+    first_value = rebin_x[0]
+    last_value= rebin_x[-1]
+    initial_step = rebin_x[1] - rebin_x[0]
+    
+
+    variable_bins, t = generate_array_with_index( first_value, last_value, initial_step, a, vertex)
+
+    '''first_value_A = rebin_x[0]
     last_value_A = (rebin_x[-1] - rebin_x[0]) * 0.3
     last_value_B = (rebin_x[-1] - rebin_x[0]) * 0.6
     last_value_C = rebin_x[-1]
@@ -198,23 +233,33 @@ def rebin_weighted(x,y,weights, rebin_x):
 
     q_range = rebin_x[-1] - rebin_x[0]
     first_value_A = rebin_x[0]
-    last_value_A = rebin_x[0] + q_range * 0.1
-    last_value_B = rebin_x[0] + q_range * 0.3
-    last_value_C = rebin_x[0] + q_range * 0.4
-    last_value_D = rebin_x[0] + q_range * 0.6
-    last_value_E = rebin_x[-1]
+    last_value_A = 3.5
+    last_value_B = 6
+    last_value_C = 8
+    last_value_D = 12
+    last_value_E = 20
     step_A = rebin_x[1] - rebin_x[0]
     step_B = step_A * 3
-    step_C = step_A * 6
+    step_C = step_A * 8
     step_D = step_A * 12
     step_E = step_A * 18
 
     variable_bins, t = generate_array_with_index(first_value_A, last_value_A, last_value_B, last_value_C, last_value_D, last_value_E, step_A, step_B, step_C, step_D, step_E)
+    variable_bins = variable_bins[variable_bins <= rebin_x[-1]] # check if too many bins were created
+     
+    bins_list = list (variable_bins)
+    last_bin_value = bins_list[-1] 
+    while last_bin_value < rebin_x[-1] and last_bin_value < 50: # check if not enough bins were created, arbitrary limit of 50 
+        
+        bins_list.append( last_bin_value+step_E)
+        last_bin_value = bins_list[-1]
 
-    '''plt.plot(t, variable_bins, '-o')
+    variable_bins = np.array(bins_list)'''
+
+    '''plt.plot(variable_bins, '-o')
     plt.xlabel('Index')
-    plt.ylabel('x')
-    plt.title('Array Plot')
+    plt.ylabel('q')
+    plt.title('variably spaced bins')
     plt.grid(True)
     plt.show()'''
 
@@ -243,7 +288,7 @@ def rebin_weighted(x,y,weights, rebin_x):
             rebin_y.append(np.average(y[mask], weights=weights[mask]))  # Weighted average of y values within each bin
 
     last_step = rebin_x[-1]-rebin_x[-2]
-    for i in range(20):
+    for i in range(5): # pad values to ensure the end of the sq is flat so that out-of-bounds interpolation is predictable
         rebin_x.append(rebin_x[-1] + last_step)
         rebin_y.append(rebin_y[-1])
 
@@ -254,38 +299,23 @@ def rebin_weighted(x,y,weights, rebin_x):
     
     return rebin_x_bkp, sq_even
 
-def quadratic_sequence(start, end, num_points):
-    x = np.linspace(0, 1, num_points)
-    y = x**2
-    sequence = start + (end - start) * y
-    sequence[-1] = end  # Set the last value to the specified end_value
-    return x, sequence
 
-def generate_array_with_index(first_value_A, last_value_A, last_value_B, last_value_C, last_value_D, last_value_E, step_A, step_B, step_C, step_D, step_E):
+
+def generate_array_with_index(first_value, last_value, initial_step, a, vertex):
     
-
-    # Generate array A with the specified first and last values and step size
-    array_A = np.arange(first_value_A, last_value_A, step_A)
-
-    # Generate array B with the calculated average step size, matching the last value of array A
-    array_B = np.arange(array_A[-1], last_value_B, step_B)
-
-    # Generate array C with the specified last value and step size
-    array_C = np.arange(array_B[-1], last_value_C, step_C)
-
-    # Generate array D with the specified last value and step size
-    array_D = np.arange(array_C[-1], last_value_D, step_D)
-
-    # Generate array E with the calculated average step size, matching the last value of array D
-    array_E = np.arange(array_D[-1], last_value_E, step_E)
-
-    array_A = array_A[:-1]
-    array_B = array_B[:-1]
-    array_C = array_C[:-1]
-    array_D = array_D[:-1]
+    new_bins = [first_value]
+    while new_bins[-1] < last_value:
+        step_modifier = piecewise_function(new_bins[-1],a,vertex)
+        step = initial_step+ step_modifier
+        next_value = new_bins[-1] + step
+        new_bins.append(next_value)
     
-    # Concatenate arrays A, B, C, D, and E
-    result_array = np.concatenate((array_A, array_B, array_C, array_D, array_E))
-    result_index = np.arange(len(result_array))
+    result_index = np.arange(len(new_bins))
 
-    return result_array, result_index
+    return new_bins, result_index
+
+def piecewise_function(x, a, vertex):
+    if x < vertex:
+        return 0
+    else:
+        return 0.01*a * (x - vertex) ** 2
