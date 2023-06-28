@@ -249,9 +249,8 @@ def rebin_weighted(x,y,weights, rebin_x):
 
     spl = interpolate.interp1d(rebin_x,rebin_y,kind='quadratic', fill_value='extrapolate')
 
-    sq_even = spl(rebin_x_bkp) # evenly spaced I(q)
+    sq_even = spl(rebin_x_bkp) # finally return evenly spaced sq
 
-    #sq_even = np.array(variable_cutoff_filter(np.array(sq_even) -1, .99999, 0.5)) + 1
     
     return rebin_x_bkp, sq_even
 
