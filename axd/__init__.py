@@ -34,6 +34,7 @@ icons_path = os.path.join(resources_path, 'icons')
 data_path = os.path.join(resources_path, 'data')
 output_path = os.path.join(resources_path, 'output')
 style_path = os.path.join(resources_path, 'style')
+aEDXD = os.path.join(resources_path, 'aEDXD')
 
 def main():
     
@@ -46,7 +47,9 @@ def main():
     app.aboutToQuit.connect(app.deleteLater)
     from axd.controllers.aEDXD_controller import aEDXDController
     controller = aEDXDController(app,1)
-    #controller.config_controller.load_config_file(filename='/Users/hrubiak/GitHub/hp-edxd/hpm/resources/P3.3-GPa-T1950-408psa-Fe-scan.cfg')
+
+    Fe_test=  os.path.normpath( os.path.join(aEDXD,'P3.3-GPa-T1950-408psa-Fe-scan_ab5.cfg'))
+    controller.config_controller.load_config_file(filename=Fe_test)
 
     app.exec_()
     del app
