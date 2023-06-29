@@ -68,20 +68,21 @@
 #       14. Peak cutting based on parametrized baseline extraction, spline still available for legacy projects
 #       15. Expanded number of available elements [H.H.M. Balyuzi, Acta Cryst. (175). A31, 600]
 #       16. Fixed I_incoherent normalization bug
-#       17. Spline routine updated, predictable Sq re-binning and smoothing (06/28/2023)
-#       18. TODO Mask data. Remove bad data at W edge. Optimal parameters not found when ~68 < Emax < ~72, prorgram crashes
-#       19. TODO integrate peak editing plot view with main view
-#       20. TODO improve autonaming of exported files, export all option
-#       21. TODO improve parameter entry, e.g. density should be more intuitive or offer more options
-#       22. TODO self consistency of S(q) check
-#       23. TODO Integrate scanning data acquisition and data display
-#       24. TODO Q scale for n spectrum view
-#       25. TODO keep row selection consist when adding and deleting items from tableviews
-#       26. TODO multiple iterations of S(q) filtering
-#       27. TODO Hdf5 compatible, save datafiles in projext files, save parameters in exported files?
-#       28. TODO RDF plot, with peak measurements
-#       29. TODO reorganize abc mkl ab5 files in sane manner in jsons
-#       30. TODO Allow different E range for different segments 
+#    0.6.5: Author: R. Hrubiak, ANL (06/28/2023)
+#        1. Sq Spline algorithm re-done using weighted binning, predictable Sq smoothing 
+#        2. TODO Mask data. Remove bad data at W edge. Optimal parameters not found when ~68 < Emax < ~72, prorgram crashes
+#        3. TODO integrate peak editing plot view with main view
+#        4. TODO improve autonaming of exported files, export all option
+#        5. TODO improve parameter entry, e.g. density should be more intuitive or offer more options
+#        6. TODO self consistency of S(q) check
+#        7. TODO Integrate scanning data acquisition and data display
+#        8. TODO Q scale for n spectrum view
+#        9. TODO keep row selection consist when adding and deleting items from tableviews
+#       10. TODO multiple iterations of S(q) filtering
+#       12. TODO Hdf5 compatible, save datafiles in projext files, save parameters in exported files?
+#       13. TODO RDF plot, with peak measurements
+#       14. TODO reorganize abc mkl ab5 files in sane manner in jsons
+#       15. TODO Allow different E range for different segments 
 #        
 ###############################################################################
 

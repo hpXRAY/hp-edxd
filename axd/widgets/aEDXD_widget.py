@@ -201,6 +201,10 @@ class aEDXDWidget(QMainWindow):
         self.file_exp_menu.addAction(self.file_exp_data_act)
         self.file_exp_sf_act = QtWidgets.QAction('&S(q)', self) 
         self.file_exp_menu.addAction(self.file_exp_sf_act)
+
+        self.file_exp_sf_plot_act = QtWidgets.QAction('S(q) &plot', self) 
+        self.file_exp_menu.addAction(self.file_exp_sf_plot_act)
+
         self.file_exp_pdf_act = QtWidgets.QAction('&G(r)', self) 
         self.file_exp_menu.addAction(self.file_exp_pdf_act)
         self.file_exp_sf_inv_act = QtWidgets.QAction('Inverse &Fourier-filtered S(q)', self) 
@@ -508,6 +512,8 @@ class aEDXDSqWidget(customWidget):
         super().__init__(fig_params)
         self.export_Sq_btn = FlatButton()
         self.export_Sq_btn.setToolTip('Export S(q)')
+        self.export_Sq_plot_btn = FlatButton()
+        self.export_Sq_plot_btn.setToolTip('Export S(q)')
 
         button_height = 32
         button_width = 32
@@ -519,7 +525,37 @@ class aEDXDSqWidget(customWidget):
         self.export_Sq_btn.setMaximumHeight(button_height)
         self.export_Sq_btn.setMinimumWidth(button_width)
         self.export_Sq_btn.setMaximumWidth(button_width)
+
         self.add_top_button_widget_item(self.export_Sq_btn)
+
+        
+        '''self.export_Sq_plot_btn.setIcon(QtGui.QIcon(os.path.join(icons_path, 'export.ico')))
+        self.export_Sq_plot_btn.setIconSize(icon_size)
+        self.export_Sq_plot_btn.setMinimumHeight(button_height)
+        self.export_Sq_plot_btn.setMaximumHeight(button_height)
+        self.export_Sq_plot_btn.setMinimumWidth(button_width)
+        self.export_Sq_plot_btn.setMaximumWidth(button_width) 
+
+        self.add_top_button_widget_item(self.export_Sq_plot_btn)''' 
+
+        self.sq_display_options_widget = QtWidgets.QWidget()
+        self._sq_display_options_widget_layout = QtWidgets.QHBoxLayout()
+        self.show_data_cb = QtWidgets.QCheckBox("Data points")
+        self.show_data_cb.setChecked(True)
+        self.show_Sq_cb = QtWidgets.QCheckBox("S(q)")
+        self.show_Sq_cb.setChecked(True)
+        self.show_Sq_uncertainty_cb = QtWidgets.QCheckBox("S(q) st.dev.")
+        self.show_Sq_uncertainty_cb.setChecked(True)
+      
+      
+        self._sq_display_options_widget_layout.addWidget(self.show_data_cb)
+        self._sq_display_options_widget_layout.addWidget(self.show_Sq_cb)
+        self._sq_display_options_widget_layout.addWidget(self.show_Sq_uncertainty_cb)
+    
+        self.sq_display_options_widget.setLayout(self._sq_display_options_widget_layout)
+
+        self.add_top_button_widget_item(self.sq_display_options_widget)
+
         self.add_top_button_widget_spacer()
         
 

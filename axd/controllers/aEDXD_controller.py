@@ -74,6 +74,7 @@ class aEDXDController(QObject):
         self.display_window.load_btn.clicked.connect(self.load_project)
         self.display_window.file_save_hdf5_act.triggered.connect(self.save_hdf5)
         self.display_window.file_exp_sf_act.triggered.connect(self.save_sq)
+        self.display_window.file_exp_sf_plot_act.triggered.connect(self.export_sq_plot)
         self.display_window.file_exp_pdf_act.triggered.connect(self.save_pdf)
         self.display_window.file_exp_data_act.triggered.connect(self.save_data)
         self.display_window.file_exp_sf_inv_act.triggered.connect(self.save_sf_inverse)
@@ -108,6 +109,12 @@ class aEDXDController(QObject):
         self.display_window.closeEvent = self.close_event
 
         self.model.config_file_set.connect(self.config_file_set_callback)
+
+        self.display_window.sq_widget.show_data_cb.clicked.connect(self.disp_sq)
+        self.display_window.sq_widget.show_Sq_cb.clicked.connect(self.disp_sq)
+        self.display_window.sq_widget.show_Sq_uncertainty_cb.clicked.connect(self.disp_sq)
+
+
         self.display_window.pdf_widget.dr_cb.clicked.connect(self.disp_pdf)
         self.display_window.pdf_widget.tr_cb.clicked.connect(self.disp_pdf)
         self.display_window.pdf_widget.gr_cb.clicked.connect(self.disp_pdf)
@@ -176,6 +183,21 @@ class aEDXDController(QObject):
             self.model.params[key] = od
             sf = self.model.structure_factor
             sf.save_structure_factor(filename)
+
+    def export_sq_plot(self, filename):
+        key = 'outputsavedirectory'
+        filters = 'svg (*.svg);;png (*.png)'
+        if key in self.model.params:
+            od = self.model.params[key]
+        else: od = None
+        filename = save_file_dialog(
+                self.display_window, "Export plot.",
+                od,
+                    (filters),True)
+        if filename.endswith('.png'):
+            self.display_window.sq_widget.fig.win.export_plot_png(filename)
+        elif filename.endswith('.svg'):
+            self.display_window.sq_widget.fig.win.export_plot_svg(filename)
 
     def save_pdf(self):
         key = 'outputsavedirectory'
@@ -295,30 +317,39 @@ class aEDXDController(QObject):
         
     def disp_sq(self):
         self.display_window.sq_widget.fig.clear()
+        show_data = self.display_window.sq_widget.show_data_cb.isChecked()
+        show_Sq = self.display_window.sq_widget.show_Sq_cb.isChecked()
+        show_Sq_uncertainty = self.display_window.sq_widget.show_Sq_uncertainty_cb.isChecked()
         if self.model.structure_factor.done == True:
             #self.display_window.tabWidget.setCurrentIndex(3)
             if len(self.model.ttharray):
                 self.display_window.sq_widget.fig.add_line_plot([],[],Width=1)
-                self.display_window.sq_widget.setText( 'Spline-interpolation',0)
+                
                 sf = self.model.structure_factor
                 S_q = sf.out_params['S_q_fragments']
                 colors = self.config_controller.files_controller.sq_colors
                 tth = self.model.ttharray
-                for i in range(len(S_q)):
-                    color = colors[i]
-                    t = tth[i]
-                    self.display_window.sq_widget.fig.add_scatter_plot(S_q[i][0],S_q[i][1],color,100)
-                    #self.display_window.sq_widget.setText( str(t),i+1)
-                    #plt.errorbar(S_q[i][0],S_q[i][1],yerr=S_q[i][2],fmt='.',capsize=1.0)
+                if show_data:
+                    for i in range(len(S_q)):
+                        color = colors[i]
+                        t = tth[i]
+                        self.display_window.sq_widget.fig.add_scatter_plot(S_q[i][0],S_q[i][1],color,100)
+                        #self.display_window.sq_widget.setText( str(t),i+1)
+                        #plt.errorbar(S_q[i][0],S_q[i][1],yerr=S_q[i][2],fmt='.',capsize=1.0)
                 q_even = sf.out_params['q_even']
                 sq_even = sf.out_params['sq_even']
-                self.display_window.sq_widget.fig.add_line_plot(q_even,sq_even,Width=2)
+                if show_Sq:
+                    self.display_window.sq_widget.setText( 'S(q)',0)
+                    self.display_window.sq_widget.fig.add_line_plot(q_even,sq_even,Width=2)
+                else:
+                    self.display_window.sq_widget.setText( '',0)
                 
 
                 S_err = sf.out_params['sq_even_err']
                 S_err_p = sq_even + S_err
                 S_err_n = sq_even - S_err
-                self.display_window.sq_widget.fig.add_fill_between_plot(q_even, S_err_p, S_err_n)
+                if show_Sq_uncertainty:
+                    self.display_window.sq_widget.fig.add_fill_between_plot(q_even, S_err_p, S_err_n)
                 #print(S_err)
 
     def tranform_pdf_to_selected_type(self, r, dr):
