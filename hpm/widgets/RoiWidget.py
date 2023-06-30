@@ -139,10 +139,10 @@ class roiTableWidget(ListTableWidget):
         self.setHorizontalHeader(header_view)
 
         # first column size fixed, the rest are strechable
-        header_view.setResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
         for i in range(len(self.default_header))[2:]:
-            header_view.setResizeMode(i, QtWidgets.QHeaderView.Stretch)
+            header_view.setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
         
         self.header = copy.deepcopy(self.default_header)
         self.setHorizontalHeaderLabels(self.header)
@@ -299,9 +299,11 @@ class roiSetsTableWidget(ListTableWidget):
         #self.index_items = []
         header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self)
         self.setHorizontalHeader(header_view)
-        header_view.setResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+
+        #header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
         for i in range(len(self.default_header))[1:]:
-            header_view.setResizeMode(i, QtWidgets.QHeaderView.Stretch)
+            header_view.setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
         
         self.header = copy.deepcopy(self.default_header)
         self.setHorizontalHeaderLabels(self.header)

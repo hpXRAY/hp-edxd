@@ -19,7 +19,7 @@ import numpy as np
 import scipy.optimize as opt
 
 from burnman.eos import equation_of_state as eos
-from burnman.tools import bracket
+#from burnman.tools import bracket
 import warnings
 #from burnman.eos.birch_murnaghan import bulk_modulus, birch_murnaghan, volume
 

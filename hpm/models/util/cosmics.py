@@ -704,7 +704,7 @@ def subsample(a):  # this is more a generic function then a method ...
     """
     """
     # Ouuwww this is slow ...
-    outarray = np.zeros((a.shape[0]*2, a.shape[1]*2), dtype=np.float64)
+    outarray = np.zeros((a.shape[0]*2, a.shape[1]*2), dtype=float64)
     for i in range(a.shape[0]):
         for j in range(a.shape[1]): 
             outarray[2*i,2*j] = a[i,j]

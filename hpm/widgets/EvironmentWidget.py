@@ -77,9 +77,9 @@ class EnvironmentWidget(QtWidgets.QWidget):
         self.show_parameter_in_pattern = True
         header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self.env_tw)
         self.env_tw.setHorizontalHeader(header_view)
-        header_view.setResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
         
-        header_view.setResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
         self.default_header = [ 'Variable', 'Value']
         self.header = copy.deepcopy(self.default_header)
         self.env_tw.setHorizontalHeaderLabels(self.header)

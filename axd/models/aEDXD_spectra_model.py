@@ -679,7 +679,7 @@ def read_file(filename, mca_adc_shapingtime):
     e_offset = float(lines[e_offset_ndx].split()[1])
     e_slope = float(lines[e_slope_ndx].split()[1])
     two_theta = float(lines[two_theta_ndx].split()[1])
-    intensityi = np.array(lines[firstdataline_ndx:],dtype=np.float)
+    intensityi = np.array(lines[firstdataline_ndx:],dtype=float)
     # correct the dead time here: 
     dead_time = real_time-live_time
     y = intensityi/live_time # counting rate
@@ -711,7 +711,7 @@ def dataread(mcadata, inputdatadirectory):
         intensity = []
         for files in files2read:
             try:
-                readin = np.genfromtxt(files,dtype=np.float,comments='#')
+                readin = np.genfromtxt(files,dtype=float,comments='#')
                 energyi = readin[:,0]
                 intensityi = readin[:,1]
                 energy.append(energyi)

@@ -126,8 +126,8 @@ class xrfWidget(QtWidgets.QWidget):
         header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self.xrf_tw)
         self.xrf_tw.setHorizontalHeader(header_view)
 
-        header_view.setResizeMode(0, QtWidgets.QHeaderView.Stretch)
-        header_view.setResizeMode(1, QtWidgets.QHeaderView.Stretch)  
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)  
         
         self.xrf_tw.setHorizontalHeaderLabels(self.header)
         #header_view.hide()

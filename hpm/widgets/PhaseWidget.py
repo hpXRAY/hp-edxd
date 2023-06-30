@@ -156,10 +156,10 @@ class PhaseWidget(QtWidgets.QWidget):
         header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self.phase_tw)
         self.phase_tw.setHorizontalHeader(header_view)
         
-        #header_view.setResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        header_view.setResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+        #header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+        header_view.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
         header_view.hide()
         self.phase_tw.setItemDelegate(NoRectDelegate())
 

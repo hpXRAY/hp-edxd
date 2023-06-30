@@ -119,9 +119,9 @@ class ImgWidget2(QtWidgets.QWidget):
         ev.accept()
 
 class ImgWidget(QtCore.QObject):
-    mouse_moved = QtCore.Signal(float, float)
-    mouse_left_clicked = QtCore.Signal(float, float)
-    mouse_left_double_clicked = QtCore.Signal(float, float)
+    mouse_moved = QtCore.pyqtSignal(float, float)
+    mouse_left_clicked = QtCore.pyqtSignal(float, float)
+    mouse_left_double_clicked = QtCore.pyqtSignal(float, float)
 
     def __init__(self, pg_layout, orientation='vertical'):
         super(ImgWidget, self).__init__()
@@ -294,7 +294,7 @@ class ImgWidget(QtCore.QObject):
         dif = pos - lastPos
         dif *= -1
         ## Ignore axes if mouse is disabled
-        mouseEnabled = np.array(self.img_view_box.state['mouseEnabled'], dtype=np.float)
+        mouseEnabled = np.array(self.img_view_box.state['mouseEnabled'], dtype=float)
         mask = mouseEnabled.copy()
         if axis is not None:
             mask[1 - axis] = 0.0

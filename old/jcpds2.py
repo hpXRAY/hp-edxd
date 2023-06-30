@@ -528,7 +528,7 @@ class jcpds(object):
                 self.mod_pressure = pressure - \
                                     self.params['alpha_t'] * self.params['k0'] * (temperature - 298.)
                 res = minimize(self.bm3_inverse, 1.)
-                self.params['v'] = self.params['v0'] / np.float(res.x)
+                self.params['v'] = self.params['v0'] / float(res.x)
 
     def bm3_inverse(self, v0_v):
         """
@@ -665,7 +665,7 @@ class jcpds(object):
 
         # Assume each cell dimension changes by the same fractional amount = cube
         # root of volume change ratio
-        ratio = np.float((self.params['v'] / self.params['v0']) ** (1.0 / 3.0))
+        ratio = float((self.params['v'] / self.params['v0']) ** (1.0 / 3.0))
         self.params['a'] = self.params['a0'] * ratio
         self.params['b'] = self.params['b0'] * ratio
         self.params['c'] = self.params['c0'] * ratio

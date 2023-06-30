@@ -233,10 +233,10 @@ class reflectionsTableWidget(ListTableWidget):
         self.setMinimumWidth(400)
         header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self)
         self.setHorizontalHeader(header_view)
-        header_view.setResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        header_view.setResizeMode(3, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
         self.default_header = ['Use','ROI','HKL',
             'd obs','d calc',f'\N{GREEK CAPITAL LETTER DELTA} d']
         self.header = copy.deepcopy(self.default_header)
@@ -393,10 +393,10 @@ class parametersTableWidget(QtWidgets.QTableWidget):
         self.setMinimumWidth(170)
         header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self)
         self.setHorizontalHeader(header_view)
-        header_view.setResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         
-        header_view.setResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        header_view.setResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
         self.default_header = ['Parameter','Value','esd']
         self.header = copy.deepcopy(self.default_header)
         self.setHorizontalHeaderLabels(self.header)

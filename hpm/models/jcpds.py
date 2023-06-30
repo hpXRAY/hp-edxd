@@ -755,7 +755,7 @@ class jcpds(object):
 
         # Assume each cell dimension changes by the same fractional amount = cube
         # root of volume change ratio
-        ratio = np.float((self.params['v'] / self.params['v0']) ** (1.0 / 3.0))
+        ratio = float((self.params['v'] / self.params['v0']) ** (1.0 / 3.0))
         self.params['a'] = self.params['a0'] * ratio
         self.params['b'] = self.params['b0'] * ratio
         self.params['c'] = self.params['c0'] * ratio

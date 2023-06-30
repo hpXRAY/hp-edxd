@@ -87,10 +87,10 @@ class aEDXDFilesWidget(QWidget):
         '''self.file_tw = ListTableWidget(columns=4)
         header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self.file_tw)
         self.file_tw.setHorizontalHeader(header_view)
-        header_view.setResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        header_view.setResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)'''
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)'''
         self.file_trw = treeWidget()
         
         #self.file_trw.setHeaderLabels([' ' + f'  2\N{GREEK SMALL LETTER THETA}'])
@@ -99,7 +99,7 @@ class aEDXDFilesWidget(QWidget):
         #self.file_trw.setItemDelegate(NoRectDelegate())
         
         header = self.file_trw.header()
-        header.setResizeMode(QtWidgets.QHeaderView.Fixed)
+        header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         self._body_layout.addWidget(self.file_trw )
         
         self._layout.addWidget(self.button_widget)

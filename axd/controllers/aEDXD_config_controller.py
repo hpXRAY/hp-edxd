@@ -20,7 +20,7 @@ from  PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, Q
 from PyQt5.QtCore import QObject, pyqtSignal, Qt
 import numpy as np
 from functools import partial
-import json, h5py
+import json #, h5py
 import copy
 from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, VerticalSpacerItem, NoRectDelegate, \
     HorizontalSpacerItem, ListTableWidget, VerticalLine, DoubleMultiplySpinBoxAlignRight

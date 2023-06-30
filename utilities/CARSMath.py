@@ -32,9 +32,9 @@ Modifications:
     
 """
 
-import numpy as Numeric  
+import numpy as np  
 import numpy.linalg as LinearAlgebra
-np = Numeric
+
 
 
 ############################################################
@@ -84,41 +84,41 @@ def polyfitw(x, y, w, ndegree, return_fit=0):
     """
     n = min(len(x), len(y)) # size = smaller of x,y
     m = ndegree + 1         # number of elements in coeff vector
-    a = Numeric.zeros((m,m),Numeric.float)  # least square matrix, weighted matrix
-    b = Numeric.zeros(m,Numeric.float)    # will contain sum w*y*x^j
-    z = Numeric.ones(n,Numeric.float)     # basis vector for constant term
+    a = np.zeros((m,m),float)  # least square matrix, weighted matrix
+    b = np.zeros(m,float)    # will contain sum w*y*x^j
+    z = np.ones(n,float)     # basis vector for constant term
 
-    a[0,0] = Numeric.sum(w)
-    b[0] = Numeric.sum(w*y)
+    a[0,0] = np.sum(w)
+    b[0] = np.sum(w*y)
 
     for p in range(1, 2*ndegree+1):     # power loop
         z = z*x   # z is now x^p
-        if (p < m):  b[p] = Numeric.sum(w*y*z)   # b is sum w*y*x^j
-        sum = Numeric.sum(w*z)
+        if (p < m):  b[p] = np.sum(w*y*z)   # b is sum w*y*x^j
+        sum = np.sum(w*z)
         for j in range(max(0,(p-ndegree)), min(ndegree,p)+1):
             a[j,p-j] = sum
 
     a = LinearAlgebra.inv(a)
-    c = Numeric.matmul(b, a)
+    c = np.matmul(b, a)
     if (return_fit == 0):
         return c     # exit if only fit coefficients are wanted
     minx = min(x)
     maxx = max(x)
     
-    x_yfit = Numeric.asarray(range(int(minx*4),int(maxx*4)+1))/4
+    x_yfit = np.asarray(range(int(minx*4),int(maxx*4)+1))/4
     n_yfit = len(x_yfit)
     # compute optional output parameters.
-    yfit = Numeric.zeros(n_yfit,Numeric.float)+c[0]   # one-sigma error estimates, init
+    yfit = np.zeros(n_yfit,float)+c[0]   # one-sigma error estimates, init
     
     for k in range(1, ndegree +1):
         yfit = yfit + c[k]*(x_yfit**k)  # sum basis vectors
         
     if (return_fit ==1):
         return [c, yfit, x_yfit]    
-    var = Numeric.sum((yfit-y)**2 )/(n-m)  # variance estimate, unbiased
-    sigma = Numeric.sqrt(var)
-    yband = Numeric.zeros(n,Numeric.float) + a[0,0]
-    z = Numeric.ones(n,Numeric.float)
+    var = np.sum((yfit-y)**2 )/(n-m)  # variance estimate, unbiased
+    sigma = np.sqrt(var)
+    yband = np.zeros(n,float) + a[0,0]
+    z = np.ones(n,float)
     for p in range(1,2*ndegree+1):     # compute correlated error estimates on y
         z = z*x		# z is now x^p
         sum = 0.
@@ -126,7 +126,7 @@ def polyfitw(x, y, w, ndegree, return_fit=0):
             sum = sum + a[j,p-j]
         yband = yband + sum * z      # add in all the error sources
     yband = yband*var
-    yband = Numeric.sqrt(yband)
+    yband = np.sqrt(yband)
     return c, yfit, yband, sigma, a
 
 # polyfitw test:
@@ -160,10 +160,10 @@ def fit_gaussian(chans, counts, return_fit=0):
         negative.  Any values less than 1 are replaced by 1.
     """
     center = (chans[0] + chans[-1])/2.
-    x = Numeric.asarray(chans, Numeric.float)-center
-    y = Numeric.log(Numeric.clip(counts, 1, max(counts)))
-    w = Numeric.asarray(counts, Numeric.float)**2
-    w = Numeric.clip(w, 1., max(w))
+    x = np.asarray(chans, float)-center
+    y = np.log(np.clip(counts, 1, max(counts)))
+    w = np.asarray(counts, float)**2
+    w = np.clip(w, 1., max(w))
     if return_fit==0:
 
         fic = polyfitw(x, y, w, 2, return_fit)
@@ -187,14 +187,14 @@ def fit_gaussian(chans, counts, return_fit=0):
                 Correlation matrix of the coefficients.
     '''
     fic[2] = min(fic[2], -.0001)  # Protect against divide by 0
-    amplitude = Numeric.exp(fic[0] - fic[1]**2/(4.*fic[2]))
+    amplitude = np.exp(fic[0] - fic[1]**2/(4.*fic[2]))
     centroid  = center - fic[1]/(2.*fic[2])
-    sigma     = Numeric.sqrt(-1/(2.*fic[2]))
+    sigma     = np.sqrt(-1/(2.*fic[2]))
     fwhm      = 2.35482 * sigma
     if return_fit == 0:
         return [amplitude, centroid, fwhm]
     if return_fit == 1:
-        return [amplitude, centroid, fwhm, Numeric.exp(yfit),x_yfit+center]
+        return [amplitude, centroid, fwhm, np.exp(yfit),x_yfit+center]
 
 
 ############################################################
@@ -209,8 +209,8 @@ def compress_array(array, compress):
         print ('Compression must be integer divisor of array length')
         return array
 
-    temp = Numeric.resize(array, (l/compress, compress))
-    return Numeric.sum(temp, 1)/compress
+    temp = np.resize(array, (l/compress, compress))
+    return np.sum(temp, 1)/compress
 
 ############################################################
 def expand_array(array, expand, sample=0):
@@ -223,11 +223,11 @@ def expand_array(array, expand, sample=0):
 
     l = len(array)
     if (expand == 1): return array
-    if (sample == 1): return Numeric.repeat(array, expand)
+    if (sample == 1): return np.repeat(array, expand)
 
-    kernel = Numeric.ones(expand, Numeric.float)/expand
+    kernel = np.ones(expand, float)/expand
     # The following mimic the behavior of IDL's rebin when expanding
-    temp = Numeric.convolve(Numeric.repeat(array, expand), kernel, mode=2)
+    temp = np.convolve(np.repeat(array, expand), kernel, mode=2)
     # Discard the first "expand-1" entries
     temp = temp[expand-1:]
     # Replace the last "expand" entries with the last entry of original
