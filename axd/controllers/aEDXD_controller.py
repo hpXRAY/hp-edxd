@@ -330,10 +330,13 @@ class aEDXDController(QObject):
                 colors = self.config_controller.files_controller.sq_colors
                 tth = self.model.ttharray
                 if show_data:
+                    sq_sort_err_max = 1/np.amin(S_q[:][2])
+                    
                     for i in range(len(S_q)):
                         color = colors[i]
                         t = tth[i]
-                        self.display_window.sq_widget.fig.add_scatter_plot(S_q[i][0],S_q[i][1],color,100)
+                        opacity  = 100* ((1/ (S_q[i][2])/sq_sort_err_max))
+                        self.display_window.sq_widget.fig.add_scatter_plot(S_q[i][0],S_q[i][1],color,opacity)
                         #self.display_window.sq_widget.setText( str(t),i+1)
                         #plt.errorbar(S_q[i][0],S_q[i][1],yerr=S_q[i][2],fmt='.',capsize=1.0)
                 q_even = sf.out_params['q_even']
