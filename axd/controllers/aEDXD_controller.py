@@ -330,7 +330,7 @@ class aEDXDController(QObject):
                 colors = self.config_controller.files_controller.sq_colors
                 tth = self.model.ttharray
                 if show_data:
-                    sq_sort_err_max = 1/np.amin(S_q[:][2])
+                    #sq_sort_err_max = 1/np.amin(S_q[:][2])
                     
                     for i in range(len(S_q)):
                         color = colors[i]
