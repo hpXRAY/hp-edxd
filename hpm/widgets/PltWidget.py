@@ -98,22 +98,16 @@ class plotWindow(QtWidgets.QWidget):
         
 
     def add_scatter_plot(self, x=[],y=[],color=(200, 200, 200),opacity=100):
-        #sb = (color[0], color[1],color[2],int(opacity[i] ))
-        Plot = self.win
+        sb = (color[0], color[1],color[2],100)
+        
 
-        scatter = pg.ScatterPlotItem()
-        Plot.addItem(scatter)
 
         # Set the properties of each point
-        for i in range(len(x)):
-            sb = (color[0], color[1],color[2],int(opacity[i] ))
-            brush = pg.mkBrush(color=sb)  # Set transparency based on the array
-            scatter.addPoints(x=[x[i]], y=[y[i]], brush=brush, pen=None)
 
-        '''Plot = self.win.plot(x,y, 
+        Plot = self.win.plot(x,y, 
                             pen=None, symbol='o', \
                             symbolPen=None, symbolSize=7, \
-                            symbolBrush=sb)'''
+                            symbolBrush=sb)
 
         self.plots.append(Plot)
          # can display name in upper right corner in same color 
