@@ -337,7 +337,7 @@ class AmorphousAnalysisWidget(QtWidgets.QWidget):
             self.view.enableAutoRange(enable=1) 
         elif ev.button() == QtCore.Qt.LeftButton: 
             pos = ev.pos()  ## using signal proxy turns original arguments into a tuple
-            mousePoint = self.view.mapToView(pos)
+            mousePoint = self.view.mapSceneToView(pos)
             index= mousePoint.y()
             y_scale = self.current_row_scale['scale']
             index_scaled = (index - y_scale[1])/ y_scale[0]

@@ -140,7 +140,7 @@ class aEDXDController(QObject):
         Checks if there is unsaved data before confirming closing of program.
         Overrides the closeEvent of the main display widget.
         '''
-        qm = QtGui.QMessageBox
+        qm = QtWidgets.QMessageBox
         ret = qm.Yes
         progress_saved = self.is_progress_saved()
         save_as_enabled = self.display_window.save_as_btn.isEnabled()

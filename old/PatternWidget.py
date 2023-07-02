@@ -371,7 +371,7 @@ class PatternWidget(QtCore.QObject):
                          ev.modifiers() & QtCore.Qt.ControlModifier):
             # determine the amount of translation
             tr = dif
-            tr = self.view_box.mapToView(tr) - self.view_box.mapToView(pg.Point(0, 0))
+            tr = self.view_box.mapSceneToView(tr) - self.view_box.mapSceneToView(pg.Point(0, 0))
             x = tr.x()
             y = tr.y()
             self.view_box.translateBy(x=x, y=y)

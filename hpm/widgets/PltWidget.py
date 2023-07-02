@@ -169,7 +169,7 @@ class CustomViewBox(pg.ViewBox):
             self.enableAutoRange(enable=1) 
         elif ev.button() == QtCore.Qt.LeftButton: 
             pos = ev.pos()  ## using signal proxy turns original arguments into a tuple
-            mousePoint = self.mapToView(pos)
+            mousePoint = self.mapSceneToView(pos)
             self.cursorPoint=mousePoint.x()
             self.plotMouseCursorSignal.emit(mousePoint.x()) 
         ev.accept()   
@@ -327,7 +327,7 @@ class PltWidget(pg.PlotWidget):
                     pass
                 elif p == 'mouse_fast_cursor_color':
                     pass
-                elif p == 'plot_width':
+                '''elif p == 'plot_width':
                     # this is currently not used because setting width more than 1 makes the plot slow
                     # maybe if they fix that issue in a future version of pyqtgraph
                     if self.plotForeground is not None:
@@ -337,7 +337,7 @@ class PltWidget(pg.PlotWidget):
                     if self.plotRoi is not None:
                         pen = self.roi_pen # need to rename this consistently at some point, see note above
                         pen.setWidth(color)
-                        self.plotRoi.setPen(pen)
+                        self.plotRoi.setPen(pen)'''
                     
                 
 
@@ -370,7 +370,7 @@ class PltWidget(pg.PlotWidget):
         # initialize some plots
         #self.pattern_plot.buttonsHidden = True
         antialias = self.prefs['plot_antialias']
-        plot_width = self.prefs['plot_width']
+        plot_width = 1 #self.prefs['plot_width']
         self.setLabel('left', 'Counts')
         data_color = self.prefs['data_color']
         self.foreground_pen = pg.mkPen(color=data_color, width=plot_width)
