@@ -1,9 +1,9 @@
 from axd.models.aEDXD_functions import I_base_calc, I_inc_new
 import numpy as np
-import matplotlib
+#import matplotlib
 from axd.models.aEDXD_atomic_parameters import aEDXDAtomicParameters
 import json
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 qp = range(1000)
 qp = np.asarray(qp)/50
@@ -32,9 +32,9 @@ for e in elements:
                 i_inc = I_inc_new(qp, opt[symbol])
 
 
-                plt.plot(qp, i_inc, linewidth=0.5)
+                #plt.plot(qp, i_inc, linewidth=0.5)
 
-plt.show()
+#plt.show()
 
 '''Z = []
         I = []

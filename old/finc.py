@@ -1,6 +1,6 @@
 from axd.models.aEDXD_functions import I_base_calc, I_inc_new
 import numpy as np
-import matplotlib
+#import matplotlib
 from axd.models.aEDXD_atomic_parameters import aEDXDAtomicParameters
 
 

@@ -27,7 +27,7 @@ from scipy.special import erfc
 from scipy.optimize import curve_fit
 from scipy import signal
 import json
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import copy
 
 def fversion():

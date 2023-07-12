@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
  
 # Unevenly spaced x-y data with duplicate x values
 x = np.array([0.0, 0.1, 0.5, 0.3, .9, 1.0, 1.1, 1.9, 2.0, 2.1, 2.5, 2.6, 3.0, 3.0, 3.5, 3.5, 4.0, 4.1, 4.5, 4.5])
@@ -35,7 +35,7 @@ new_rebin_x = np.arange(rebin_x[0], rebin_x[-1], step)
 # Interpolate rebin_y values using numpy's interp function
 new_rebin_y = np.interp(new_rebin_x, rebin_x, rebin_y)
 
-# Plot the original data with colors based on weights
+'''# Plot the original data with colors based on weights
 plt.scatter(x, y, c=weights, cmap='coolwarm', label='Original Data')
 
 # Plot the rebinned data as connected lines with round markers
@@ -50,4 +50,4 @@ plt.ylabel('y')
 plt.title('Original Data and Rebinned Data with Interpolation')
 plt.legend()
 plt.colorbar(label='Weight')
-plt.show()
+plt.show()'''

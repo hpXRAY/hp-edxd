@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 def generate_array_with_index(first_value_A, last_value_A, last_value_B, last_value_C, last_value_D, last_value_E, step_A, step_C, step_D, step_E):
     step_B = (step_A + step_C) / 2
@@ -45,10 +45,10 @@ step_E = 0.6
 
 result_array, result_index = generate_array_with_index(first_value_A, last_value_A, last_value_B, last_value_C, last_value_D, last_value_E, step_A, step_C, step_D, step_E)
 
-# Plot x vs index
+'''# Plot x vs index
 plt.plot(result_index, result_array, '-o')
 plt.xlabel('Index')
 plt.ylabel('x')
 plt.title('Array Plot')
 plt.grid(True)
-plt.show()
+plt.show()'''
