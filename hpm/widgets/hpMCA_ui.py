@@ -864,7 +864,7 @@ class Ui_hpMCA(object):
         self.menuFile.addAction(self.actionPreferences)
         self.menuFile.addAction(self.actionEvironment)
         self.menuFile.addAction(self.actionMultiSpectra)
-        self.menuFile.addAction(self.actionAmorphous)
+        #self.menuFile.addAction(self.actionAmorphous)
 
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
