@@ -385,7 +385,7 @@ class MaskController(object):
                                                  img_filename + '.mask'),
                                     filter='Mask (*.mask)')
 
-        if filename is not '':
+        if filename != '':
             self.directories.mask = os.path.dirname(filename)
             self.mask_model.save_mask(filename)
 
@@ -396,7 +396,7 @@ class MaskController(object):
             filename = open_file_dialog(self.widget, caption="Load mask data",
                                         directory=self.directories.mask, filter='*.mask')
 
-        if filename is not '':
+        if filename != '':
             self.directories.mask = os.path.dirname(filename)
             if self.mask_model.load_mask(filename):
                 self.plot_mask()
@@ -412,7 +412,7 @@ class MaskController(object):
             filename = open_file_dialog(self.widget, caption="Add mask data",
                                     directory=self.directories.mask, filter='*.mask')
 
-        if filename is not '':
+        if filename != '':
             self.directories.mask = os.path.dirname(filename)
             if self.mask_model.add_mask(filename):
                 self.plot_mask()
