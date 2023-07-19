@@ -32,6 +32,8 @@ from PyQt5 import QtWidgets
 import copy
 import numpy as np
 
+from .. import _platform
+
 # used by aEDXD, will upgrade hpMCA to use this later as well
 class plotWindow(QtWidgets.QWidget):
     widget_closed = QtCore.pyqtSignal()
@@ -169,7 +171,10 @@ class CustomViewBox(pg.ViewBox):
             self.enableAutoRange(enable=1) 
         elif ev.button() == QtCore.Qt.LeftButton: 
             pos = ev.pos()  ## using signal proxy turns original arguments into a tuple
-            mousePoint = self.mapToView(pos)
+            if _platform == 'Windows':
+                mousePoint = self.mapDeviceToView(pos)
+            else:
+                mousePoint = self.mapToView(pos)
             self.cursorPoint=mousePoint.x()
             self.plotMouseCursorSignal.emit(mousePoint.x()) 
         ev.accept()   

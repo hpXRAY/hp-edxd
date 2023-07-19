@@ -34,6 +34,8 @@ import platform
 
 import pathlib
 
+_platform = platform.system()
+
 desktop = pathlib.Path.home() / 'Desktop'
 
 
