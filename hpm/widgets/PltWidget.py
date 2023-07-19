@@ -172,10 +172,11 @@ class CustomViewBox(pg.ViewBox):
         elif ev.button() == QtCore.Qt.LeftButton: 
             pos = ev.pos()  ## using signal proxy turns original arguments into a tuple
             if _platform == 'Windows':
-                mousePoint = self.mapDeviceToView(pos)
+                mousePoint = self.mapSceneToView(pos)
             else:
                 mousePoint = self.mapToView(pos)
             self.cursorPoint=mousePoint.x()
+            print(self.cursorPoint)
             self.plotMouseCursorSignal.emit(mousePoint.x()) 
         ev.accept()   
 
