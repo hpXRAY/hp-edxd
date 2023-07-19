@@ -169,7 +169,7 @@ class CustomViewBox(pg.ViewBox):
             self.enableAutoRange(enable=1) 
         elif ev.button() == QtCore.Qt.LeftButton: 
             pos = ev.pos()  ## using signal proxy turns original arguments into a tuple
-            mousePoint = self.mapSceneToView(pos)
+            mousePoint = self.mapToView(pos)
             self.cursorPoint=mousePoint.x()
             self.plotMouseCursorSignal.emit(mousePoint.x()) 
         ev.accept()   
