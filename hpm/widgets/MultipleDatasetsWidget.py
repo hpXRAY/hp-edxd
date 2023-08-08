@@ -17,6 +17,7 @@
 # Copyright (C) 2018-2019 ANL, Lemont, USA
 
 from functools import partial
+import imp
 from PyQt5.QtCore import QObject, pyqtSignal, Qt
 from PyQt5 import QtWidgets, QtCore
 import copy
@@ -27,6 +28,7 @@ from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, Verti
 from hpm.widgets.PltWidget import PltWidget
 from hpm.widgets.MaskWidget import MaskWidget
 from hpm.widgets.plot_widgets import ImgWidget2
+from hpm.widgets.CustomImageWidget import CustomImageWidget
 
 class MultiSpectraWidget(QtWidgets.QWidget):
 
@@ -36,8 +38,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
     pv_item_changed = QtCore.pyqtSignal(int, str)
     widget_closed = QtCore.pyqtSignal()
     key_signal = pyqtSignal(str)
-    plotMouseMoveSignal = pyqtSignal(float)  
-    plotMouseCursorSignal = pyqtSignal(list)
+    
     linearRegionMovedSignal = pyqtSignal(list)
 
     def __init__(self):
@@ -115,11 +116,12 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self.file_view_tabs= QtWidgets.QTabWidget(self)
         
         self.file_view_tabs.setObjectName("file_view_tabs")
-        self.make_img_plot()
+        #self.make_img_plot()
         self.plot_widget = QtWidgets.QWidget()
         self._plot_widget_layout = QtWidgets.QVBoxLayout(self.plot_widget)
         self._plot_widget_layout.setContentsMargins(0,0,0,0)
 
+        self.win = CustomImageWidget()
         self._plot_widget_layout.addWidget( self.win)
 
         self.HorizontalScaleWidget = QtWidgets.QWidget()
@@ -303,21 +305,20 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         else:
             self.file_list_view.clear()
 
-    def set_spectral_data(self, data):
+    '''def set_spectral_data(self, data):
         if len(data):
             data_positive = np.clip(data, .1, np.amax(data))
             data_negative = np.clip(-1* data, 0.1 , np.amax(data))
             
             img_data_positive = np.log10( data_positive)
             img_data_negative = -1 * np.log10( data_negative)
-            '''img_data_positive[img_data_positive<.5] = 0
-            img_data_negative[img_data_negative<.5] = 0'''
+            
             img_data = img_data_positive + img_data_negative
             
             self.img.setImage(img_data.T)
             #self.mask_widget.img_widget.plot_image(img_data, auto_level=True)
         else:
-            self.img.clear()
+            self.img.clear()'''
 
     def set_linear_regions(self, rois, show:False):
         lr : pg.LinearRegionItem
@@ -356,12 +357,12 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self.file_list_view.blockSignals(False)
 
     def select_spectrum(self, index):
-        self.set_cursor_pos(index, None)
+        self.win.set_cursor_pos(index, None)
 
     def select_value(self, val):
-        self.set_cursor_pos(None, val)
+        self.win.set_cursor_pos(None, val)
 
-    def set_image_scale(self, label, scale):
+    '''def set_image_scale(self, label, scale):
         
         current_label = self.current_scale['label']
         current_translate = self.current_scale['scale'][1]
@@ -379,10 +380,10 @@ class MultiSpectraWidget(QtWidgets.QWidget):
             self.current_scale['label'] = label
             self.current_scale['scale'] = scale
             
-            self.p1.setLabel(axis='bottom', text=label)
+            self.p1.setLabel(axis='bottom', text=label)'''
 
 
-    def set_image_row_scale(self, row_label, row_scale):
+    '''def set_image_row_scale(self, row_label, row_scale):
         
         current_row_label = self.current_scale['label']
         current_row_translate = self.current_row_scale['scale'][1]
@@ -401,9 +402,9 @@ class MultiSpectraWidget(QtWidgets.QWidget):
             self.current_row_scale['label'] = row_label
             self.current_row_scale['scale'] = row_scale
             
-            self.p1.setLabel(axis='left', text=row_label)
+            self.p1.setLabel(axis='left', text=row_label)'''
       
-    def make_img_plot(self):
+    '''def make_img_plot(self):
         ## Create window with GraphicsView widget
         self.win = pg.GraphicsLayoutWidget(parent=self)
         self.p1 = self.win.addPlot()
@@ -444,10 +445,10 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self.view.addItem(self.vLine, ignoreBounds=True)
         self.view.addItem(self.hLine, ignoreBounds=True)
         self.view.addItem(self.hLineFast, ignoreBounds=True)
-        self.view.mouseClickEvent = self.customMouseClickEvent
+        self.view.mouseClickEvent = self.customMouseClickEvent'''
 
 
-    def fastCursorMove(self, evt):
+    '''def fastCursorMove(self, evt):
         pos = evt[0]  ## using signal proxy turns original arguments into a tuple
         if self.view.sceneBoundingRect().contains(pos):
             mousePoint = self.view.mapSceneToView(pos)
@@ -472,7 +473,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
             if index >=0 :
                 self.set_cursor_pos(index_scaled, scale_point)
                 self.plotMouseCursorSignal.emit([index_scaled, scale_point])  
-        ev.accept()
+        ev.accept()'''
 
     '''def set_cursorFast_pos(self, index, E):
         self.hLine.blockSignals(True)
@@ -482,7 +483,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self.hLineFast.blockSignals(False)'''
 
 
-    def set_cursor_pos(self, index = None, E=None):
+    '''def set_cursor_pos(self, index = None, E=None):
         if E != None:
             self.vLine.blockSignals(True)
             
@@ -495,7 +496,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
             self.hLine.blockSignals(True)
             self.hLine.setPos(index_scaled)
             self.cursorPoints[0] = (index_scaled,self.cursorPoints[0][1])
-            self.hLine.blockSignals(False)
+            self.hLine.blockSignals(False)'''
         
     def keyPressEvent(self, e):
         sig = None
@@ -534,3 +535,4 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self.raise_()
 
   
+

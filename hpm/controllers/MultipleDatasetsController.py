@@ -96,8 +96,8 @@ class MultipleDatasetsController(QObject):
         self.widget.cal_btn.clicked.connect(self.calibrate_all_elements)
 
         self.widget.key_signal.connect(self.key_sig_callback)
-        self.widget.plotMouseMoveSignal.connect(self.fastCursorMove)
-        self.widget.plotMouseCursorSignal.connect(self.CursorClick)
+        self.widget.win.plotMouseMoveSignal.connect(self.fastCursorMove)
+        self.widget.win.plotMouseCursorSignal.connect(self.CursorClick)
         self.widget.file_list_view.currentRowChanged.connect(self.file_list_selection_changed_callback)
         
 
@@ -329,13 +329,13 @@ class MultipleDatasetsController(QObject):
             self.widget.radioAligned.setChecked(True)
             #r = self.multi_spectra_model.E_scale
 
-        self.widget.set_spectral_data(view)
+        self.widget.win.set_spectral_data(view)
         self.widget.set_linear_regions(self.multi_spectra_model.alignment_rois, self.widget.show_roi_btn.isChecked())
         #if len(scratch_view):
         #    self.widget.scratch_widget.plot_image(scratch_view)
         #self.mask_controller.mask_model._img_data = view
         #self.mask_controller.update_mask_dimension()
-        self.widget.set_image_scale(scale, r)
+        self.widget.win.set_image_scale(scale, r)
         
         self.scale = scale
         
@@ -349,7 +349,7 @@ class MultipleDatasetsController(QObject):
 
 
 
-    def sum_scratch_callback(self):
+    '''def sum_scratch_callback(self):
 
         if self.scale == 'E':
             data = self.multi_spectra_model.scratch_E
@@ -367,7 +367,7 @@ class MultipleDatasetsController(QObject):
         out = self.multi_spectra_model.flaten_data(data, mask)
         self.multi_spectra_model.scratch_q_average = out
         x = np.arange(len(out)) * scale[0] + scale[1]
-        self.widget.plot_data(x, out)
+        self.widget.plot_data(x, out)'''
     
 
     def ebg_data(self):
@@ -406,7 +406,7 @@ class MultipleDatasetsController(QObject):
             files.append(os.path.basename(f))
         self.widget.reload_files(files)
         self.file_changed(self.row)
-        fast_row = self.widget.cursorPoints[1][0]
+        fast_row = self.widget.win.cursorPoints[1][0]
         self.file_changed_fast(fast_row)
         
 
