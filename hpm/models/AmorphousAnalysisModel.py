@@ -17,10 +17,7 @@
 from fileinput import filelineno
 import pyqtgraph as pg
 from axd.models import aEDXD_atomic_parameters
-#import imp
-#from this import d
-'''from tkinter import N
-from tkinter.messagebox import NO'''
+
 import numpy as np
 from scipy import interpolate
 from PyQt5 import QtCore, QtWidgets

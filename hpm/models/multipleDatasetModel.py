@@ -15,7 +15,7 @@
 
 
 from fileinput import filelineno
-import imp
+
 from operator import truediv
 import numpy as np
 from scipy import interpolate
