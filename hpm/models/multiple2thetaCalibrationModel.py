@@ -49,8 +49,21 @@ class Multiple2ThetaModel(QtCore.QObject):  #
         Example:
             m = MultipleSpectraModel()
         """
-        self.mca : MCA
-        self.mca = None
+        self.data = None
+        self.mask = None
+        self.points = []
+        self.points_index = []
+
+    def set_data(self, data):
+        self.clear_peaks()
+        self.data = data
+        self.setup_peak_search_algorithm('Massif')
+       
+
+    def add_point(self, x, y):
+        peak = self.find_peak(x,y, 4, 0)
+        peaks = self.find_peaks_automatic(*peak[0],0)
+        return peaks
    
         
     def find_peaks_automatic(self, x, y, peak_ind):
@@ -65,7 +78,7 @@ class Multiple2ThetaModel(QtCore.QObject):  #
         :return:
             array of points found
         """
-        massif = Massif(self.img_model._img_data)
+        massif = Massif(self.data)
         cur_peak_points = massif.find_peaks((int(np.round(x)), int(np.round(y))), stdout=DummyStdOut())
         if len(cur_peak_points):
             self.points.append(np.array(cur_peak_points))
@@ -93,7 +106,7 @@ class Multiple2ThetaModel(QtCore.QObject):  #
         top_ind = int(np.round(y - search_size * 0.5))
         if top_ind < 0:
             top_ind = 0
-        search_array = self.img_model.img_data[left_ind:(left_ind + search_size), top_ind:(top_ind + search_size)]
+        search_array = self.data[left_ind:(left_ind + search_size), top_ind:(top_ind + search_size)]
         x_ind, y_ind = np.where(search_array == search_array.max())
         x_ind = x_ind[0] + left_ind
         y_ind = y_ind[0] + top_ind
@@ -122,12 +135,12 @@ class Multiple2ThetaModel(QtCore.QObject):  #
         """
 
         if algorithm == 'Massif':
-            self.peak_search_algorithm = Massif(self.img_model.raw_img_data)
+            self.peak_search_algorithm = Massif(self.data)
         elif algorithm == 'Blob':
             if mask is not None:
-                self.peak_search_algorithm = BlobDetection(self.img_model.raw_img_data * mask)
+                self.peak_search_algorithm = BlobDetection(self.data * mask)
             else:
-                self.peak_search_algorithm = BlobDetection(self.img_model.raw_img_data)
+                self.peak_search_algorithm = BlobDetection(self.data)
             self.peak_search_algorithm.process()
         else:
             return

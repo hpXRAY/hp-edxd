@@ -33,6 +33,7 @@ from .mcaComponents import McaROI
 import hpm.models.Xrf as Xrf
 
 from hpm.models.MaskModel import MaskModel
+from hpm.models.multiple2thetaCalibrationModel import Multiple2ThetaModel
 
 class MultipleSpectraModel(QtCore.QObject):  # 
     def __init__(self,  *args, **filekw):
@@ -83,6 +84,7 @@ class MultipleSpectraModel(QtCore.QObject):  #
         range_2 = [3000,3480]
         range_3 = [2600,3000]
         self.alignment_rois = []
+        self.multi_angle_calibration_model = Multiple2ThetaModel()
 
     def clear(self):
         self.__init__()
@@ -193,7 +195,29 @@ class MultipleSpectraModel(QtCore.QObject):  #
 
         #self.align_multialement_data(mask, new_mask , rebinned_scales,rebinned_new ,kind='nearest')
         
-    
+    def angle_calibration_gsd_set_data(self):
+        data = self.E
+        n = data.shape[0]
+        m = data.shape[1]
+        # Calculate the number of new columns
+        bin = 16
+        new_m = m // bin
+
+        # Reshape and sum every 20 columns
+        reshaped_E_arr = data.reshape(n, new_m, bin).sum(axis=2)
+        self.multi_angle_calibration_model.set_data(reshaped_E_arr)
+
+    def angle_calibration_gsd_add_pt(self, x,y):
+        found_peaks = self.multi_angle_calibration_model.add_point(x,y)
+        hr_peaks = []
+        for peak in found_peaks:
+            x = peak[1]
+            y = peak[0]
+            hr_peaks.append([x,y])
+        return hr_peaks
+
+    def angle_calibration_gsd_calc(self):
+        pass
 
     def rebin_scale(self, new_scale='q'):
         data = self.data

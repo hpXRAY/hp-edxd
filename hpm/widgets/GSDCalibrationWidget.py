@@ -27,8 +27,9 @@ from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, Verti
 from hpm.widgets.PltWidget import PltWidget
 from hpm.widgets.MaskWidget import MaskWidget
 from hpm.widgets.plot_widgets import ImgWidget2
+from hpm.widgets.CalibrationWidget import CalibrationWidget
 
-class MultiSpectraWidget(QtWidgets.QWidget):
+class GSDCalibrationWidget(QtWidgets.QWidget):
 
     color_btn_clicked = QtCore.pyqtSignal(int, QtWidgets.QWidget)
     #env_btn_clicked = QtCore.pyqtSignal(int)
@@ -46,7 +47,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
 
         self.p1 : pg.PlotWidget
         self.win:pg.GraphicsLayoutWidget
-        self.setWindowTitle('Multiple spectra view')
+        self.setWindowTitle('GSD Clibration')
         self.button_widget = QtWidgets.QWidget(self)
         self.button_widget.setMaximumHeight(40)
         self.button_widget.setObjectName('multispectra_control_button_widget')
@@ -201,6 +202,9 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self.file_view_tabs.addTab(self.line_plot_widget, 'Plot')'''
 
         self._body_layout.addWidget(self.file_view_tabs)
+
+        self.calibration_parameters_widget = CalibrationWidget()
+        self._body_layout.addWidget(self.calibration_parameters_widget)
         
 
         self._layout.addLayout(self._body_layout)

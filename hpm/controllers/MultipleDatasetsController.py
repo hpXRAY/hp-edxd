@@ -27,6 +27,7 @@ from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, Verti
     HorizontalSpacerItem, ListTableWidget, VerticalLine, DoubleMultiplySpinBoxAlignRight
 from hpm.widgets.UtilityWidgets import save_file_dialog, open_file_dialog, open_files_dialog, open_folder_dialog
 from hpm.widgets.MultipleDatasetsWidget import MultiSpectraWidget
+from hpm.widgets.GSDCalibrationWidget import GSDCalibrationWidget
 from hpm.models.multipleDatasetModel import MultipleSpectraModel
 from PyQt5.QtCore import pyqtSignal, QObject
 import natsort
@@ -50,7 +51,7 @@ class MultipleDatasetsController(QObject):
         
         self.multi_spectra_model = MultipleSpectraModel()
         self.widget = MultiSpectraWidget()
-        
+        self.gsd_calibration_widget = GSDCalibrationWidget()
 
         #self.displayPrefs = DisplayPreferences(self.widget.line_plot_widget) 
 
@@ -104,10 +105,35 @@ class MultipleDatasetsController(QObject):
         self.widget.prev_btn.clicked.connect(partial(self.key_sig_callback, 'left'))
         self.widget.next_btn.clicked.connect(partial(self.key_sig_callback, 'right'))
 
+        self.widget.cal_gsd_2theta_btn.clicked.connect(self.cal_gsd_2theta_btn_callback)
+        self.gsd_calibration_widget.cal_gsd_add_pt_btn.clicked.connect(self.cal_gsd_add_pt_btn_callback)
+        self.gsd_calibration_widget.cal_gsd_calc_btn.clicked.connect(self.cal_gsd_calc_btn_callback)
+
     def set_mca(self, mca, element=0):
         self.multi_spectra_model.set_mca(mca)
         self.setHorzScaleBtnsEnabled()
         self.multispectra_loaded()
+
+    def cal_gsd_2theta_btn_callback(self):
+        self.multi_spectra_model.angle_calibration_gsd_set_data()
+        data = self.multi_spectra_model.multi_angle_calibration_model.data
+        self.gsd_calibration_widget.set_spectral_data(self.multi_spectra_model.E)
+        self.gsd_calibration_widget.raise_widget()
+
+    def cal_gsd_add_pt_btn_callback(self): 
+        cursor_pt = self.gsd_calibration_widget.cursorPoints[0]
+        x = cursor_pt[0]
+        y = cursor_pt[1]//16
+        found_peaks = self.multi_spectra_model.angle_calibration_gsd_add_pt(x,y)
+        x = []
+        y = []
+        for peak in found_peaks:
+            x.append((peak[0]+0.5)*16)
+            y.append(peak[1]+0.5)
+        self.gsd_calibration_widget.p_scatter.setData(x,y)
+    
+    def cal_gsd_calc_btn_callback(self):
+        self.multi_spectra_model.angle_calibration_gsd_calc() 
     
     def set_channel_cursor(self, cursor):
         if len(cursor):
