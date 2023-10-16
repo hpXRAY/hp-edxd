@@ -42,6 +42,7 @@ class CalibrationWidget(QtWidgets.QWidget):
         self.setLayout(self._layout)
 
         self.create_shortcuts()
+        
 
     def create_shortcuts(self):
         """
@@ -246,7 +247,7 @@ class CalibrationControlWidget(QtWidgets.QWidget):
 
         self._layout = QtWidgets.QVBoxLayout(self)
         self._layout.setContentsMargins(0,0,0,0)
-
+    
         self._file_layout = QtWidgets.QHBoxLayout()
         self.load_img_btn = FlatButton("Load File", self)
         self.load_previous_img_btn = FlatButton("<", self)
@@ -283,8 +284,8 @@ class CalibrationControlWidget(QtWidgets.QWidget):
     def style_widgets(self):
         self.load_previous_img_btn.setMaximumWidth(50)
         self.load_next_img_btn.setMaximumWidth(50)
-        self.setMaximumWidth(350)
-        self.setMinimumWidth(350)
+        self.setMaximumWidth(270)
+        self.setMinimumWidth(270)
 
 
 class CalibrationParameterWidget(QtWidgets.QWidget):
@@ -309,7 +310,7 @@ class CalibrationParameterWidget(QtWidgets.QWidget):
 class StartValuesGroupBox(QtWidgets.QGroupBox):
     def __init__(self, *args, **kwargs):
         super(StartValuesGroupBox, self).__init__('Start values', *args, **kwargs)
-
+        self.setMaximumWidth(240)
         self._layout = QtWidgets.QVBoxLayout(self)
 
         self._grid_layout1 = QtWidgets.QGridLayout()
@@ -372,7 +373,7 @@ class StartValuesGroupBox(QtWidgets.QGroupBox):
 class PeakSelectionGroupBox(QtWidgets.QGroupBox):
     def __init__(self):
         super(PeakSelectionGroupBox, self).__init__('Peak Selection')
-
+        self.setMaximumWidth(240)
         self._layout = QtWidgets.QGridLayout()
         self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding,
                                                QtWidgets.QSizePolicy.Minimum), 0, 0)
@@ -416,7 +417,7 @@ class PeakSelectionGroupBox(QtWidgets.QGroupBox):
 class RefinementOptionsGroupBox(QtWidgets.QGroupBox):
     def __init__(self):
         super(RefinementOptionsGroupBox, self).__init__('Refinement Options')
-
+        self.setMaximumWidth(240)
         self._layout = QtWidgets.QGridLayout()
 
         self.automatic_refinement_cb = QtWidgets.QCheckBox('automatic refinement')

@@ -14,18 +14,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from qtpy import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore
 
 import numpy as np
 
 from ..widgets.UtilityWidgets import open_file_dialog, save_file_dialog
 from .. import calibrants_path
 
-# imports for type hinting in PyCharm -- DO NOT DELETE
+
 from ..widgets.CalibrationWidget import CalibrationWidget
 from ..widgets.UtilityWidgets import open_file_dialog
-from ..model.DioptasModel import DioptasModel
-from ..model.CalibrationModel import NotEnoughSpacingsInCalibrant
+
 
 
 class CalibrationController(object):

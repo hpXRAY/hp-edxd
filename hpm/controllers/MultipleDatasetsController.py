@@ -121,16 +121,15 @@ class MultipleDatasetsController(QObject):
         self.gsd_calibration_widget.raise_widget()
 
     def cal_gsd_add_pt_btn_callback(self): 
+        bin = self.multi_spectra_model.multi_angle_calibration_model.bin
         cursor_pt = self.gsd_calibration_widget.cursorPoints[0]
         x = cursor_pt[0]
-        y = cursor_pt[1]//16
-        found_peaks = self.multi_spectra_model.angle_calibration_gsd_add_pt(x,y)
-        x = []
-        y = []
-        for peak in found_peaks:
-            x.append((peak[0]+0.5)*16)
-            y.append(peak[1]+0.5)
-        self.gsd_calibration_widget.p_scatter.setData(x,y)
+        y = cursor_pt[1]//bin
+        x_range, y_range = self.multi_spectra_model.angle_calibration_gsd_add_pt(x,y)
+        
+        x_range = (x_range[::8] +0.5)*bin
+        y_range= y_range[::8]+0.5
+        self.gsd_calibration_widget.p_scatter.setData(x_range,y_range)
     
     def cal_gsd_calc_btn_callback(self):
         self.multi_spectra_model.angle_calibration_gsd_calc() 

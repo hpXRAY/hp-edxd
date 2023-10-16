@@ -27,7 +27,7 @@ from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, Verti
 from hpm.widgets.PltWidget import PltWidget
 from hpm.widgets.MaskWidget import MaskWidget
 from hpm.widgets.plot_widgets import ImgWidget2
-from hpm.widgets.CalibrationWidget import CalibrationWidget
+from hpm.widgets.CalibrationWidget import CalibrationControlWidget, CalibrationWidget
 
 class GSDCalibrationWidget(QtWidgets.QWidget):
 
@@ -203,7 +203,7 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
 
         self._body_layout.addWidget(self.file_view_tabs)
 
-        self.calibration_parameters_widget = CalibrationWidget()
+        self.calibration_parameters_widget = CalibrationControlWidget()
         self._body_layout.addWidget(self.calibration_parameters_widget)
         
 

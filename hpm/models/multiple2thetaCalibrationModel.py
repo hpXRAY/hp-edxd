@@ -36,7 +36,7 @@ from hpm.models.MaskModel import MaskModel
 from pyFAI.massif import Massif
 from pyFAI.blob_detection import BlobDetection
 from pyFAI.calibrant import Calibrant
-
+from scipy.optimize import curve_fit
 
 from .. import calibrants_path
 
@@ -49,21 +49,41 @@ class Multiple2ThetaModel(QtCore.QObject):  #
         Example:
             m = MultipleSpectraModel()
         """
+        self.data_raw = None
+        self.bin = 8
         self.data = None
         self.mask = None
         self.points = []
         self.points_index = []
 
     def set_data(self, data):
+        self.data_raw = data
+        n = data.shape[0]
+        m = data.shape[1]
+        # Calculate the number of new columns
+        bin = self.bin
+        new_m = m // bin
+
+        # Reshape and sum every 20 columns
+        reshaped_E_arr = data.reshape(n, new_m, bin).sum(axis=2)
+        self.data = reshaped_E_arr
+
         self.clear_peaks()
-        self.data = data
+        
         self.setup_peak_search_algorithm('Massif')
        
 
     def add_point(self, x, y):
         peak = self.find_peak(x,y, 4, 0)
         peaks = self.find_peaks_automatic(*peak[0],0)
-        return peaks
+        # Extract x and y values from the list of tuples
+        y_data, x_data = zip(*peaks)
+        x_data = np.array(x_data)
+        y_data = np.array(y_data)
+        x_max = self.data.shape[0]
+        a, b, c, y_range, x_range = fit_and_evaluate_polynomial(y_data, x_data, x_max)
+
+        return x_range, y_range
    
         
     def find_peaks_automatic(self, x, y, peak_ind):
@@ -227,3 +247,20 @@ class DummyStdOut(object):
     @classmethod
     def write(cls, *args, **kwargs):
         pass
+
+def second_order_polynomial(x, a, b, c):
+    return a * x**2 + b * x + c
+
+def fit_and_evaluate_polynomial(x_data, y_data, x_max):
+    popt, _ = curve_fit(second_order_polynomial, x_data, y_data)
+
+    # Extract the coefficients
+    a, b, c = popt
+
+    # Define the range for x values
+    x_range = np.arange(0, int(x_max) + 1, 1)
+
+    # Calculate the corresponding y values using the polynomial
+    y_range = second_order_polynomial(x_range, a, b, c)
+
+    return a, b, c, x_range, y_range

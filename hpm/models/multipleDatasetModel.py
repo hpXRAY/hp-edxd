@@ -197,24 +197,13 @@ class MultipleSpectraModel(QtCore.QObject):  #
         
     def angle_calibration_gsd_set_data(self):
         data = self.E
-        n = data.shape[0]
-        m = data.shape[1]
-        # Calculate the number of new columns
-        bin = 16
-        new_m = m // bin
-
-        # Reshape and sum every 20 columns
-        reshaped_E_arr = data.reshape(n, new_m, bin).sum(axis=2)
-        self.multi_angle_calibration_model.set_data(reshaped_E_arr)
+        
+        self.multi_angle_calibration_model.set_data(data)
 
     def angle_calibration_gsd_add_pt(self, x,y):
-        found_peaks = self.multi_angle_calibration_model.add_point(x,y)
-        hr_peaks = []
-        for peak in found_peaks:
-            x = peak[1]
-            y = peak[0]
-            hr_peaks.append([x,y])
-        return hr_peaks
+        x_range, y_range = self.multi_angle_calibration_model.add_point(x,y)
+        
+        return x_range, y_range
 
     def angle_calibration_gsd_calc(self):
         pass
