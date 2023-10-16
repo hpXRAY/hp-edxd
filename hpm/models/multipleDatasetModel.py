@@ -195,18 +195,7 @@ class MultipleSpectraModel(QtCore.QObject):  #
 
         #self.align_multialement_data(mask, new_mask , rebinned_scales,rebinned_new ,kind='nearest')
         
-    def angle_calibration_gsd_set_data(self):
-        data = self.E
-        
-        self.multi_angle_calibration_model.set_data(data)
-
-    def angle_calibration_gsd_add_pt(self, x,y):
-        x_range, y_range = self.multi_angle_calibration_model.add_point(x,y)
-        
-        return x_range, y_range
-
-    def angle_calibration_gsd_calc(self):
-        pass
+    
 
     def rebin_scale(self, new_scale='q'):
         data = self.data

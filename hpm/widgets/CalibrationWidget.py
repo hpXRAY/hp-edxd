@@ -163,8 +163,8 @@ class CalibrationControlWidget(QtWidgets.QWidget):
     def style_widgets(self):
         self.load_previous_img_btn.setMaximumWidth(50)
         self.load_next_img_btn.setMaximumWidth(50)
-        self.setMaximumWidth(270)
-        self.setMinimumWidth(270)
+        self.setMaximumWidth(290)
+        self.setMinimumWidth(290)
 
 
 class CalibrationParameterWidget(QtWidgets.QWidget):
@@ -189,7 +189,7 @@ class CalibrationParameterWidget(QtWidgets.QWidget):
 class StartValuesGroupBox(QtWidgets.QGroupBox):
     def __init__(self, *args, **kwargs):
         super(StartValuesGroupBox, self).__init__('Start values', *args, **kwargs)
-        self.setMaximumWidth(240)
+        self.setMaximumWidth(260)
         self._layout = QtWidgets.QVBoxLayout(self)
 
         self._grid_layout1 = QtWidgets.QGridLayout()
@@ -252,7 +252,7 @@ class StartValuesGroupBox(QtWidgets.QGroupBox):
 class PeakSelectionGroupBox(QtWidgets.QGroupBox):
     def __init__(self):
         super(PeakSelectionGroupBox, self).__init__('Peak Selection')
-        self.setMaximumWidth(240)
+        self.setMaximumWidth(260)
         self._layout = QtWidgets.QGridLayout()
         self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding,
                                                QtWidgets.QSizePolicy.Minimum), 0, 0)
@@ -274,13 +274,13 @@ class PeakSelectionGroupBox(QtWidgets.QGroupBox):
         self._layout.addWidget(self.automatic_peak_search_rb, 2, 0, 1, 4)
         self._layout.addWidget(self.select_peak_rb, 3, 0, 1, 4)
 
-        self._layout.addWidget(LabelAlignRight('Search size:'), 4, 0)
+        self._layout.addWidget(LabelAlignRight('Search size:'), 4, 0, 1,3)
         self.search_size_sb = SpinBoxAlignRight()
         self.search_size_sb.setValue(10)
         self.search_size_sb.setMaximumWidth(50)
-        self._layout.addWidget(self.search_size_sb, 4, 1, 1, 2)
-        self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding,
-                                               QtWidgets.QSizePolicy.Minimum), 4, 2, 1, 2)
+        self._layout.addWidget(self.search_size_sb, 4, 3, 1, 2)
+        #self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding,
+        #                                       QtWidgets.QSizePolicy.Minimum), 4, 3, 1, 2)
 
         self.undo_peaks_btn = FlatButton("Undo")
         self.clear_peaks_btn = FlatButton("Clear All Peaks")
@@ -296,7 +296,7 @@ class PeakSelectionGroupBox(QtWidgets.QGroupBox):
 class RefinementOptionsGroupBox(QtWidgets.QGroupBox):
     def __init__(self):
         super(RefinementOptionsGroupBox, self).__init__('Refinement Options')
-        self.setMaximumWidth(240)
+        self.setMaximumWidth(260)
         self._layout = QtWidgets.QGridLayout()
 
         self.automatic_refinement_cb = QtWidgets.QCheckBox('automatic refinement')

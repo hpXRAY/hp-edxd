@@ -57,15 +57,10 @@ class GSDCalibrationController(QtCore.QObject):
         Connects the GUI signals to the appropriate Controller methods.
         """
         
-
         self.create_transformation_signals()
     
-
         self.widget.calibrant_cb.currentIndexChanged.connect(self.load_calibrant)
-        #self.widget.load_img_btn.clicked.connect(self.load_img)
-        #self.widget.load_next_img_btn.clicked.connect(self.load_next_img)
-        #self.widget.load_previous_img_btn.clicked.connect(self.load_previous_img)
-        #self.widget.filename_txt.editingFinished.connect(self.update_filename_txt)
+
 
         self.widget.save_calibration_btn.clicked.connect(self.save_calibration)
         self.widget.load_calibration_btn.clicked.connect(self.load_calibration)
@@ -75,31 +70,80 @@ class GSDCalibrationController(QtCore.QObject):
         self.widget.clear_peaks_btn.clicked.connect(self.clear_peaks_btn_click)
         self.widget.undo_peaks_btn.clicked.connect(self.undo_peaks_btn_clicked)
 
-
-
-        '''self.widget.f2_wavelength_cb.stateChanged.connect(self.wavelength_cb_changed)
-        self.widget.pf_wavelength_cb.stateChanged.connect(self.wavelength_cb_changed)
-        self.widget.sv_wavelength_cb.stateChanged.connect(self.wavelength_cb_changed)
-
-        self.widget.f2_distance_cb.stateChanged.connect(self.distance_cb_changed)
-        self.widget.pf_distance_cb.stateChanged.connect(self.distance_cb_changed)
-        self.widget.sv_distance_cb.stateChanged.connect(self.distance_cb_changed)
-
-        self.widget.pf_poni1_cb.stateChanged.connect(self.poni1_cb_changed)
-        self.widget.pf_poni2_cb.stateChanged.connect(self.poni2_cb_changed)
-        self.widget.pf_rot1_cb.stateChanged.connect(self.rot1_cb_changed)
-        self.widget.pf_rot2_cb.stateChanged.connect(self.rot2_cb_changed)
-        self.widget.pf_rot3_cb.stateChanged.connect(self.rot3_cb_changed)'''
-
         self.widget.use_mask_cb.stateChanged.connect(self.plot_mask)
         self.widget.mask_transparent_cb.stateChanged.connect(self.mask_transparent_status_changed)
+
+        self.widget.cal_gsd_add_pt_btn.clicked.connect(self.cal_gsd_add_pt_btn_callback)
+        #self.widget.cal_gsd_calc_btn.clicked.connect(self.cal_gsd_calc_btn_callback)
+
+        self.widget.plotMouseCursorSignal.connect(self.search_peaks)
+
+    def set_2D_data(self, E_scale, data):
+        self.model.set_data(E_scale, data)
+        self.widget.set_image_scale('E',E_scale)
+        self.widget.set_spectral_data(data)
+        
+
+    def search_peaks(self, cursor):
+        """
+        Searches peaks around a specific points (x,y) in the current image file. The algorithm for searching
+        (either automatic or single peaksearch) is set in the GUI.
+        :param x:
+            x-Position for the search.
+        :param y:
+            y-Position for the search
+        """
+        x, y = cursor[0] ,cursor[1] 
+        x, y = y, x  # indeces for the img array are transposed compared to the mouse position
+
+        x = self .model.convert_point_E_to_channel(x) // self.model.bin
+
+        # convert pixel coord into pixel index
+        x, y = int(x), int(y)
+
+        # filter events outside the image
+        shape = self.model.data.shape
+        x_len = shape[1]
+        y_len = shape[0]
+
+        if not (0 <= x < x_len):
+            return
+        if not (0 <= y < y_len):
+            return
+
+        peak_ind = self.widget.peak_num_sb.value()
+        if self.widget.automatic_peak_search_rb.isChecked():
+            points = self.model.find_peaks_automatic(y, x, peak_ind - 1)
+        else:
+            search_size = np.int(self.widget.search_size_sb.value())
+            points = self.model.find_peak(y, x, search_size, peak_ind - 1)
+        if len(points):
+            y_data, x_data = zip(*points)
+            x_data = np.array(x_data)* self.model.bin + 0.5
+            x_data = self.model.convert_point_channel_to_E(x_data)
+            
+
+            self.plot_points(x_data,y_data )
+            if self.widget.automatic_peak_num_inc_cb.checkState():
+                self.widget.peak_num_sb.setValue(peak_ind + 1)
+
+    def cal_gsd_add_pt_btn_callback(self): 
+   
+        cursor_pt = self.widget.cursorPoints[0]
+        x = cursor_pt[0]
+        y = cursor_pt[1]
+        x_range, y_range = self.model.add_point(x,y)
+        
+        x_range = (x_range[::8] )
+        y_range= y_range[::8]+0.5
+        self.widget.p_scatter.setData(x_range,y_range)
+        
 
     def create_transformation_signals(self):
         """
         Connects all the rotation GUI controls.
         """
-        pass
-        #self.widget.reset_transformations_btn.clicked.connect(self.reset_transformations_btn_clicked)
+        self.widget.invert_vertical_btn.clicked.connect(self.invert_vertical_btn_clicked)
 
 
 
@@ -146,48 +190,23 @@ class GSDCalibrationController(QtCore.QObject):
         self.widget.calibrant_cb.setCurrentIndex(self._calibrants_file_names_list.index('LaB6'))  # to LaB6
         self.load_calibrant()
 
-    def load_calibrant(self, wavelength_from='start_values'):
+    def load_calibrant(self):
         """
         Loads the selected calibrant in the calibrant combobox into the calibration data.
-        :param wavelength_from: determines which wavelength to use possible values: "start_values", "pyFAI"
+        :param two_theta: determines which two_theta to use possible values: "start_values"
         """
         current_index = self.widget.calibrant_cb.currentIndex()
         filename = os.path.join(calibrants_path,
                                 self._calibrants_file_list[current_index])
         self.model.set_calibrant(filename)
 
-        if wavelength_from == 'start_values':
-            start_values = self.widget.get_start_values()
-            wavelength = start_values['wavelength']
-        elif wavelength_from == 'pyFAI':
-            pyFAI_parameter, _ = self.model.get_calibration_parameter()
-            if pyFAI_parameter['wavelength'] is not 0:
-                wavelength = pyFAI_parameter['wavelength']
-            else:
-                start_values = self.widget.get_start_values()
-                wavelength = start_values['wavelength']
-        else:
-            start_values = self.widget.get_start_values()
-            wavelength = start_values['wavelength']
-
-        self.model.calibrant.setWavelength_change2th(wavelength)
-        try:
-            integration_unit = self.model.current_configuration.integration_unit
-        except:
-            integration_unit = '2th_deg'
-
-        calibrant_line_positions = self.convert_x_value(
-            np.array(self.model.calibrant.get_2th()) / np.pi * 180, '2th_deg', integration_unit,
-            wavelength)
-        # filter them to only show the ones visible with the current pattern
-        '''if len(self.model.pattern.x) > 0:
-            pattern_min = np.min(self.model.pattern.x)
-            pattern_max = np.max(self.model.pattern.x)
-            calibrant_line_positions = calibrant_line_positions[calibrant_line_positions > pattern_min]
-            calibrant_line_positions = calibrant_line_positions[calibrant_line_positions < pattern_max]
-            self.widget.pattern_widget.plot_vertical_lines(positions=calibrant_line_positions,
-                                                           name=self._calibrants_file_names_list[current_index])'''
-
+        
+        start_values = self.widget.get_start_values()
+        two_theta = start_values['two_theta']
+        self.model.calibrant.set2thetachangeE(two_theta)
+    
+        calibrant_line_positions = np.array(self.model.calibrant.get_E()) 
+        
     def set_calibrant(self, index):
         """
         :param index:
@@ -205,60 +224,25 @@ class GSDCalibrationController(QtCore.QObject):
         self.widget.img_widget.auto_level()
         self.widget.set_img_filename(self.model.img_model.filename)
 
-    def search_peaks(self, x, y):
-        """
-        Searches peaks around a specific points (x,y) in the current image file. The algorithm for searching
-        (either automatic or single peaksearch) is set in the GUI.
-        :param x:
-            x-Position for the search.
-        :param y:
-            y-Position for the search
-        """
-        x, y = y, x  # indeces for the img array are transposed compared to the mouse position
 
-        # convert pixel coord into pixel index
-        x, y = int(x), int(y)
-
-        # filter events outside the image
-        shape = self.model.img_model.img_data.shape
-        if not (0 <= x < shape[0]):
-            return
-        if not (0 <= y < shape[1]):
-            return
-
-        peak_ind = self.widget.peak_num_sb.value()
-        if self.widget.automatic_peak_search_rb.isChecked():
-            points = self.model.calibration_model.find_peaks_automatic(x, y, peak_ind - 1)
-        else:
-            search_size = np.int(self.widget.search_size_sb.value())
-            points = self.model.calibration_model.find_peak(x, y, search_size, peak_ind - 1)
-        if len(points):
-            self.plot_points(points)
-            if self.widget.automatic_peak_num_inc_cb.checkState():
-                self.widget.peak_num_sb.setValue(peak_ind + 1)
-
-    def plot_points(self, points=None):
+    def plot_points(self, x_data, y_data):
         """
         Plots points into the image view.
         :param points:
             list of points, whereby a point is a [x,y] element. If it is none it will plot the points stored in the
             calibration_data
         """
-        if points is None:
-            try:
-                points = self.model.calibration_model.get_point_array()
-            except IndexError:
-                points = []
-        if len(points):
-            self.widget.img_widget.add_scatter_data(points[:, 0] + 0.5, points[:, 1] + 0.5)
+        
+        if len(x_data):
+            self.widget.p_scatter.setData(x_data, y_data)
 
     def clear_peaks_btn_click(self):
         """
         Deletes all points/peaks in the calibration_data and in the gui.
         :return:
         """
-        self.model.calibration_model.clear_peaks()
-        self.widget.img_widget.clear_scatter_plot()
+        self.model.clear_peaks()
+        self.widget.p_scatter.setData([],[])
         self.widget.peak_num_sb.setValue(1)
 
     def undo_peaks_btn_clicked(self):
@@ -518,3 +502,7 @@ class GSDCalibrationController(QtCore.QObject):
         else:
             res = 0
         return res
+
+    def invert_vertical_btn_clicked(self):
+        self.model.flip_img_vertically()
+        self.clear_peaks_btn_click()

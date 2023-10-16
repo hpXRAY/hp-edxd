@@ -93,17 +93,11 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self.cal_btn.setMaximumWidth(90)
         self.cal_btn.setMinimumWidth(90)
 
-        self.cal_gsd_2theta_btn = FlatButton('GSD 2th')
+        self.cal_gsd_2theta_btn = FlatButton('Calibrate GSD')
         self.cal_gsd_2theta_btn.setMaximumWidth(90)
         self.cal_gsd_2theta_btn.setMinimumWidth(90)
 
-        self.cal_gsd_add_pt_btn = FlatButton('GSD add pt.')
-        self.cal_gsd_add_pt_btn.setMaximumWidth(90)
-        self.cal_gsd_add_pt_btn.setMinimumWidth(90)
 
-        self.cal_gsd_calc_btn = FlatButton('GSD add pt.')
-        self.cal_gsd_calc_btn.setMaximumWidth(90)
-        self.cal_gsd_calc_btn.setMinimumWidth(90)
 
         #self._button_layout.addWidget(self.refresh_folder_btn)
         self._button_layout.addSpacerItem(HorizontalSpacerItem())
@@ -116,8 +110,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self._button_layout.addWidget(self.copy_rois_btn)
         self._button_layout.addWidget(self.cal_btn)
         self._button_layout.addWidget(self.cal_gsd_2theta_btn)
-        self._button_layout.addWidget(self.cal_gsd_add_pt_btn)
-        self._button_layout.addWidget(self.cal_gsd_calc_btn)
+
         
         self.button_widget.setLayout(self._button_layout)
         self._layout.addWidget(self.button_widget)

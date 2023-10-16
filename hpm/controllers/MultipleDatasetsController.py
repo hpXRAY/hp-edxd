@@ -109,8 +109,7 @@ class MultipleDatasetsController(QObject):
         self.widget.next_btn.clicked.connect(partial(self.key_sig_callback, 'right'))
 
         self.widget.cal_gsd_2theta_btn.clicked.connect(self.cal_gsd_2theta_btn_callback)
-        self.gsd_calibration_widget.cal_gsd_add_pt_btn.clicked.connect(self.cal_gsd_add_pt_btn_callback)
-        self.gsd_calibration_widget.cal_gsd_calc_btn.clicked.connect(self.cal_gsd_calc_btn_callback)
+        
 
     def set_mca(self, mca, element=0):
         self.multi_spectra_model.set_mca(mca)
@@ -118,25 +117,14 @@ class MultipleDatasetsController(QObject):
         self.multispectra_loaded()
 
     def cal_gsd_2theta_btn_callback(self):
-        self.multi_spectra_model.angle_calibration_gsd_set_data()
-        data = self.multi_spectra_model.multi_angle_calibration_model.data
-        self.gsd_calibration_widget.set_spectral_data(self.multi_spectra_model.E)
-        self.gsd_calibration_widget.raise_widget()
+       
+        data = self.multi_spectra_model.E
+        E_scale = self.multi_spectra_model.E_scale
+        self.gsd_calibration_controller.set_2D_data(E_scale, data)
+        self.gsd_calibration_controller.widget.raise_widget()
 
-    def cal_gsd_add_pt_btn_callback(self): 
-        bin = self.multi_spectra_model.multi_angle_calibration_model.bin
-        cursor_pt = self.gsd_calibration_widget.cursorPoints[0]
-        x = cursor_pt[0]
-        y = cursor_pt[1]//bin
-        x_range, y_range = self.multi_spectra_model.angle_calibration_gsd_add_pt(x,y)
-        
-        x_range = (x_range[::8] +0.5)*bin
-        y_range= y_range[::8]+0.5
-        self.gsd_calibration_widget.p_scatter.setData(x_range,y_range)
-    
-    def cal_gsd_calc_btn_callback(self):
-        self.multi_spectra_model.angle_calibration_gsd_calc() 
-    
+  
+
     def set_channel_cursor(self, cursor):
         if len(cursor):
            

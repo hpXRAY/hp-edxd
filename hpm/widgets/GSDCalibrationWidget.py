@@ -97,17 +97,11 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         self.cal_btn.setMaximumWidth(90)
         self.cal_btn.setMinimumWidth(90)
 
-        self.cal_gsd_2theta_btn = FlatButton('GSD 2th')
-        self.cal_gsd_2theta_btn.setMaximumWidth(90)
-        self.cal_gsd_2theta_btn.setMinimumWidth(90)
-
+    
         self.cal_gsd_add_pt_btn = FlatButton('GSD add pt.')
         self.cal_gsd_add_pt_btn.setMaximumWidth(90)
         self.cal_gsd_add_pt_btn.setMinimumWidth(90)
 
-        self.cal_gsd_calc_btn = FlatButton('GSD add pt.')
-        self.cal_gsd_calc_btn.setMaximumWidth(90)
-        self.cal_gsd_calc_btn.setMinimumWidth(90)
 
         #self._button_layout.addWidget(self.refresh_folder_btn)
         self._button_layout.addSpacerItem(HorizontalSpacerItem())
@@ -119,9 +113,9 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         self._button_layout.addWidget(self.align_btn)
         self._button_layout.addWidget(self.copy_rois_btn)
         self._button_layout.addWidget(self.cal_btn)
-        self._button_layout.addWidget(self.cal_gsd_2theta_btn)
         self._button_layout.addWidget(self.cal_gsd_add_pt_btn)
-        self._button_layout.addWidget(self.cal_gsd_calc_btn)
+   
+        self._button_layout.addSpacerItem(HorizontalSpacerItem())
         
         self.button_widget.setLayout(self._button_layout)
         self._layout.addWidget(self.button_widget)
@@ -188,6 +182,7 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         self.next_btn = QtWidgets.QPushButton('Next >')
         self._nav_layout.addWidget(self.prev_btn)
         self._nav_layout.addWidget(self.next_btn)
+       
         self._plot_widget_layout.addWidget(self.navigation_buttons)
         
         self.file_view_tabs.addTab(self.plot_widget, 'Spectra')
@@ -225,7 +220,7 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         self.env_show_cbs = []
         self.pv_items = []
         self.index_items = []
-        self.resize(1000,1200)
+        
 
         self.HorizontalScaleWidget.setStyleSheet("""
             QPushButton{
@@ -256,7 +251,7 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
 
         self.alignment_rois = []
 
-
+        self.resize(1300,900)
 
     def create_shortcuts(self):
         """

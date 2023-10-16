@@ -35,7 +35,7 @@ import hpm.models.Xrf as Xrf
 from hpm.models.MaskModel import MaskModel
 from pyFAI.massif import Massif
 from pyFAI.blob_detection import BlobDetection
-from pyFAI.calibrant import Calibrant
+from .calibrant import Calibrant
 from scipy.optimize import curve_fit
 
 from .. import calibrants_path
@@ -52,6 +52,7 @@ class GSDCalibrationModel(QtCore.QObject):  #
         self.data_raw = None
         self.bin = 8
         self.data = None
+        self.E_scale = None
         self.mask = None
         self.points = []
         self.points_index = []
@@ -60,8 +61,9 @@ class GSDCalibrationModel(QtCore.QObject):  #
                              'pixel_width': 260e-6,
                              'wavelength': 0.4e-10}
 
-    def set_data(self, data):
+    def set_data(self, E_scale, data):
         self.data_raw = data
+        self.E_scale = E_scale
         n = data.shape[0]
         m = data.shape[1]
         # Calculate the number of new columns
@@ -75,19 +77,61 @@ class GSDCalibrationModel(QtCore.QObject):  #
         self.clear_peaks()
         
         self.setup_peak_search_algorithm('Massif')
-       
 
-    def add_point(self, x, y):
-        peak = self.find_peak(x,y, 4, 0)
+    def flip_img_vertically(self):
+        data = np.flipud(self.data_raw)
+        self.set_data(data)
+       
+    def convert_point_E_to_channel(self, E):
+        current_translate = self.E_scale[1]
+        current_scale = self.E_scale[0]
+
+        inverse_translate = -1*current_translate
+        inverse_scale =  1/current_scale
+
+        x = E + inverse_translate
+        x = x * inverse_scale
+        channel = x
+        return channel
+
+    def convert_point_channel_to_E(self, channel):
+        current_translate = self.E_scale[1]
+        current_scale = self.E_scale[0]
+
+        x_data = channel * current_scale
+        energy = x_data + current_translate
+
+        return energy
+
+    def add_point(self, y, x):
+        x = self .convert_point_E_to_channel(x) // self.bin
+
+        peak = self.find_peak(y,x, 4, 0)
         peaks = self.find_peaks_automatic(*peak[0],0)
         # Extract x and y values from the list of tuples
         y_data, x_data = zip(*peaks)
-        x_data = np.array(x_data)
+        x_data = np.array(x_data)* self.bin + 0.5
+
+        x_data = self.convert_point_channel_to_E(x_data)
+
         y_data = np.array(y_data)
         x_max = self.data.shape[0]
         a, b, c, y_range, x_range = fit_and_evaluate_polynomial(y_data, x_data, x_max)
 
-        return x_range, y_range
+        return x_data, y_data
+
+    def create_point_array(self, points, points_ind):
+        res = []
+        for i, point_list in enumerate(points):
+            if point_list.shape == (2,):
+                res.append([point_list[0], point_list[1], points_ind[i]])
+            else:
+                for point in point_list:
+                    res.append([point[0], point[1], points_ind[i]])
+        return np.array(res)
+
+    def get_point_array(self):
+        return self.create_point_array(self.points, self.points_index)
    
         
     def find_peaks_automatic(self, x, y, peak_ind):
@@ -172,91 +216,13 @@ class GSDCalibrationModel(QtCore.QObject):  #
     def set_calibrant(self, filename):
         self.calibrant = Calibrant()
         self.calibrant.load_file(filename)
-        #self.pattern_geometry.calibrant = self.calibrant #Azimuthal intergrator
-    def get_calibration_parameter(self):
-        pyFAI_parameter = self.pattern_geometry.getPyFAI()
-        pyFAI_parameter['polarization_factor'] = self.polarization_factor
-        try:
-            fit2d_parameter = self.pattern_geometry.getFit2D()
-            fit2d_parameter['polarization_factor'] = self.polarization_factor
-        except TypeError:
-            fit2d_parameter = None
 
-        pyFAI_parameter['two_theta'] = self.pattern_geometry.two_theta
-        if fit2d_parameter:
-            fit2d_parameter['two_theta'] = self.pattern_geometry.two_theta
 
-        return pyFAI_parameter, fit2d_parameter
-
-    def search_peaks_on_ring(self, ring_index, delta_tth=0.1, min_mean_factor=1,
-                             upper_limit=55000, mask=None):
-        """
-        This function is searching for peaks on an expected ring. It needs an initial calibration
-        before. Then it will search for the ring within some delta_tth and other parameters to get
-        peaks from the calibrant.
-
-        :param ring_index: the index of the ring for the search
-        :param delta_tth: search space around the expected position in two theta
-        :param min_mean_factor: a factor determining the minimum peak intensity to be picked up. it is based
-                                on the mean value of the search area defined by delta_tth. Pick a large value
-                                for larger minimum value and lower for lower minimum value. Therefore, a smaller
-                                number is more prone to picking up noise. typical values like between 1 and 3.
-        :param upper_limit: maximum intensity for the peaks to be picked
-        :param mask: in case the image has to be masked from certain areas, it need to be given here. Default is None.
-                     The mask should be given as an 2d array with the same dimensions as the image, where 1 denotes a
-                     masked pixel and all others should be 0.
-        """
-        self.reset_supersampling()
-        if not self.is_calibrated:
+    def set_Es_for_element(self, Es = []):
+        if len(Es) == 0:
             return
+        
 
-        # transform delta from degree into radians
-        delta_tth = delta_tth / 180.0 * np.pi
-
-        # get appropriate two theta value for the ring number
-        tth_calibrant_list = self.calibrant.get_2th()
-        if ring_index >= len(tth_calibrant_list):
-            raise NotEnoughSpacingsInCalibrant()
-        tth_calibrant = np.float(tth_calibrant_list[ring_index])
-
-        # get the calculated two theta values for the whole image
-        tth_array = self.pattern_geometry.twoThetaArray(self.img_model._img_data.shape)
-
-        # create mask based on two_theta position
-        ring_mask = abs(tth_array - tth_calibrant) <= delta_tth
-
-        if mask is not None:
-            mask = np.logical_and(ring_mask, np.logical_not(mask))
-        else:
-            mask = ring_mask
-
-        # calculate the mean and standard deviation of this area
-        sub_data = np.array(self.img_model._img_data.ravel()[np.where(mask.ravel())], dtype=np.float64)
-        sub_data[np.where(sub_data > upper_limit)] = np.NaN
-        mean = np.nanmean(sub_data)
-        std = np.nanstd(sub_data)
-
-        # set the threshold into the mask (don't detect very low intensity peaks)
-        threshold = min_mean_factor * mean + std
-        mask2 = np.logical_and(self.img_model._img_data > threshold, mask)
-        mask2[np.where(self.img_model._img_data > upper_limit)] = False
-        size2 = mask2.sum(dtype=int)
-
-        keep = int(np.ceil(np.sqrt(size2)))
-        try:
-            sys.stdout = DummyStdOut
-            res = self.peak_search_algorithm.peaks_from_area(mask2, Imin=mean - std, keep=keep)
-            sys.stdout = sys.__stdout__
-        except IndexError:
-            res = []
-
-        # Store the result
-        if len(res):
-            self.points.append(np.array(res))
-            self.points_index.append(ring_index)
-
-        self.set_supersampling()
-        self.pattern_geometry.reset()
 
 class NotEnoughSpacingsInCalibrant(Exception):
     pass
