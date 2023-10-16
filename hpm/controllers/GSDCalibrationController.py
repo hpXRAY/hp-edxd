@@ -22,17 +22,17 @@ from ..widgets.UtilityWidgets import open_file_dialog, save_file_dialog
 from .. import calibrants_path
 
 
-from ..widgets.CalibrationWidget import CalibrationWidget
+from ..widgets.GSDCalibrationWidget import GSDCalibrationWidget
 from ..widgets.UtilityWidgets import open_file_dialog
+from ..models.GSDCalibrationModel import GSDCalibrationModel, NotEnoughSpacingsInCalibrant
 
 
-
-class CalibrationController(object):
+class GSDCalibrationController(QtCore.QObject):
     """
     CalibrationController handles all the interaction between the CalibrationView and the CalibrationData class
     """
 
-    def __init__(self, widget, dioptas_model):
+    def __init__(self):
         """Manages the connection between the calibration GUI and data
 
         :param widget: Gives the Calibration Widget
@@ -42,44 +42,42 @@ class CalibrationController(object):
         :type dioptas_model: DioptasModel
 
         """
-        self.widget = widget
-        self.model = dioptas_model
+        super().__init__()
+        self.widget = GSDCalibrationWidget()
+        self.model = GSDCalibrationModel()
 
-        self.widget.set_start_values(self.model.calibration_model.start_values)
+        self.widget.set_start_values(self.model.start_values)
         self._first_plot = True
         self.create_signals()
-        self.plot_image()
+   
         self.load_calibrants_list()
 
     def create_signals(self):
         """
         Connects the GUI signals to the appropriate Controller methods.
         """
-        self.model.img_changed.connect(self.plot_image)
-        self.model.configuration_selected.connect(self.update_calibration_parameter_in_view)
+        
 
         self.create_transformation_signals()
-        self.create_update_signals()
-        self.create_mouse_signals()
+    
 
         self.widget.calibrant_cb.currentIndexChanged.connect(self.load_calibrant)
-        self.widget.load_img_btn.clicked.connect(self.load_img)
-        self.widget.load_next_img_btn.clicked.connect(self.load_next_img)
-        self.widget.load_previous_img_btn.clicked.connect(self.load_previous_img)
-        self.widget.filename_txt.editingFinished.connect(self.update_filename_txt)
+        #self.widget.load_img_btn.clicked.connect(self.load_img)
+        #self.widget.load_next_img_btn.clicked.connect(self.load_next_img)
+        #self.widget.load_previous_img_btn.clicked.connect(self.load_previous_img)
+        #self.widget.filename_txt.editingFinished.connect(self.update_filename_txt)
 
         self.widget.save_calibration_btn.clicked.connect(self.save_calibration)
         self.widget.load_calibration_btn.clicked.connect(self.load_calibration)
-        self.widget.calibrate_btn.clicked.connect(self.calibrate)
-        self.widget.refine_btn.clicked.connect(self.refine)
+        #self.widget.calibrate_btn.clicked.connect(self.calibrate)
+        #self.widget.refine_btn.clicked.connect(self.refine)
 
         self.widget.clear_peaks_btn.clicked.connect(self.clear_peaks_btn_click)
         self.widget.undo_peaks_btn.clicked.connect(self.undo_peaks_btn_clicked)
 
-        self.widget.load_spline_btn.clicked.connect(self.load_spline_btn_click)
-        self.widget.spline_reset_btn.clicked.connect(self.reset_spline_btn_click)
 
-        self.widget.f2_wavelength_cb.stateChanged.connect(self.wavelength_cb_changed)
+
+        '''self.widget.f2_wavelength_cb.stateChanged.connect(self.wavelength_cb_changed)
         self.widget.pf_wavelength_cb.stateChanged.connect(self.wavelength_cb_changed)
         self.widget.sv_wavelength_cb.stateChanged.connect(self.wavelength_cb_changed)
 
@@ -91,7 +89,7 @@ class CalibrationController(object):
         self.widget.pf_poni2_cb.stateChanged.connect(self.poni2_cb_changed)
         self.widget.pf_rot1_cb.stateChanged.connect(self.rot1_cb_changed)
         self.widget.pf_rot2_cb.stateChanged.connect(self.rot2_cb_changed)
-        self.widget.pf_rot3_cb.stateChanged.connect(self.rot3_cb_changed)
+        self.widget.pf_rot3_cb.stateChanged.connect(self.rot3_cb_changed)'''
 
         self.widget.use_mask_cb.stateChanged.connect(self.plot_mask)
         self.widget.mask_transparent_cb.stateChanged.connect(self.mask_transparent_status_changed)
@@ -100,8 +98,8 @@ class CalibrationController(object):
         """
         Connects all the rotation GUI controls.
         """
- 
-        self.widget.reset_transformations_btn.clicked.connect(self.reset_transformations_btn_clicked)
+        pass
+        #self.widget.reset_transformations_btn.clicked.connect(self.reset_transformations_btn_clicked)
 
 
 
@@ -154,15 +152,15 @@ class CalibrationController(object):
         :param wavelength_from: determines which wavelength to use possible values: "start_values", "pyFAI"
         """
         current_index = self.widget.calibrant_cb.currentIndex()
-        filename = os.path.join(self.model.calibration_model._calibrants_working_dir,
+        filename = os.path.join(calibrants_path,
                                 self._calibrants_file_list[current_index])
-        self.model.calibration_model.set_calibrant(filename)
+        self.model.set_calibrant(filename)
 
         if wavelength_from == 'start_values':
             start_values = self.widget.get_start_values()
             wavelength = start_values['wavelength']
         elif wavelength_from == 'pyFAI':
-            pyFAI_parameter, _ = self.model.calibration_model.get_calibration_parameter()
+            pyFAI_parameter, _ = self.model.get_calibration_parameter()
             if pyFAI_parameter['wavelength'] is not 0:
                 wavelength = pyFAI_parameter['wavelength']
             else:
@@ -172,23 +170,23 @@ class CalibrationController(object):
             start_values = self.widget.get_start_values()
             wavelength = start_values['wavelength']
 
-        self.model.calibration_model.calibrant.setWavelength_change2th(wavelength)
+        self.model.calibrant.setWavelength_change2th(wavelength)
         try:
             integration_unit = self.model.current_configuration.integration_unit
         except:
             integration_unit = '2th_deg'
 
         calibrant_line_positions = self.convert_x_value(
-            np.array(self.model.calibration_model.calibrant.get_2th()) / np.pi * 180, '2th_deg', integration_unit,
+            np.array(self.model.calibrant.get_2th()) / np.pi * 180, '2th_deg', integration_unit,
             wavelength)
         # filter them to only show the ones visible with the current pattern
-        if len(self.model.pattern.x) > 0:
+        '''if len(self.model.pattern.x) > 0:
             pattern_min = np.min(self.model.pattern.x)
             pattern_max = np.max(self.model.pattern.x)
             calibrant_line_positions = calibrant_line_positions[calibrant_line_positions > pattern_min]
             calibrant_line_positions = calibrant_line_positions[calibrant_line_positions < pattern_max]
             self.widget.pattern_widget.plot_vertical_lines(positions=calibrant_line_positions,
-                                                           name=self._calibrants_file_names_list[current_index])
+                                                           name=self._calibrants_file_names_list[current_index])'''
 
     def set_calibrant(self, index):
         """
@@ -494,5 +492,29 @@ class CalibrationController(object):
             self.model.working_directories['calibration'] = os.path.dirname(filename)
             if not filename.rsplit('.', 1)[-1] == 'poni':
                 filename = filename + '.poni'
-            self.model.calibration_model.save(filename)
+            self.model.save(filename)
 
+    def convert_x_value(self, value, previous_unit, new_unit, wavelength):
+        if wavelength is None:
+            wavelength = self.model.wavelength
+        if previous_unit == '2th_deg':
+            tth = value
+        elif previous_unit == 'q_A^-1':
+            tth = np.arcsin(
+                value * 1e10 * wavelength / (4 * np.pi)) * 360 / np.pi
+        elif previous_unit == 'd_A':
+            tth = 2 * np.arcsin(wavelength / (2 * value * 1e-10)) * 180 / np.pi
+        else:
+            tth = 0
+
+        if new_unit == '2th_deg':
+            res = tth
+        elif new_unit == 'q_A^-1':
+            res = 4 * np.pi * \
+                  np.sin(tth / 360 * np.pi) / \
+                  wavelength / 1e10
+        elif new_unit == 'd_A':
+            res = wavelength / (2 * np.sin(tth / 360 * np.pi)) * 1e10
+        else:
+            res = 0
+        return res

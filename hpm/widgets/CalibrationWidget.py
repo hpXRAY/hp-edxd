@@ -59,20 +59,20 @@ class CalibrationWidget(QtWidgets.QWidget):
         self.ToolBox = self.calibration_control_widget.toolbox
 
         sv_gb = self.calibration_control_widget.calibration_parameters_widget.start_values_gb
-        self.rotate_m90_btn = sv_gb.rotate_m90_btn
-        self.rotate_p90_btn = sv_gb.rotate_p90_btn
-        self.invert_horizontal_btn = sv_gb.flip_horizontal_btn
+        #self.rotate_m90_btn = sv_gb.rotate_m90_btn
+        #self.rotate_p90_btn = sv_gb.rotate_p90_btn
+        #self.invert_horizontal_btn = sv_gb.flip_horizontal_btn
         self.invert_vertical_btn = sv_gb.flip_vertical_btn
         self.reset_transformations_btn = sv_gb.reset_transformations_btn
         self.calibrant_cb = sv_gb.calibrant_cb
 
-        self.sv_wavelength_txt = sv_gb.wavelength_txt
-        self.sv_wavelength_cb = sv_gb.wavelength_cb
+        self.sv_two_theta_txt = sv_gb.two_theta_txt
+        self.sv_two_theta_cb = sv_gb.two_theta_cb
         self.sv_distance_txt = sv_gb.distance_txt
         self.sv_distance_cb = sv_gb.distance_cb
-        self.sv_polarisation_txt = sv_gb.polarization_txt
+        #self.sv_polarisation_txt = sv_gb.polarization_txt
         self.sv_pixel_width_txt = sv_gb.pixel_width_txt
-        self.sv_pixel_height_txt = sv_gb.pixel_height_txt
+        #self.sv_pixel_height_txt = sv_gb.pixel_height_txt
 
         refinement_options_gb = self.calibration_control_widget.calibration_parameters_widget.refinement_options_gb
         self.use_mask_cb = refinement_options_gb.use_mask_cb
@@ -93,11 +93,11 @@ class CalibrationWidget(QtWidgets.QWidget):
         self.clear_peaks_btn = peak_selection_gb.clear_peaks_btn
         self.undo_peaks_btn = peak_selection_gb.undo_peaks_btn
 
-        self.f2_update_btn = self.calibration_control_widget.fit2d_parameters_widget.update_btn
+        '''self.f2_update_btn = self.calibration_control_widget.fit2d_parameters_widget.update_btn
         self.pf_update_btn = self.calibration_control_widget.pyfai_parameters_widget.update_btn
 
-        self.f2_wavelength_cb = self.calibration_control_widget.fit2d_parameters_widget.wavelength_cb
-        self.pf_wavelength_cb = self.calibration_control_widget.pyfai_parameters_widget.wavelength_cb
+        self.f2_two_theta_cb = self.calibration_control_widget.fit2d_parameters_widget.two_theta_cb
+        self.pf_two_theta_cb = self.calibration_control_widget.pyfai_parameters_widget.two_theta_cb
 
         self.f2_distance_cb = self.calibration_control_widget.fit2d_parameters_widget.distance_cb
         self.pf_distance_cb = self.calibration_control_widget.pyfai_parameters_widget.distance_cb
@@ -106,137 +106,16 @@ class CalibrationWidget(QtWidgets.QWidget):
         self.pf_poni2_cb = self.calibration_control_widget.pyfai_parameters_widget.poni2_cb
         self.pf_rot1_cb = self.calibration_control_widget.pyfai_parameters_widget.rotation1_cb
         self.pf_rot2_cb = self.calibration_control_widget.pyfai_parameters_widget.rotation2_cb
-        self.pf_rot3_cb = self.calibration_control_widget.pyfai_parameters_widget.rotation3_cb
+        self.pf_rot3_cb = self.calibration_control_widget.pyfai_parameters_widget.rotation3_cb'''
      
 
     def set_img_filename(self, filename):
         self.filename_txt.setText(os.path.basename(filename))
 
-    def set_start_values(self, start_values):
-        """
-        Sets the Start value widgets with the correct numbers and appropriate formatting
-        :param start_values: dictionary with calibration start values, expected fields are: dist, wavelength,
-                             polarization_factor, pixel_width, pixel_width
-        """
-        sv_gb = self.calibration_control_widget.calibration_parameters_widget.start_values_gb
-        sv_gb.distance_txt.setText('%.3f' % (start_values['dist'] * 1000))
-        sv_gb.wavelength_txt.setText('%.6f' % (start_values['wavelength'] * 1e10))
-        sv_gb.polarization_txt.setText('%.3f' % (start_values['polarization_factor']))
-        sv_gb.pixel_height_txt.setText('%.0f' % (start_values['pixel_width'] * 1e6))
-        sv_gb.pixel_width_txt.setText('%.0f' % (start_values['pixel_width'] * 1e6))
-
-    def get_start_values(self):
-        """
-        Gets start_values from the widgets
-        :return: returns a dictionary with the following keys: dist, wavelength, pixel_width, pixel_height,
-                polarization_factor
-        """
-        sv_gb = self.calibration_control_widget.calibration_parameters_widget.start_values_gb
-        start_values = {'dist': float(sv_gb.distance_txt.text()) * 1e-3,
-                        'wavelength': float(sv_gb.wavelength_txt.text()) * 1e-10,
-                        'pixel_width': float(sv_gb.pixel_width_txt.text()) * 1e-6,
-                        'pixel_height': float(sv_gb.pixel_height_txt.text()) * 1e-6,
-                        'polarization_factor': float(sv_gb.polarization_txt.text())}
-        return start_values
+    
 
     def set_calibration_parameters(self, pyFAI_parameter, fit2d_parameter):
-        self.set_pyFAI_parameter(pyFAI_parameter)
-        self.set_fit2d_parameter(fit2d_parameter)
-
-    def set_pyFAI_parameter(self, pyfai_parameter):
-        """
-        Sets the values of the pyFAI widgets.
-        :param pyfai_parameter: dictionary with the following keys: dist, poni1, poni2, rot1, rot2, rot3, wavelength
-            polarization_factor, pixel1, pixel2
-        """
-        pyfai_widget = self.calibration_control_widget.pyfai_parameters_widget
-        try:
-            pyfai_widget.distance_txt.setText('%.6f' % (pyfai_parameter['dist'] * 1000))
-            pyfai_widget.poni1_txt.setText('%.6f' % (pyfai_parameter['poni1']))
-            pyfai_widget.poni2_txt.setText('%.6f' % (pyfai_parameter['poni2']))
-            pyfai_widget.rotation1_txt.setText('%.8f' % (pyfai_parameter['rot1']))
-            pyfai_widget.rotation2_txt.setText('%.8f' % (pyfai_parameter['rot2']))
-            pyfai_widget.rotation3_txt.setText('%.8f' % (pyfai_parameter['rot3']))
-            pyfai_widget.wavelength_txt.setText('%.6f' % (pyfai_parameter['wavelength'] * 1e10))
-            pyfai_widget.polarization_txt.setText('%.3f' % (pyfai_parameter['polarization_factor']))
-            pyfai_widget.pixel_width_txt.setText('%.4f' % (pyfai_parameter['pixel1'] * 1e6))
-            pyfai_widget.pixel_height_txt.setText('%.4f' % (pyfai_parameter['pixel2'] * 1e6))
-        except (AttributeError, TypeError):
-            pyfai_widget.distance_txt.setText('')
-            pyfai_widget.poni1_txt.setText('')
-            pyfai_widget.poni2_txt.setText('')
-            pyfai_widget.rotation1_txt.setText('')
-            pyfai_widget.rotation2_txt.setText('')
-            pyfai_widget.rotation3_txt.setText('')
-            pyfai_widget.wavelength_txt.setText('')
-            pyfai_widget.polarization_txt.setText('')
-            pyfai_widget.pixel_width_txt.setText('')
-            pyfai_widget.pixel_height_txt.setText('')
-
-    def get_pyFAI_parameter(self):
-        """
-        Gets the pyFAI parameter values from the pyFAI widgets.
-        :return: dictionary with the following keys: dist, poni1, poni2, rot1, rot2, rot3, wavelength
-            polarization_factor, pixel1, pixel2
-        """
-        pyfai_widget = self.calibration_control_widget.pyfai_parameters_widget
-        pyfai_parameter = {'dist': float(pyfai_widget.distance_txt.text()) / 1000,
-                           'poni1': float(pyfai_widget.poni1_txt.text()),
-                           'poni2': float(pyfai_widget.poni2_txt.text()),
-                           'rot1': float(pyfai_widget.rotation1_txt.text()),
-                           'rot2': float(pyfai_widget.rotation2_txt.text()),
-                           'rot3': float(pyfai_widget.rotation3_txt.text()),
-                           'wavelength': float(pyfai_widget.wavelength_txt.text()) / 1e10,
-                           'polarization_factor': float(pyfai_widget.polarization_txt.text()),
-                           'pixel1': float(pyfai_widget.pixel_width_txt.text()) / 1e6,
-                           'pixel2': float(pyfai_widget.pixel_height_txt.text()) / 1e6}
-        return pyfai_parameter
-
-    def set_fit2d_parameter(self, fit2d_parameter):
-        """
-        Sets the values of the fit2d parameter widgets with the appropriate number formatting.
-        :param fit2d_parameter: dictionary with the following keys: directDist, centerX, centerY, tilt,
-            tiltPlanRotation, wavelength, pixelX, pixelY
-        """
-        fit2d_widget = self.calibration_control_widget.fit2d_parameters_widget
-        try:
-            fit2d_widget.distance_txt.setText('%.4f' % (fit2d_parameter['directDist']))
-            fit2d_widget.center_x_txt.setText('%.3f' % (fit2d_parameter['centerX']))
-            fit2d_widget.center_y_txt.setText('%.3f' % (fit2d_parameter['centerY']))
-            fit2d_widget.tilt_txt.setText('%.6f' % (fit2d_parameter['tilt']))
-            fit2d_widget.rotation_txt.setText('%.6f' % (fit2d_parameter['tiltPlanRotation']))
-            fit2d_widget.wavelength_txt.setText('%.4f' % (fit2d_parameter['wavelength'] * 1e10))
-            fit2d_widget.polarization_txt.setText('%.3f' % (fit2d_parameter['polarization_factor']))
-            fit2d_widget.pixel_width_txt.setText('%.4f' % (fit2d_parameter['pixelX']))
-            fit2d_widget.pixel_height_txt.setText('%.4f' % (fit2d_parameter['pixelY']))
-        except (AttributeError, TypeError):
-            fit2d_widget.distance_txt.setText('')
-            fit2d_widget.center_x_txt.setText('')
-            fit2d_widget.center_y_txt.setText('')
-            fit2d_widget.tilt_txt.setText('')
-            fit2d_widget.rotation_txt.setText('')
-            fit2d_widget.wavelength_txt.setText('')
-            fit2d_widget.polarization_txt.setText('')
-            fit2d_widget.pixel_width_txt.setText('')
-            fit2d_widget.pixel_height_txt.setText('')
-
-    def get_fit2d_parameter(self):
-        """
-        Gets the values of the fit2d parameter widgets.
-        :return: dictionary with the following keys: directDist, centerX, centerY, tilt,
-            tiltPlanRotation, wavelength, pixelX, pixelY
-        """
-        fit2d_widget = self.calibration_control_widget.fit2d_parameters_widget
-        fit2d_parameter = {'directDist': float(fit2d_widget.distance_txt.text()),
-                           'centerX': float(fit2d_widget.center_x_txt.text()),
-                           'centerY': float(fit2d_widget.center_y_txt.text()),
-                           'tilt': float(fit2d_widget.tilt_txt.text()),
-                           'tiltPlanRotation': float(fit2d_widget.rotation_txt.text()),
-                           'wavelength': float(fit2d_widget.wavelength_txt.text()) / 1e10,
-                           'polarization_factor': float(fit2d_widget.polarization_txt.text()),
-                           'pixelX': float(fit2d_widget.pixel_width_txt.text()),
-                           'pixelY': float(fit2d_widget.pixel_height_txt.text())}
-        return fit2d_parameter
+        print('TODO: set_calibration_parameters')
 
 
 
@@ -264,12 +143,12 @@ class CalibrationControlWidget(QtWidgets.QWidget):
 
         self.toolbox = QtWidgets.QToolBox()
         self.calibration_parameters_widget = CalibrationParameterWidget()
-        self.pyfai_parameters_widget = PyfaiParametersWidget()
-        self.fit2d_parameters_widget = Fit2dParametersWidget()
+        #self.pyfai_parameters_widget = PyfaiParametersWidget()
+        #self.fit2d_parameters_widget = Fit2dParametersWidget()
 
         self.toolbox.addItem(self.calibration_parameters_widget, "Calibration Parameters")
-        self.toolbox.addItem(self.pyfai_parameters_widget, 'pyFAI Parameters')
-        self.toolbox.addItem(self.fit2d_parameters_widget, 'Fit2d Parameters')
+        #self.toolbox.addItem(self.pyfai_parameters_widget, 'pyFAI Parameters')
+        #self.toolbox.addItem(self.fit2d_parameters_widget, 'Fit2d Parameters')
         self._layout.addWidget(self.toolbox)
 
         self._bottom_layout = QtWidgets.QHBoxLayout()
@@ -316,33 +195,33 @@ class StartValuesGroupBox(QtWidgets.QGroupBox):
         self._grid_layout1 = QtWidgets.QGridLayout()
 
         self._grid_layout1.addWidget(LabelAlignRight('Distance:'), 0, 0)
-        self.distance_txt = NumberTextField('200')
+        self.distance_txt = NumberTextField('1000')
         self.distance_cb = QtWidgets.QCheckBox()
         self.distance_cb.setChecked(True)
         self._grid_layout1.addWidget(self.distance_txt, 0, 1)
         self._grid_layout1.addWidget(QtWidgets.QLabel('mm'), 0, 2)
         self._grid_layout1.addWidget(self.distance_cb, 0, 3)
 
-        self._grid_layout1.addWidget(LabelAlignRight('Wavelength:'), 1, 0)
-        self.wavelength_txt = NumberTextField('0.3344')
-        self.wavelength_cb = QtWidgets.QCheckBox()
-        self._grid_layout1.addWidget(self.wavelength_txt, 1, 1)
+        self._grid_layout1.addWidget(LabelAlignRight('2 theta:'), 1, 0)
+        self.two_theta_txt = NumberTextField('15')
+        self.two_theta_cb = QtWidgets.QCheckBox()
+        self._grid_layout1.addWidget(self.two_theta_txt, 1, 1)
         self._grid_layout1.addWidget(QtWidgets.QLabel('A'), 1, 2)
-        self._grid_layout1.addWidget(self.wavelength_cb, 1, 3)
+        self._grid_layout1.addWidget(self.two_theta_cb, 1, 3)
 
-        self._grid_layout1.addWidget(LabelAlignRight('Polarization:'), 2, 0)
+        '''self._grid_layout1.addWidget(LabelAlignRight('Polarization:'), 2, 0)
         self.polarization_txt = NumberTextField('0.99')
-        self._grid_layout1.addWidget(self.polarization_txt, 2, 1)
+        self._grid_layout1.addWidget(self.polarization_txt, 2, 1)'''
 
         self._grid_layout1.addWidget(LabelAlignRight('Pixel width:'), 3, 0)
         self.pixel_width_txt = NumberTextField('72')
         self._grid_layout1.addWidget(self.pixel_width_txt, 3, 1)
         self._grid_layout1.addWidget(QtWidgets.QLabel('um'))
 
-        self._grid_layout1.addWidget(LabelAlignRight('Pixel height:'), 4, 0)
+        '''self._grid_layout1.addWidget(LabelAlignRight('Pixel height:'), 4, 0)
         self.pixel_height_txt = NumberTextField('72')
         self._grid_layout1.addWidget(self.pixel_height_txt, 4, 1)
-        self._grid_layout1.addWidget(QtWidgets.QLabel('um'))
+        self._grid_layout1.addWidget(QtWidgets.QLabel('um'))'''
 
         self._grid_layout1.addWidget(LabelAlignRight('Calibrant:'), 5, 0)
         self.calibrant_cb = CleanLooksComboBox()
@@ -351,14 +230,14 @@ class StartValuesGroupBox(QtWidgets.QGroupBox):
         self._grid_layout2 = QtWidgets.QGridLayout()
         self._grid_layout2.setSpacing(6)
 
-        self.rotate_p90_btn = FlatButton('Rotate +90')
+        '''self.rotate_p90_btn = FlatButton('Rotate +90')
         self.rotate_m90_btn = FlatButton('Rotate -90', self)
         self._grid_layout2.addWidget(self.rotate_p90_btn, 1, 0)
-        self._grid_layout2.addWidget(self.rotate_m90_btn, 1, 1)
+        self._grid_layout2.addWidget(self.rotate_m90_btn, 1, 1)'''
 
-        self.flip_horizontal_btn = FlatButton('Flip horizontal', self)
+        '''self.flip_horizontal_btn = FlatButton('Flip horizontal', self)'''
         self.flip_vertical_btn = FlatButton('Flip vertical', self)
-        self._grid_layout2.addWidget(self.flip_horizontal_btn, 2, 0)
+        '''self._grid_layout2.addWidget(self.flip_horizontal_btn, 2, 0)'''
         self._grid_layout2.addWidget(self.flip_vertical_btn, 2, 1)
 
         self.reset_transformations_btn = FlatButton('Reset transformations', self)
@@ -377,7 +256,7 @@ class PeakSelectionGroupBox(QtWidgets.QGroupBox):
         self._layout = QtWidgets.QGridLayout()
         self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding,
                                                QtWidgets.QSizePolicy.Minimum), 0, 0)
-        self._layout.addWidget(LabelAlignRight('Current Ring Number:'), 0, 1, 1, 2)
+        self._layout.addWidget(LabelAlignRight('Current Ring Number:'), 0, 0, 1, 3)
         self.peak_num_sb = SpinBoxAlignRight()
         self.peak_num_sb.setValue(1)
         self.peak_num_sb.setMinimum(1)
@@ -449,9 +328,9 @@ class RefinementOptionsGroupBox(QtWidgets.QGroupBox):
         self.intensity_limit_txt = NumberTextField('55000')
         self._layout.addWidget(self.intensity_limit_txt, 5, 1)
 
-        self._layout.addWidget(LabelAlignRight('Number of rings:'), 6, 0)
+        self._layout.addWidget(LabelAlignRight('Number of lines:'), 6, 0)
         self.number_of_rings_sb = SpinBoxAlignRight()
-        self.number_of_rings_sb.setValue(15)
+        self.number_of_rings_sb.setValue(5)
         self._layout.addWidget(self.number_of_rings_sb, 6, 1)
 
         self.setLayout(self._layout)
@@ -460,7 +339,7 @@ class RefinementOptionsGroupBox(QtWidgets.QGroupBox):
 
 
 
-class PyfaiParametersWidget(QtWidgets.QWidget):
+'''class PyfaiParametersWidget(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super(PyfaiParametersWidget, self).__init__(*args, **kwargs)
 
@@ -475,11 +354,11 @@ class PyfaiParametersWidget(QtWidgets.QWidget):
         self._layout.addWidget(self.distance_cb, 0, 3)
 
         self._layout.addWidget(LabelAlignRight('Wavelength:'), 1, 0)
-        self.wavelength_txt = NumberTextField()
-        self.wavelength_cb = QtWidgets.QCheckBox()
-        self._layout.addWidget(self.wavelength_txt, 1, 1)
+        self.two_theta_txt = NumberTextField()
+        self.two_theta_cb = QtWidgets.QCheckBox()
+        self._layout.addWidget(self.two_theta_txt, 1, 1)
         self._layout.addWidget(QtWidgets.QLabel('A'), 1, 2)
-        self._layout.addWidget(self.wavelength_cb, 1, 3)
+        self._layout.addWidget(self.two_theta_cb, 1, 3)
 
         self._layout.addWidget(LabelAlignRight('Polarization:'), 2, 0)
         self.polarization_txt = NumberTextField()
@@ -536,10 +415,10 @@ class PyfaiParametersWidget(QtWidgets.QWidget):
         self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding),
                              11, 0, 1, 4)
 
-        self.setLayout(self._layout)
+        self.setLayout(self._layout)'''
 
 
-class Fit2dParametersWidget(QtWidgets.QWidget):
+'''class Fit2dParametersWidget(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super(Fit2dParametersWidget, self).__init__(*args, **kwargs)
 
@@ -554,11 +433,11 @@ class Fit2dParametersWidget(QtWidgets.QWidget):
         self._layout.addWidget(self.distance_cb, 0, 3)
 
         self._layout.addWidget(LabelAlignRight('Wavelength:'), 1, 0)
-        self.wavelength_txt = NumberTextField()
-        self.wavelength_cb = QtWidgets.QCheckBox()
-        self._layout.addWidget(self.wavelength_txt, 1, 1)
+        self.two_theta_txt = NumberTextField()
+        self.two_theta_cb = QtWidgets.QCheckBox()
+        self._layout.addWidget(self.two_theta_txt, 1, 1)
         self._layout.addWidget(QtWidgets.QLabel('A'), 1, 2)
-        self._layout.addWidget(self.wavelength_cb, 1, 3)
+        self._layout.addWidget(self.two_theta_cb, 1, 3)
 
         self._layout.addWidget(LabelAlignRight('Polarization:'), 2, 0)
         self.polarization_txt = NumberTextField()
@@ -600,4 +479,4 @@ class Fit2dParametersWidget(QtWidgets.QWidget):
         self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding),
                              11, 0, 1, 4)
 
-        self.setLayout(self._layout)
+        self.setLayout(self._layout)'''

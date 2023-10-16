@@ -27,7 +27,7 @@ from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, Verti
 from hpm.widgets.PltWidget import PltWidget
 from hpm.widgets.MaskWidget import MaskWidget
 from hpm.widgets.plot_widgets import ImgWidget2
-from hpm.widgets.CalibrationWidget import CalibrationControlWidget, CalibrationWidget
+from hpm.widgets.CalibrationWidget import CalibrationControlWidget
 
 class GSDCalibrationWidget(QtWidgets.QWidget):
 
@@ -44,6 +44,9 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self._layout = QtWidgets.QVBoxLayout()  
+
+        self.calibration_control_widget = CalibrationControlWidget()
+        self.create_shortcuts()
 
         self.p1 : pg.PlotWidget
         self.win:pg.GraphicsLayoutWidget
@@ -203,8 +206,8 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
 
         self._body_layout.addWidget(self.file_view_tabs)
 
-        self.calibration_parameters_widget = CalibrationControlWidget()
-        self._body_layout.addWidget(self.calibration_parameters_widget)
+       
+        self._body_layout.addWidget(self.calibration_control_widget)
         
 
         self._layout.addLayout(self._body_layout)
@@ -222,7 +225,7 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         self.env_show_cbs = []
         self.pv_items = []
         self.index_items = []
-        self.resize(500,633)
+        self.resize(1000,1200)
 
         self.HorizontalScaleWidget.setStyleSheet("""
             QPushButton{
@@ -253,6 +256,103 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
 
         self.alignment_rois = []
 
+
+
+    def create_shortcuts(self):
+        """
+        Creates shortcuts for the widgets which are directly interfacing with the controller.
+        """
+        self.load_img_btn = self.calibration_control_widget.load_img_btn
+        self.load_next_img_btn = self.calibration_control_widget.load_next_img_btn
+        self.load_previous_img_btn = self.calibration_control_widget.load_previous_img_btn
+        self.filename_txt = self.calibration_control_widget.filename_txt
+
+        self.save_calibration_btn = self.calibration_control_widget.save_calibration_btn
+        self.load_calibration_btn = self.calibration_control_widget.load_calibration_btn
+
+        self.ToolBox = self.calibration_control_widget.toolbox
+
+        sv_gb = self.calibration_control_widget.calibration_parameters_widget.start_values_gb
+        #self.rotate_m90_btn = sv_gb.rotate_m90_btn
+        #self.rotate_p90_btn = sv_gb.rotate_p90_btn
+        #self.invert_horizontal_btn = sv_gb.flip_horizontal_btn
+        self.invert_vertical_btn = sv_gb.flip_vertical_btn
+        self.reset_transformations_btn = sv_gb.reset_transformations_btn
+        self.calibrant_cb = sv_gb.calibrant_cb
+
+        self.sv_two_theta_txt = sv_gb.two_theta_txt
+        self.sv_two_theta_cb = sv_gb.two_theta_cb
+        self.sv_distance_txt = sv_gb.distance_txt
+        self.sv_distance_cb = sv_gb.distance_cb
+        #self.sv_polarisation_txt = sv_gb.polarization_txt
+        self.sv_pixel_width_txt = sv_gb.pixel_width_txt
+        #self.sv_pixel_height_txt = sv_gb.pixel_height_txt
+
+        refinement_options_gb = self.calibration_control_widget.calibration_parameters_widget.refinement_options_gb
+        self.use_mask_cb = refinement_options_gb.use_mask_cb
+        self.mask_transparent_cb = refinement_options_gb.mask_transparent_cb
+        self.options_automatic_refinement_cb = refinement_options_gb.automatic_refinement_cb
+        self.options_num_rings_sb = refinement_options_gb.number_of_rings_sb
+        self.options_peaksearch_algorithm_cb = refinement_options_gb.peak_search_algorithm_cb
+        self.options_delta_tth_txt = refinement_options_gb.delta_tth_txt
+        self.options_intensity_mean_factor_sb = refinement_options_gb.intensity_mean_factor_sb
+        self.options_intensity_limit_txt = refinement_options_gb.intensity_limit_txt
+
+        peak_selection_gb = self.calibration_control_widget.calibration_parameters_widget.peak_selection_gb
+        self.peak_num_sb = peak_selection_gb.peak_num_sb
+        self.automatic_peak_search_rb = peak_selection_gb.automatic_peak_search_rb
+        self.select_peak_rb = peak_selection_gb.select_peak_rb
+        self.search_size_sb = peak_selection_gb.search_size_sb
+        self.automatic_peak_num_inc_cb = peak_selection_gb.automatic_peak_num_inc_cb
+        self.clear_peaks_btn = peak_selection_gb.clear_peaks_btn
+        self.undo_peaks_btn = peak_selection_gb.undo_peaks_btn
+
+        '''self.f2_update_btn = self.calibration_control_widget.fit2d_parameters_widget.update_btn
+        self.pf_update_btn = self.calibration_control_widget.pyfai_parameters_widget.update_btn
+
+        self.f2_two_theta_cb = self.calibration_control_widget.fit2d_parameters_widget.two_theta_cb
+        self.pf_two_theta_cb = self.calibration_control_widget.pyfai_parameters_widget.two_theta_cb
+
+        self.f2_distance_cb = self.calibration_control_widget.fit2d_parameters_widget.distance_cb
+        self.pf_distance_cb = self.calibration_control_widget.pyfai_parameters_widget.distance_cb
+
+        self.pf_poni1_cb = self.calibration_control_widget.pyfai_parameters_widget.poni1_cb
+        self.pf_poni2_cb = self.calibration_control_widget.pyfai_parameters_widget.poni2_cb
+        self.pf_rot1_cb = self.calibration_control_widget.pyfai_parameters_widget.rotation1_cb
+        self.pf_rot2_cb = self.calibration_control_widget.pyfai_parameters_widget.rotation2_cb
+        self.pf_rot3_cb = self.calibration_control_widget.pyfai_parameters_widget.rotation3_cb'''
+     
+    
+
+    def set_start_values(self, start_values):
+        """
+        Sets the Start value widgets with the correct numbers and appropriate formatting
+        :param start_values: dictionary with calibration start values, expected fields are: dist, two_theta,
+                             polarization_factor, pixel_width, pixel_width
+        """
+        sv_gb = self.calibration_control_widget.calibration_parameters_widget.start_values_gb
+        sv_gb.distance_txt.setText('%.3f' % (start_values['dist'] * 1000))
+        sv_gb.two_theta_txt.setText('%.3f' % (start_values['two_theta'] ))
+        #sv_gb.polarization_txt.setText('%.3f' % (start_values['polarization_factor']))
+        #sv_gb.pixel_height_txt.setText('%.0f' % (start_values['pixel_width'] * 1e6))
+        sv_gb.pixel_width_txt.setText('%.0f' % (start_values['pixel_width'] * 1e6))
+
+    def get_start_values(self):
+        """
+        Gets start_values from the widgets
+        :return: returns a dictionary with the following keys: dist, two_theta, pixel_width, pixel_height,
+                polarization_factor
+        """
+        sv_gb = self.calibration_control_widget.calibration_parameters_widget.start_values_gb
+        start_values = {'dist': float(sv_gb.distance_txt.text()) * 1e-3,
+                        'two_theta': float(sv_gb.two_theta_txt.text()) ,
+                        'pixel_width': float(sv_gb.pixel_width_txt.text()) * 1e-6,
+                        'wavelength': 0.4e-10
+                        #'pixel_height': float(sv_gb.pixel_height_txt.text()) * 1e-6,
+                        #'polarization_factor': float(sv_gb.polarization_txt.text())
+                        }
+        return start_values
+
     def add_alignment_roi(self, roi, show):
         #self.alignment_rois. append(roi)
         self._add_alignment_roi(roi, show)
@@ -272,6 +372,9 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
                     self.p1.addItem(lr)
                 except:
                     pass
+
+  
+    
 
     def set_scales_enabled_states(self, enabled=['Channel']):
         for btn in self.scales_btns:

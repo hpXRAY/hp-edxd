@@ -36,6 +36,7 @@ from hpm.models.mcaModel import MCA
 from hpm.controllers.MaskController import MaskController
 from hpm.models.MaskModel import MaskModel
 from hpm.controllers.AmorphousAnalysisController import AmorphousAnalysisController
+from hpm.controllers.GSDCalibrationController import GSDCalibrationController
 
 class MultipleDatasetsController(QObject):
     file_changed_signal = pyqtSignal(str)  
@@ -51,7 +52,9 @@ class MultipleDatasetsController(QObject):
         
         self.multi_spectra_model = MultipleSpectraModel()
         self.widget = MultiSpectraWidget()
-        self.gsd_calibration_widget = GSDCalibrationWidget()
+
+        self.gsd_calibration_controller =  GSDCalibrationController()
+        self.gsd_calibration_widget = self.gsd_calibration_controller.widget
 
         #self.displayPrefs = DisplayPreferences(self.widget.line_plot_widget) 
 

@@ -40,7 +40,7 @@ from scipy.optimize import curve_fit
 
 from .. import calibrants_path
 
-class Multiple2ThetaModel(QtCore.QObject):  # 
+class GSDCalibrationModel(QtCore.QObject):  # 
     def __init__(self,  *args, **filekw):
         
         """
@@ -55,6 +55,10 @@ class Multiple2ThetaModel(QtCore.QObject):  #
         self.mask = None
         self.points = []
         self.points_index = []
+        self.start_values = {'dist': 1,
+                             'two_theta': 15,
+                             'pixel_width': 260e-6,
+                             'wavelength': 0.4e-10}
 
     def set_data(self, data):
         self.data_raw = data
@@ -168,7 +172,21 @@ class Multiple2ThetaModel(QtCore.QObject):  #
     def set_calibrant(self, filename):
         self.calibrant = Calibrant()
         self.calibrant.load_file(filename)
-        self.pattern_geometry.calibrant = self.calibrant
+        #self.pattern_geometry.calibrant = self.calibrant #Azimuthal intergrator
+    def get_calibration_parameter(self):
+        pyFAI_parameter = self.pattern_geometry.getPyFAI()
+        pyFAI_parameter['polarization_factor'] = self.polarization_factor
+        try:
+            fit2d_parameter = self.pattern_geometry.getFit2D()
+            fit2d_parameter['polarization_factor'] = self.polarization_factor
+        except TypeError:
+            fit2d_parameter = None
+
+        pyFAI_parameter['two_theta'] = self.pattern_geometry.two_theta
+        if fit2d_parameter:
+            fit2d_parameter['two_theta'] = self.pattern_geometry.two_theta
+
+        return pyFAI_parameter, fit2d_parameter
 
     def search_peaks_on_ring(self, ring_index, delta_tth=0.1, min_mean_factor=1,
                              upper_limit=55000, mask=None):

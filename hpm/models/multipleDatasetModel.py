@@ -33,7 +33,7 @@ from .mcaComponents import McaROI
 import hpm.models.Xrf as Xrf
 
 from hpm.models.MaskModel import MaskModel
-from hpm.models.multiple2thetaCalibrationModel import Multiple2ThetaModel
+from hpm.models.GSDCalibrationModel import GSDCalibrationModel
 
 class MultipleSpectraModel(QtCore.QObject):  # 
     def __init__(self,  *args, **filekw):
@@ -84,7 +84,7 @@ class MultipleSpectraModel(QtCore.QObject):  #
         range_2 = [3000,3480]
         range_3 = [2600,3000]
         self.alignment_rois = []
-        self.multi_angle_calibration_model = Multiple2ThetaModel()
+        self.multi_angle_calibration_model = GSDCalibrationModel()
 
     def clear(self):
         self.__init__()
