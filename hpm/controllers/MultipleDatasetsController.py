@@ -109,6 +109,7 @@ class MultipleDatasetsController(QObject):
         self.widget.next_btn.clicked.connect(partial(self.key_sig_callback, 'right'))
 
         self.widget.cal_gsd_2theta_btn.clicked.connect(self.cal_gsd_2theta_btn_callback)
+        self.widget.cal_gsd_2theta_upd_btn.clicked.connect(self.cal_gsd_2theta_upd_btn_callback)
         
 
     def set_mca(self, mca, element=0):
@@ -123,7 +124,13 @@ class MultipleDatasetsController(QObject):
         self.gsd_calibration_controller.set_2D_data(E_scale, data)
         self.gsd_calibration_controller.widget.raise_widget()
 
-  
+    def cal_gsd_2theta_upd_btn_callback(self):
+        tth_calibration = self.gsd_calibration_controller.model.tth_calibrated
+        calibration = self.multi_spectra_model.mca.get_calibration()
+        for i, cal in enumerate(calibration):
+            cal.two_theta = tth_calibration[i]
+            cal.set_dx_type('edx')
+        self.update_view_after_calibration_change()
 
     def set_channel_cursor(self, cursor):
         if len(cursor):
@@ -434,15 +441,12 @@ class MultipleDatasetsController(QObject):
 
     def calibrate_all_elements(self):
         self.multi_spectra_model.calibrate_all_elements(1)
+        self.update_view_after_calibration_change()
+
+    def update_view_after_calibration_change(self):
         self.setHorzScaleBtnsEnabled()
         self.multispectra_loaded()
         
-
-    
-                
-
-        self.setHorzScaleBtnsEnabled()
-        self.multispectra_loaded()
 
     def show_view(self):
         self.active = True

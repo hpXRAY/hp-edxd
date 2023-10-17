@@ -432,6 +432,13 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         else:
             self.img.clear()
 
+    def remove_last_scatter_points(self, num_points):
+        data_x, data_y = self.p_scatter.getData()
+        if not data_x.size == 0:
+            data_x = data_x[:-num_points]
+            data_y = data_y[:-num_points]
+            self.p_scatter.setData(data_x, data_y)
+
     def set_linear_regions(self, rois, show:False):
         lr : pg.LinearRegionItem
         if len(self.alignment_rois):

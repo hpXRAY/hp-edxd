@@ -118,14 +118,13 @@ class GSDCalibrationController(QtCore.QObject):
             search_size = np.int(self.widget.search_size_sb.value())
             points = self.model.find_peak(y, x, search_size, peak_ind - 1)
         if len(points):
-            y_data, x_data = zip(*points)
-            x_data = np.array(x_data)* self.model.bin + 0.5
-            x_data = self.model.convert_point_channel_to_E(x_data)
             
-
-            self.plot_points(x_data,y_data )
+            self.plot_points()
+            self.model.update_two_theta_calibration()
             if self.widget.automatic_peak_num_inc_cb.checkState():
                 self.widget.peak_num_sb.setValue(peak_ind + 1)
+
+        
 
     def cal_gsd_add_pt_btn_callback(self): 
    
@@ -225,16 +224,28 @@ class GSDCalibrationController(QtCore.QObject):
         self.widget.set_img_filename(self.model.img_model.filename)
 
 
-    def plot_points(self, x_data, y_data):
+    def plot_points(self, points=None):
         """
         Plots points into the image view.
         :param points:
             list of points, whereby a point is a [x,y] element. If it is none it will plot the points stored in the
             calibration_data
         """
-        
-        if len(x_data):
+        if points is None:
+            try:
+                points = self.model.get_point_array()
+            except IndexError:
+                points = []
+        if len(points):
+            y_data, x_data, ind = zip(*points)
+            y_data = np.array(y_data)+0.5
+            x_data = np.array(x_data)* self.model.bin + 0.5
+            x_data = self.model.convert_point_channel_to_E(x_data)
+
             self.widget.p_scatter.setData(x_data, y_data)
+            
+
+      
 
     def clear_peaks_btn_click(self):
         """
@@ -249,8 +260,8 @@ class GSDCalibrationController(QtCore.QObject):
         """
         undoes clicked peaks
         """
-        num_points = self.model.calibration_model.remove_last_peak()
-        self.widget.img_widget.remove_last_scatter_points(num_points)
+        num_points = self.model.remove_last_peak()
+        self.widget.remove_last_scatter_points(num_points)
         if self.widget.automatic_peak_num_inc_cb.isChecked():
             self.widget.peak_num_sb.setValue(self.widget.peak_num_sb.value() - 1)
 

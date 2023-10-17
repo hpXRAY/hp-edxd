@@ -97,6 +97,10 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self.cal_gsd_2theta_btn.setMaximumWidth(90)
         self.cal_gsd_2theta_btn.setMinimumWidth(90)
 
+        self.cal_gsd_2theta_upd_btn = FlatButton('GSD update')
+        self.cal_gsd_2theta_upd_btn.setMaximumWidth(90)
+        self.cal_gsd_2theta_upd_btn.setMinimumWidth(90)
+
 
 
         #self._button_layout.addWidget(self.refresh_folder_btn)
@@ -110,6 +114,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self._button_layout.addWidget(self.copy_rois_btn)
         self._button_layout.addWidget(self.cal_btn)
         self._button_layout.addWidget(self.cal_gsd_2theta_btn)
+        self._button_layout.addWidget(self.cal_gsd_2theta_upd_btn)
 
         
         self.button_widget.setLayout(self._button_layout)

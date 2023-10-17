@@ -53,6 +53,7 @@ class GSDCalibrationModel(QtCore.QObject):  #
         self.bin = 8
         self.data = None
         self.E_scale = None
+        self.tth_calibrated = np.zeros(192)+15
         self.mask = None
         self.points = []
         self.points_index = []
@@ -153,6 +154,8 @@ class GSDCalibrationModel(QtCore.QObject):  #
             self.points_index.append(peak_ind)
         return np.array(cur_peak_points)
 
+    
+
     def find_peak(self, x, y, search_size, peak_ind):
         """
         Searches a peak around the x,y position. It just searches for the maximum value in a specific search size.
@@ -218,10 +221,31 @@ class GSDCalibrationModel(QtCore.QObject):  #
         self.calibrant.load_file(filename)
 
 
-    def set_Es_for_element(self, Es = []):
-        if len(Es) == 0:
-            return
+    def update_two_theta_calibration(self):
+        points = self.get_point_array()
+        cal_ds = np.asarray(self.calibrant.get_dSpacing())
+        tths = []
+        y, x_binned, ind = zip(*points)
+        x = np.array(x_binned)* self.bin 
+        e = self.convert_point_channel_to_E(x)
+        y = np.array(y)
+        ind = np.array(ind, dtype=int)
         
+        d = cal_ds[ind]
+        tth = 2.0 * np.arcsin(12.398 / (2.0*e*d))*180./np.pi
+
+        unique_y = sorted(list(set(list(y))))
+        unique_tth = []
+        for u_y in unique_y:
+            u_tth = np.mean(tth[y==u_y])
+            unique_tth.append(u_tth)
+
+        a, b, c,  x_range, y_range = fit_and_evaluate_polynomial(unique_y,unique_tth,191)
+
+        self.tth_calibrated = y_range
+        
+
+    
 
 
 class NotEnoughSpacingsInCalibrant(Exception):
@@ -234,6 +258,9 @@ class DummyStdOut(object):
 
 def second_order_polynomial(x, a, b, c):
     return a * x**2 + b * x + c
+
+def third_order_polynomial(x, a, b, c, d):
+    return a * x**2 + b * x + c + d * x**3
 
 def fit_and_evaluate_polynomial(x_data, y_data, x_max):
     popt, _ = curve_fit(second_order_polynomial, x_data, y_data)
