@@ -175,7 +175,7 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         self.radioChannel.setChecked(True)
         #self._plot_widget_layout.addWidget(self.HorizontalScaleWidget)
 
-        self.navigation_buttons = QtWidgets.QWidget()
+        '''self.navigation_buttons = QtWidgets.QWidget()
         self._nav_layout = QtWidgets.QHBoxLayout(self.navigation_buttons)
         self._nav_layout.setContentsMargins(0,0,0,0)
         self.prev_btn = QtWidgets.QPushButton('< Previous')
@@ -183,7 +183,7 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         self._nav_layout.addWidget(self.prev_btn)
         self._nav_layout.addWidget(self.next_btn)
        
-        self._plot_widget_layout.addWidget(self.navigation_buttons)
+        self._plot_widget_layout.addWidget(self.navigation_buttons)'''
         
         self.file_view_tabs.addTab(self.plot_widget, 'Spectra')
 

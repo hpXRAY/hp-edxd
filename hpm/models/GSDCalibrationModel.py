@@ -14,25 +14,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from fileinput import filelineno
 
-from operator import truediv
 import numpy as np
-from scipy import interpolate
-from PyQt5 import QtCore, QtWidgets
 
-import os, sys
-import time
-import copy
+from PyQt5 import QtCore
 
+from functools import partial
 from .mcareaderGeStrip import *
-from .mcaModel import McaCalibration, McaElapsed, McaROI, McaEnvironment, MCA
-from utilities.CARSMath import fit_gaussian
-from .eCalModel import calc_parabola_vertex, fit_energies
-from .mcaComponents import McaROI
-import hpm.models.Xrf as Xrf
 
-from hpm.models.MaskModel import MaskModel
 from pyFAI.massif import Massif
 from pyFAI.blob_detection import BlobDetection
 from .calibrant import Calibrant
@@ -133,6 +122,43 @@ class GSDCalibrationModel(QtCore.QObject):  #
 
     def get_point_array(self):
         return self.create_point_array(self.points, self.points_index)
+
+    def find_peak_center(data, num_points=6):
+        n = len(data)
+        x = np.arange(n)
+
+        # Calculate the background using an average of multiple points at the start and end
+        background_start = np.mean(data[:num_points])
+        background_end = np.mean(data[-num_points:])
+        # Create a trimmed data array to match the background start and end positions
+        trimmed_data = data[num_points//2:-num_points//2]
+        # Create a corresponding x array for the trimmed data
+        trimmed_x = x[num_points//2:-num_points//2]
+        # Calculate a linear background for the trimmed data
+        background = (background_end - background_start) / (len(trimmed_data) - 1) * (trimmed_x - trimmed_x[0]) + background_start
+        data_adjusted = trimmed_data - background
+        # Normalize the data to 1
+        normalized_data = data_adjusted / np.max(data_adjusted)
+        # Find the FWHM points
+        half_max = 0.5
+        above_half = normalized_data > half_max
+        fwhm_points = np.where(above_half)[0]
+        fwhm_center = int((fwhm_points[0] + fwhm_points[-1]) // 2.0)
+        # Create a tighter background within 1.5 of FWHM distance from the new peak center
+        fwhm_distance = int((fwhm_points[-1] - fwhm_points[0])*1.5 )
+        background_start_index = fwhm_center - fwhm_distance 
+        background_end_index = fwhm_center + fwhm_distance 
+        background_start = normalized_data[background_start_index]
+        background_end = normalized_data[background_end_index]
+        indexes_surrounding_center = fwhm_center - fwhm_distance + np.arange(2* fwhm_distance+1)
+        x_tight = trimmed_x[indexes_surrounding_center]
+        tighter_background = (background_end - background_start) / (2 * fwhm_distance) * (x_tight-x_tight[0] ) + background_start
+        normalized_data_tight = normalized_data[indexes_surrounding_center]
+        data_adjusted_tight = normalized_data_tight - tighter_background
+        data_squared = data_adjusted_tight**2
+        # Compute the center of mass of the square of the data, squaring suppresses the contribution from background
+        center_of_mass = np.sum(x_tight * data_squared) / np.sum(data_squared)
+        return center_of_mass #, fwhm_points, x_tight, data_adjusted_tight
    
         
     def find_peaks_automatic(self, x, y, peak_ind):
@@ -234,15 +260,20 @@ class GSDCalibrationModel(QtCore.QObject):  #
         d = cal_ds[ind]
         tth = 2.0 * np.arcsin(12.398 / (2.0*e*d))*180./np.pi
 
-        unique_y = sorted(list(set(list(y))))
+        unique_x = sorted(list(set(list(y))))
         unique_tth = []
-        for u_y in unique_y:
+        for u_y in unique_x:
             u_tth = np.mean(tth[y==u_y])
             unique_tth.append(u_tth)
 
-        a, b, c,  x_range, y_range = fit_and_evaluate_polynomial(unique_y,unique_tth,191)
+        unique_tth = np.asarray(unique_tth)/180*np.pi
+        unique_x = 192 - np.asarray(unique_x)
+        a, b, c, x_range, tth_range_estimate = fit_and_evaluate_polynomial( unique_x,unique_tth, 191)
+        guess_tth = np.mean(tth_range_estimate)
+        poni_x, poni_angle, distance, x_range, tth_range = fit_poni_relationship(unique_x,unique_tth,191)
+        tth_range=np.flip(tth_range)
 
-        self.tth_calibrated = y_range
+        self.tth_calibrated = tth_range
         
 
     
@@ -259,6 +290,25 @@ class DummyStdOut(object):
 def second_order_polynomial(x, a, b, c):
     return a * x**2 + b * x + c
 
+def poni_2theta_relationship(poni_x, x, poni_angle, distance):
+
+    if np.array_equal(x, poni_x):
+        result = poni_angle
+    elif np.all(x < poni_x):
+        result =  poni_angle - np.arctan((poni_x - x) / distance)
+    elif np.all(x > poni_x):
+        result =  poni_angle + np.arctan((x - poni_x) / distance)
+    else:
+        # Handle the case where x contains a mix of values less and greater than poni_x
+        result = np.empty_like(x, dtype=float)
+        result[x == poni_x] = poni_angle
+        result[x < poni_x] = poni_angle - np.arctan((poni_x - x[x < poni_x]) / distance)
+        result[x > poni_x] = poni_angle + np.arctan((x[x > poni_x] - poni_x) / distance)
+    
+    return result
+
+
+
 def third_order_polynomial(x, a, b, c, d):
     return a * x**2 + b * x + c + d * x**3
 
@@ -274,4 +324,27 @@ def fit_and_evaluate_polynomial(x_data, y_data, x_max):
     # Calculate the corresponding y values using the polynomial
     y_range = second_order_polynomial(x_range, a, b, c)
 
-    return a, b, c, x_range, y_range
+    return a, b, c, x_range, y_range 
+
+def fit_poni_relationship(x, tth, x_max=191):
+    det_size = 50 #mm
+    num_elements = 192
+
+    distance_0_in_mm = 1000
+    element_size = det_size / num_elements
+    distance_0_in_pixels = distance_0_in_mm / element_size
+    tth_0 = np.mean(tth)
+
+    poni_x_0, poni_angle_0, distance_0 = num_elements // 2, tth_0 , distance_0_in_pixels
+    popt, _ = curve_fit( partial(poni_2theta_relationship,poni_x_0), x, tth, p0= [poni_angle_0, distance_0])
+
+    # Extract the coefficients
+    poni_angle, distance = popt
+
+    # Define the range for x values
+    x_range = np.arange(0, int(x_max) + 1, 1)
+
+    # Calculate the corresponding y values using the polynomial
+    y_range = poni_2theta_relationship(poni_x_0, x_range, poni_angle, distance)
+
+    return poni_x_0, poni_angle * 180 / np.pi, distance, x_range, y_range

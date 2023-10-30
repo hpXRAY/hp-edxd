@@ -120,7 +120,7 @@ class GSDCalibrationController(QtCore.QObject):
         if len(points):
             
             self.plot_points()
-            self.model.update_two_theta_calibration()
+            self.model.update_two_theta_calibration()  ## TODO make a calibrate button and move this there
             if self.widget.automatic_peak_num_inc_cb.checkState():
                 self.widget.peak_num_sb.setValue(peak_ind + 1)
 
