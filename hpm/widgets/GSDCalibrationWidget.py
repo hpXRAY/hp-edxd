@@ -491,11 +491,11 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         if label != current_label:
             inverse_translate = -1*current_translate
             inverse_scale =  1/current_scale
-            self.p1.scale(  inverse_scale, 1)
-            self.p1.translate(inverse_translate, 0)
+            self.img.scale(  inverse_scale, 1)
+            self.img.translate(inverse_translate, 0)
             
-            self.p1.translate(scale[1], 0)
-            self.p1.scale(scale[0], 1)
+            self.img.translate(scale[1], 0)
+            self.img.scale(scale[0], 1)
             
             self.current_scale['label'] = label
             self.current_scale['scale'] = scale

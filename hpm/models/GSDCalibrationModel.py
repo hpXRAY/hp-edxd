@@ -271,7 +271,7 @@ class GSDCalibrationModel(QtCore.QObject):  #
         a, b, c, x_range, tth_range_estimate = fit_and_evaluate_polynomial( unique_x,unique_tth, 191)
         guess_tth = np.mean(tth_range_estimate)
         poni_x, poni_angle, distance, x_range, tth_range = fit_poni_relationship(unique_x,unique_tth,191)
-        tth_range=np.flip(tth_range)
+        tth_range=  np.flip(tth_range) *180/np.pi
 
         self.tth_calibrated = tth_range
         
