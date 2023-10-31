@@ -75,6 +75,7 @@ class GSDCalibrationController(QtCore.QObject):
 
         self.widget.cal_gsd_add_pt_btn.clicked.connect(self.cal_gsd_add_pt_btn_callback)
         #self.widget.cal_gsd_calc_btn.clicked.connect(self.cal_gsd_calc_btn_callback)
+        self.widget.calibrate_btn.clicked.connect(self.calibrate_btn_callback)
 
         self.widget.plotMouseCursorSignal.connect(self.search_peaks)
 
@@ -120,11 +121,12 @@ class GSDCalibrationController(QtCore.QObject):
         if len(points):
             
             self.plot_points()
-            self.model.update_two_theta_calibration()  ## TODO make a calibrate button and move this there
+            
             if self.widget.automatic_peak_num_inc_cb.checkState():
                 self.widget.peak_num_sb.setValue(peak_ind + 1)
 
-        
+    def calibrate_btn_callback(self):
+        self.model.update_two_theta_calibration()  ## TODO make a calibrate button and move this there
 
     def cal_gsd_add_pt_btn_callback(self): 
    

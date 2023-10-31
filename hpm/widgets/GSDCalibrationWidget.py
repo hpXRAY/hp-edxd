@@ -125,12 +125,29 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         self.file_view_tabs= QtWidgets.QTabWidget(self)
         
         self.file_view_tabs.setObjectName("file_view_tabs")
+
+
         self.make_img_plot()
+
+
+
         self.plot_widget = QtWidgets.QWidget()
         self._plot_widget_layout = QtWidgets.QVBoxLayout(self.plot_widget)
         self._plot_widget_layout.setContentsMargins(0,0,0,0)
 
         self._plot_widget_layout.addWidget( self.win)
+
+        self._status_layout = QtWidgets.QHBoxLayout()
+        self.calibrate_btn = FlatButton("Calibrate")
+        self.refine_btn = FlatButton("Refine")
+        self.position_lbl = QtWidgets.QLabel("position_lbl")
+
+        self._status_layout.addWidget(self.calibrate_btn)
+        self._status_layout.addWidget(self.refine_btn)
+        self._status_layout.addSpacerItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding,
+                                                            QtWidgets.QSizePolicy.Minimum))
+        self._status_layout.addWidget(self.position_lbl)
+        self._plot_widget_layout.addLayout(self._status_layout)
 
         self.HorizontalScaleWidget = QtWidgets.QWidget()
         self.HorizontalScaleLayout = QtWidgets.QHBoxLayout(self.HorizontalScaleWidget)
@@ -523,6 +540,14 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
             self.current_row_scale['scale'] = row_scale
             
             self.p1.setLabel(axis='left', text=row_label)
+
+    def plot_lines(self, x_segments, y_segments): # segments are lists of numpy arrays
+        
+        # Combine segments with np.nan values between them
+        x_data = np.concatenate([x_segment for x_segment in x_segments] + [np.array([np.nan])])
+        y_data = np.concatenate([y_segment for y_segment in y_segments] + [np.array([np.nan])])
+
+        self.lines.setData(x=x_data, y=y_data)
       
     def make_img_plot(self):
         ## Create window with GraphicsView widget
@@ -554,9 +579,17 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
                  pen=None, symbol='o', \
                                 symbolPen=None, symbolSize=7, \
                                 symbolBrush=sb)
+
+
+
         
         self.view.addItem(self.p_scatter)
         
+        # Create a PlotDataItem for the lines
+        self.lines = pg.PlotDataItem(x=[], y=[], pen=pg.mkPen(color='r', width=2))
+
+        # Add the line to the PlotItem
+        self.view.addItem(self.lines)
 
         # Contrast/color control
         self.hist = pg.HistogramLUTItem()

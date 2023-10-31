@@ -290,7 +290,7 @@ class DummyStdOut(object):
 def second_order_polynomial(x, a, b, c):
     return a * x**2 + b * x + c
 
-def poni_2theta_relationship(poni_x, x, poni_angle, distance):
+def poni_2theta_relationship(x,poni_x, poni_angle, distance):
 
     if np.array_equal(x, poni_x):
         result = poni_angle
@@ -307,7 +307,39 @@ def poni_2theta_relationship(poni_x, x, poni_angle, distance):
     
     return result
 
+def poni_2theta_relationship_fixed_poni_x(poni_x, x, poni_angle, distance):
 
+    if np.array_equal(x, poni_x):
+        result = poni_angle
+    elif np.all(x < poni_x):
+        result =  poni_angle - np.arctan((poni_x - x) / distance)
+    elif np.all(x > poni_x):
+        result =  poni_angle + np.arctan((x - poni_x) / distance)
+    else:
+        # Handle the case where x contains a mix of values less and greater than poni_x
+        result = np.empty_like(x, dtype=float)
+        result[x == poni_x] = poni_angle
+        result[x < poni_x] = poni_angle - np.arctan((poni_x - x[x < poni_x]) / distance)
+        result[x > poni_x] = poni_angle + np.arctan((x[x > poni_x] - poni_x) / distance)
+    
+    return result
+
+def poni_2theta_relationship_fixed_distance(distance, x, poni_angle, poni_x):
+
+    if np.array_equal(x, poni_x):
+        result = poni_angle
+    elif np.all(x < poni_x):
+        result =  poni_angle - np.arctan((poni_x - x) / distance)
+    elif np.all(x > poni_x):
+        result =  poni_angle + np.arctan((x - poni_x) / distance)
+    else:
+        # Handle the case where x contains a mix of values less and greater than poni_x
+        result = np.empty_like(x, dtype=float)
+        result[x == poni_x] = poni_angle
+        result[x < poni_x] = poni_angle - np.arctan((poni_x - x[x < poni_x]) / distance)
+        result[x > poni_x] = poni_angle + np.arctan((x[x > poni_x] - poni_x) / distance)
+    
+    return result
 
 def third_order_polynomial(x, a, b, c, d):
     return a * x**2 + b * x + c + d * x**3
@@ -336,15 +368,18 @@ def fit_poni_relationship(x, tth, x_max=191):
     tth_0 = np.mean(tth)
 
     poni_x_0, poni_angle_0, distance_0 = num_elements // 2, tth_0 , distance_0_in_pixels
-    popt, _ = curve_fit( partial(poni_2theta_relationship,poni_x_0), x, tth, p0= [poni_angle_0, distance_0])
+    popt, _ = curve_fit( partial(poni_2theta_relationship_fixed_poni_x,poni_x_0), x, tth, p0= [poni_angle_0, distance_0])
 
     # Extract the coefficients
     poni_angle, distance = popt
+    print(poni_x_0, ' ', poni_angle * 180 / np.pi, ' ', distance)
+    
 
     # Define the range for x values
     x_range = np.arange(0, int(x_max) + 1, 1)
 
     # Calculate the corresponding y values using the polynomial
-    y_range = poni_2theta_relationship(poni_x_0, x_range, poni_angle, distance)
+    y_range = poni_2theta_relationship(x_range, poni_x_0, poni_angle, distance)
+
 
     return poni_x_0, poni_angle * 180 / np.pi, distance, x_range, y_range
