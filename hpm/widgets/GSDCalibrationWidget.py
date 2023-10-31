@@ -49,7 +49,8 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         self.create_shortcuts()
 
         self.p1 : pg.PlotWidget
-        self.win:pg.GraphicsLayoutWidget
+        self.win: pg.GraphicsLayoutWidget
+        self.img: pg.ImageItem
         self.setWindowTitle('GSD Clibration')
         self.button_widget = QtWidgets.QWidget(self)
         self.button_widget.setMaximumHeight(40)
@@ -490,11 +491,11 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         if label != current_label:
             inverse_translate = -1*current_translate
             inverse_scale =  1/current_scale
-            self.img.scale(inverse_scale, 1)
-            self.img.translate(inverse_translate, 0)
+            self.p1.scale(  inverse_scale, 1)
+            self.p1.translate(inverse_translate, 0)
             
-            self.img.translate(scale[1], 0)
-            self.img.scale(scale[0], 1)
+            self.p1.translate(scale[1], 0)
+            self.p1.scale(scale[0], 1)
             
             self.current_scale['label'] = label
             self.current_scale['scale'] = scale
