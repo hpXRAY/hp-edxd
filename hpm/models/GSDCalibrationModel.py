@@ -16,7 +16,7 @@
 
 
 import numpy as np
-
+import matplotlib.pyplot as plt
 from PyQt5 import QtCore
 
 from functools import partial
@@ -270,7 +270,7 @@ class GSDCalibrationModel(QtCore.QObject):  #
         unique_x = 192 - np.asarray(unique_x)
         a, b, c, x_range, tth_range_estimate = fit_and_evaluate_polynomial( unique_x,unique_tth, 191)
         guess_tth = np.mean(tth_range_estimate)
-        poni_x, poni_angle, distance, x_range, tth_range = fit_poni_relationship(unique_x,unique_tth,191)
+        poni_x, poni_angle, distance,tilt, x_range, tth_range = fit_poni_relationship(unique_x,unique_tth,191)
         tth_range=  np.flip(tth_range) *180/np.pi
 
         self.tth_calibrated = tth_range
@@ -324,22 +324,23 @@ def poni_2theta_relationship_fixed_poni_x(poni_x, x, poni_angle, distance):
     
     return result
 
-def poni_2theta_relationship_fixed_distance(distance, x, poni_angle, poni_x):
+def poni_with_tilt( poni_x, poni_angle, x, tilt, distance): 
 
     if np.array_equal(x, poni_x):
         result = poni_angle
     elif np.all(x < poni_x):
-        result =  poni_angle - np.arctan((poni_x - x) / distance)
+        result =  poni_angle - np.arctan((poni_x - x)* np.cos(tilt) / (distance - (poni_x - x)*np.sin(tilt)))
     elif np.all(x > poni_x):
-        result =  poni_angle + np.arctan((x - poni_x) / distance)
+        result =  poni_angle + np.arctan((x - poni_x)* np.cos(tilt) / (distance + (x - poni_x)*np.sin(tilt)))
     else:
         # Handle the case where x contains a mix of values less and greater than poni_x
         result = np.empty_like(x, dtype=float)
         result[x == poni_x] = poni_angle
-        result[x < poni_x] = poni_angle - np.arctan((poni_x - x[x < poni_x]) / distance)
-        result[x > poni_x] = poni_angle + np.arctan((x[x > poni_x] - poni_x) / distance)
+        result[x < poni_x] = poni_angle - np.arctan((poni_x - x[x < poni_x])* np.cos(tilt) / (distance - (poni_x - x[x < poni_x])*np.sin(tilt)))
+        result[x > poni_x] = poni_angle + np.arctan((x[x > poni_x] - poni_x)* np.cos(tilt) / (distance + (x[x > poni_x] - poni_x)*np.sin(tilt)))
     
-    return result
+    return result 
+
 
 def third_order_polynomial(x, a, b, c, d):
     return a * x**2 + b * x + c + d * x**3
@@ -373,13 +374,28 @@ def fit_poni_relationship(x, tth, x_max=191):
     # Extract the coefficients
     poni_angle, distance = popt
     print(poni_x_0, ' ', poni_angle * 180 / np.pi, ' ', distance)
-    
+
+    tilt_0 = 0.
+    popt, _ = curve_fit( partial(poni_with_tilt,poni_x_0, poni_angle),x,tth,p0= [tilt_0, distance])
+    tilt, distance = popt
+    print('tilt ', tilt * 180 / np.pi, ' distance ', distance)
 
     # Define the range for x values
     x_range = np.arange(0, int(x_max) + 1, 1)
 
     # Calculate the corresponding y values using the polynomial
-    y_range = poni_2theta_relationship(x_range, poni_x_0, poni_angle, distance)
+    y_range = poni_with_tilt(poni_x_0, poni_angle,  x_range, tilt, distance)
+    y_range_0_tilt = poni_with_tilt(poni_x_0, poni_angle, x_range, 0, distance)
+
+    # Plot the results
+    plt.plot(x_range, y_range *180 /np.pi, c='blue')
+    plt.plot(x_range, y_range_0_tilt *180 /np.pi, c='orange')
+    plt.scatter(x, tth *180 /np.pi, c='red', marker='o', s=20, label='Data Points')
+    plt.xlabel('x')
+    plt.ylabel('Angle (radians)')
+    plt.title('Angle vs. x')
+    plt.grid(True)
+    plt.show()
 
 
-    return poni_x_0, poni_angle * 180 / np.pi, distance, x_range, y_range
+    return poni_x_0, poni_angle * 180 / np.pi, distance, tilt, x_range, y_range

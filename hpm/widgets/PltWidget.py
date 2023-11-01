@@ -171,13 +171,12 @@ class CustomViewBox(pg.ViewBox):
             self.enableAutoRange(enable=1) 
         elif ev.button() == QtCore.Qt.LeftButton: 
             pos = ev.pos()  ## using signal proxy turns original arguments into a tuple
-            if _platform == 'Windows':
-                mousePoint = self.mapSceneToView(pos)
-            else:
-                mousePoint = self.mapToView(pos)
-            self.cursorPoint=mousePoint.x()
-            print(self.cursorPoint)
-            self.plotMouseCursorSignal.emit(mousePoint.x()) 
+            mousePoint = self.mapSceneToView(pos)
+
+            mptx = mousePoint.x()
+            self.cursorPoint=mptx
+
+            self.plotMouseCursorSignal.emit(self.cursorPoint) 
         ev.accept()   
 
 class myLegendItem(LegendItem):
@@ -254,7 +253,7 @@ class PltWidget(pg.PlotWidget):
         # cursor
         
         
-        self.proxy = pg.SignalProxy(self.scene().sigMouseMoved, rateLimit=25, slot=self.fastCursorMove)
+        self.proxy = pg.SignalProxy(self.scene().sigMouseMoved, rateLimit=20, slot=self.fastCursorMove)
         # self.getViewBox().addItem(self.hLine, ignoreBounds=True)
         self.create_graphics()
         self.pattern_plot = self.plotItem

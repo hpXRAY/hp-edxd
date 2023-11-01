@@ -432,7 +432,7 @@ class FileSaveController(object):
             print("Stopped watching all directories.")
         else:
             pass
-            print("Warning: 'folder_watcher_handle_directory_changed' slot was not connected to 'directoryChanged' signal.")
+            #print("Warning: 'folder_watcher_handle_directory_changed' slot was not connected to 'directoryChanged' signal.")
 
     '''def folder_watcher_handle_directory_changed(self):
         self.proxy.emit()'''

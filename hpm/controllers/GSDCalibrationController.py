@@ -188,7 +188,7 @@ class GSDCalibrationController(QtCore.QObject):
         self.widget.calibrant_cb.clear()
         self.widget.calibrant_cb.addItems(self._calibrants_file_names_list)
         self.widget.calibrant_cb.blockSignals(False)
-        self.widget.calibrant_cb.setCurrentIndex(self._calibrants_file_names_list.index('LaB6'))  # to LaB6
+        self.widget.calibrant_cb.setCurrentIndex(self._calibrants_file_names_list.index('Au'))  # to Au
         self.load_calibrant()
 
     def load_calibrant(self):
