@@ -126,7 +126,9 @@ class GSDCalibrationController(QtCore.QObject):
                 self.widget.peak_num_sb.setValue(peak_ind + 1)
 
     def calibrate_btn_callback(self):
-        self.model.update_two_theta_calibration()  ## TODO make a calibrate button and move this there
+        segments_x, segments_y = self.model.update_two_theta_calibration()  
+        self.widget.plot_lines(segments_x, segments_y)
+
 
     def cal_gsd_add_pt_btn_callback(self): 
    

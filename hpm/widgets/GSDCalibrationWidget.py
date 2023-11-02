@@ -544,8 +544,22 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
     def plot_lines(self, x_segments, y_segments): # segments are lists of numpy arrays
         
         # Combine segments with np.nan values between them
-        x_data = np.concatenate([x_segment for x_segment in x_segments] + [np.array([np.nan])])
-        y_data = np.concatenate([y_segment for y_segment in y_segments] + [np.array([np.nan])])
+        self.lines.clear()
+
+        # Concatenate arrays with element inserted between each pair
+        x_data = np.array([])  # Initialize an empty array
+        for i, array in enumerate(x_segments):
+            x_data = np.concatenate([x_data, array[::8], np.array([array[-1]])])  # Concatenate the original array
+            if i < len(x_segments) - 1:
+                x_data = np.concatenate([x_data, [np.nan]])  # Insert the element
+
+        # Concatenate arrays with element inserted between each pair
+        y_data = np.array([])  # Initialize an empty array
+        for i, array in enumerate(y_segments):
+            y_data = np.concatenate([y_data, array[::8], np.array([array[-1]])])  # Concatenate the original array
+            if i < len(y_segments) - 1:
+                y_data = np.concatenate([y_data, [np.nan]])  # Insert the element
+
 
         self.lines.setData(x=x_data, y=y_data)
       
@@ -586,7 +600,7 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         self.view.addItem(self.p_scatter)
         
         # Create a PlotDataItem for the lines
-        self.lines = pg.PlotDataItem(x=[], y=[], pen=pg.mkPen(color='r', width=2))
+        self.lines = pg.PlotDataItem(x=[], y=[], pen=pg.mkPen(color='r', width=2),connect="finite" )
 
         # Add the line to the PlotItem
         self.view.addItem(self.lines)

@@ -7,6 +7,10 @@ def E_to_q(e,tth):
     #q = 6.28318530718 /(6.199 / e / sin(tth/180.*pi/2.))
     return q
 
+def q_to_E(q, tth):
+    e = 6.199 / (sin(tth * 0.008726646259972) * (6.28318530718 / q))
+    return e
+
 def E_to_d(e,tth):
     q = E_to_q(e,tth)
     d = q_to_d(q)

@@ -16,11 +16,12 @@
 
 
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from PyQt5 import QtCore
 
 from functools import partial
 from .mcareaderGeStrip import *
+from hpm.models.UnitConversions import *
 
 from pyFAI.massif import Massif
 from pyFAI.blob_detection import BlobDetection
@@ -275,9 +276,25 @@ class GSDCalibrationModel(QtCore.QObject):  #
 
         self.tth_calibrated = tth_range
         
-
-    
-
+        segments_x = []
+        segments_y = []
+        for i in range(min(10, len(cal_ds))):
+            x = np.empty_like(tth_range)
+            y = np.empty_like(tth_range)
+            for j, tth in enumerate(tth_range):
+                
+                    
+                    q = d_to_q(cal_ds[i])
+                    e = q_to_E(q, tth)
+                    if e <= 100 and e > 0:
+                        y[j] = j
+                        x[j] = e
+                    else:
+                        y[j] = np.nan
+                        x[j] = np.nan
+            segments_x.append(x)
+            segments_y.append(y)
+        return segments_x, segments_y
 
 class NotEnoughSpacingsInCalibrant(Exception):
     pass
@@ -387,7 +404,7 @@ def fit_poni_relationship(x, tth, x_max=191):
     y_range = poni_with_tilt(poni_x_0, poni_angle,  x_range, tilt, distance)
     y_range_0_tilt = poni_with_tilt(poni_x_0, poni_angle, x_range, 0, distance)
 
-    # Plot the results
+    '''# Plot the results
     plt.plot(x_range, y_range *180 /np.pi, c='blue')
     plt.plot(x_range, y_range_0_tilt *180 /np.pi, c='orange')
     plt.scatter(x, tth *180 /np.pi, c='red', marker='o', s=20, label='Data Points')
@@ -395,7 +412,7 @@ def fit_poni_relationship(x, tth, x_max=191):
     plt.ylabel('Angle (radians)')
     plt.title('Angle vs. x')
     plt.grid(True)
-    plt.show()
+    plt.show()'''
 
 
     return poni_x_0, poni_angle * 180 / np.pi, distance, tilt, x_range, y_range
