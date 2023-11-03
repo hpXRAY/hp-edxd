@@ -273,13 +273,15 @@ class GSDCalibrationModel(QtCore.QObject):  #
         segments_d = []
         segments_channel = []
         d_spacings = list(self.calibrated_d_spacings.keys())
-        skip_ranges = self.convert_point_E_to_channel(np.asarray([66,70,77,81]))
-        mask = np.zeros(self.data.shape[1])
+        skip_ranges = self.convert_point_E_to_channel(np.asarray([66,70,77,81,15,76]))
+        mask = np.zeros(self.data_raw.shape[1])
         mask[int(skip_ranges[0]):int(skip_ranges[1])] = 1
         mask[int(skip_ranges[2]):int(skip_ranges[3])] = 1
+        mask[:int(skip_ranges[4])] = 1
+        mask[int(skip_ranges[5]):] = 1
 
-        for i in range(4): #self.calibrated_d_spacings:
-            d = d_spacings[i]
+        for i, d in enumerate(d_spacings[:9]):
+            
             energy, y = self.calibrated_d_spacings[d]
             
             channels = self.convert_point_E_to_channel(energy)
@@ -289,8 +291,8 @@ class GSDCalibrationModel(QtCore.QObject):  #
                 ch_high_bound = int(channel + bin* 10)
                 skip = mask[ch_low_bound:ch_high_bound].any()==1 
                 if not skip:
-                    roi_start = int(channel//bin-10)
-                    roi_end = int(channel//bin+10)
+                    roi_start = int(channel//bin-12)
+                    roi_end = int(channel//bin+12)
                     roi = self.data[c, roi_start:roi_end]
                     roi_center = find_peak_center(roi)
                     if not np.isnan(roi_center):
