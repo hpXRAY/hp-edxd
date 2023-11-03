@@ -52,6 +52,8 @@ class GSDCalibrationModel(QtCore.QObject):  #
                              'pixel_width': 260e-6,
                              'wavelength': 0.4e-10}
 
+        self.calibrated_d_spacings = {}
+
     def set_data(self, E_scale, data):
         self.data_raw = data
         self.E_scale = E_scale
@@ -124,42 +126,7 @@ class GSDCalibrationModel(QtCore.QObject):  #
     def get_point_array(self):
         return self.create_point_array(self.points, self.points_index)
 
-    def find_peak_center(data, num_points=6):
-        n = len(data)
-        x = np.arange(n)
-
-        # Calculate the background using an average of multiple points at the start and end
-        background_start = np.mean(data[:num_points])
-        background_end = np.mean(data[-num_points:])
-        # Create a trimmed data array to match the background start and end positions
-        trimmed_data = data[num_points//2:-num_points//2]
-        # Create a corresponding x array for the trimmed data
-        trimmed_x = x[num_points//2:-num_points//2]
-        # Calculate a linear background for the trimmed data
-        background = (background_end - background_start) / (len(trimmed_data) - 1) * (trimmed_x - trimmed_x[0]) + background_start
-        data_adjusted = trimmed_data - background
-        # Normalize the data to 1
-        normalized_data = data_adjusted / np.max(data_adjusted)
-        # Find the FWHM points
-        half_max = 0.5
-        above_half = normalized_data > half_max
-        fwhm_points = np.where(above_half)[0]
-        fwhm_center = int((fwhm_points[0] + fwhm_points[-1]) // 2.0)
-        # Create a tighter background within 1.5 of FWHM distance from the new peak center
-        fwhm_distance = int((fwhm_points[-1] - fwhm_points[0])*1.5 )
-        background_start_index = fwhm_center - fwhm_distance 
-        background_end_index = fwhm_center + fwhm_distance 
-        background_start = normalized_data[background_start_index]
-        background_end = normalized_data[background_end_index]
-        indexes_surrounding_center = fwhm_center - fwhm_distance + np.arange(2* fwhm_distance+1)
-        x_tight = trimmed_x[indexes_surrounding_center]
-        tighter_background = (background_end - background_start) / (2 * fwhm_distance) * (x_tight-x_tight[0] ) + background_start
-        normalized_data_tight = normalized_data[indexes_surrounding_center]
-        data_adjusted_tight = normalized_data_tight - tighter_background
-        data_squared = data_adjusted_tight**2
-        # Compute the center of mass of the square of the data, squaring suppresses the contribution from background
-        center_of_mass = np.sum(x_tight * data_squared) / np.sum(data_squared)
-        return center_of_mass #, fwhm_points, x_tight, data_adjusted_tight
+    
    
         
     def find_peaks_automatic(self, x, y, peak_ind):
@@ -248,7 +215,7 @@ class GSDCalibrationModel(QtCore.QObject):  #
         self.calibrant.load_file(filename)
 
 
-    def update_two_theta_calibration(self):
+    def do_2theta_calibration(self):
         points = self.get_point_array()
         cal_ds = np.asarray(self.calibrant.get_dSpacing())
         tths = []
@@ -261,29 +228,29 @@ class GSDCalibrationModel(QtCore.QObject):  #
         d = cal_ds[ind]
         tth = 2.0 * np.arcsin(12.398 / (2.0*e*d))*180./np.pi
 
-        unique_x = sorted(list(set(list(y))))
+        unique_y = sorted(list(set(list(y))))
         unique_tth = []
-        for u_y in unique_x:
+        for u_y in unique_y:
             u_tth = np.mean(tth[y==u_y])
             unique_tth.append(u_tth)
 
         unique_tth = np.asarray(unique_tth)/180*np.pi
-        unique_x = 192 - np.asarray(unique_x)
-        a, b, c, x_range, tth_range_estimate = fit_and_evaluate_polynomial( unique_x,unique_tth, 191)
+        unique_y = 192 - np.asarray(unique_y)
+        a, b, c, y_range, tth_range_estimate = fit_and_evaluate_polynomial( unique_y,unique_tth, 191)
         guess_tth = np.mean(tth_range_estimate)
-        poni_x, poni_angle, distance,tilt, x_range, tth_range = fit_poni_relationship(unique_x,unique_tth,191)
+        poni_y, poni_angle, distance,tilt, y_range, tth_range = fit_poni_relationship(unique_y,unique_tth,191)
         tth_range=  np.flip(tth_range) *180/np.pi
 
         self.tth_calibrated = tth_range
         
         segments_x = []
         segments_y = []
+        calibrated_d_spacings = {}
         for i in range(min(10, len(cal_ds))):
             x = np.empty_like(tth_range)
             y = np.empty_like(tth_range)
             for j, tth in enumerate(tth_range):
                 
-                    
                     q = d_to_q(cal_ds[i])
                     e = q_to_E(q, tth)
                     if e <= 100 and e > 0:
@@ -294,7 +261,21 @@ class GSDCalibrationModel(QtCore.QObject):  #
                         x[j] = np.nan
             segments_x.append(x)
             segments_y.append(y)
+            calibrated_d_spacings[cal_ds[i]]=[x,y]
+        self.calibrated_d_spacings = calibrated_d_spacings
         return segments_x, segments_y
+
+    def refine_2theta_calibration(self, ):
+        segments_e = []
+        segments_y = []
+        segments_d = []
+        for d in self.calibrated_d_spacings:
+            energy, y = self.calibrated_d_spacings[d]
+            segments_e.append[energy]
+            segments_y.append[y]
+            d_array = np.zeros_like(energy)+ d
+            segments_d.append[d_array]
+        return segments_e, segments_y
 
 class NotEnoughSpacingsInCalibrant(Exception):
     pass
@@ -416,3 +397,41 @@ def fit_poni_relationship(x, tth, x_max=191):
 
 
     return poni_x_0, poni_angle * 180 / np.pi, distance, tilt, x_range, y_range
+
+
+def find_peak_center(data, num_points=6):
+    n = len(data)
+    x = np.arange(n)
+
+    # Calculate the background using an average of multiple points at the start and end
+    background_start = np.mean(data[:num_points])
+    background_end = np.mean(data[-num_points:])
+    # Create a trimmed data array to match the background start and end positions
+    trimmed_data = data[num_points//2:-num_points//2]
+    # Create a corresponding x array for the trimmed data
+    trimmed_x = x[num_points//2:-num_points//2]
+    # Calculate a linear background for the trimmed data
+    background = (background_end - background_start) / (len(trimmed_data) - 1) * (trimmed_x - trimmed_x[0]) + background_start
+    data_adjusted = trimmed_data - background
+    # Normalize the data to 1
+    normalized_data = data_adjusted / np.max(data_adjusted)
+    # Find the FWHM points
+    half_max = 0.5
+    above_half = normalized_data > half_max
+    fwhm_points = np.where(above_half)[0]
+    fwhm_center = int((fwhm_points[0] + fwhm_points[-1]) // 2.0)
+    # Create a tighter background within 1.5 of FWHM distance from the new peak center
+    fwhm_distance = int((fwhm_points[-1] - fwhm_points[0])*1.5 )
+    background_start_index = fwhm_center - fwhm_distance 
+    background_end_index = fwhm_center + fwhm_distance 
+    background_start = normalized_data[background_start_index]
+    background_end = normalized_data[background_end_index]
+    indexes_surrounding_center = fwhm_center - fwhm_distance + np.arange(2* fwhm_distance+1)
+    x_tight = trimmed_x[indexes_surrounding_center]
+    tighter_background = (background_end - background_start) / (2 * fwhm_distance) * (x_tight-x_tight[0] ) + background_start
+    normalized_data_tight = normalized_data[indexes_surrounding_center]
+    data_adjusted_tight = normalized_data_tight - tighter_background
+    data_squared = data_adjusted_tight**2
+    # Compute the center of mass of the square of the data, squaring suppresses the contribution from background
+    center_of_mass = np.sum(x_tight * data_squared) / np.sum(data_squared)
+    return center_of_mass #, fwhm_points, x_tight, data_adjusted_tight

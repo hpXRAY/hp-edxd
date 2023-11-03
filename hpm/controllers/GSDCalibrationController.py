@@ -76,6 +76,7 @@ class GSDCalibrationController(QtCore.QObject):
         self.widget.cal_gsd_add_pt_btn.clicked.connect(self.cal_gsd_add_pt_btn_callback)
         #self.widget.cal_gsd_calc_btn.clicked.connect(self.cal_gsd_calc_btn_callback)
         self.widget.calibrate_btn.clicked.connect(self.calibrate_btn_callback)
+        self.widget.refine_btn.clicked.connect(self.refine_btn_callback)
 
         self.widget.plotMouseCursorSignal.connect(self.search_peaks)
 
@@ -126,9 +127,12 @@ class GSDCalibrationController(QtCore.QObject):
                 self.widget.peak_num_sb.setValue(peak_ind + 1)
 
     def calibrate_btn_callback(self):
-        segments_x, segments_y = self.model.update_two_theta_calibration()  
+        segments_x, segments_y = self.model.do_2theta_calibration()  
         self.widget.plot_lines(segments_x, segments_y)
 
+    def refine_btn_callback(self):
+        segments_x, segments_y = self.model.refine_2theta_calibration()  
+        self.widget.plot_lines(segments_x, segments_y)
 
     def cal_gsd_add_pt_btn_callback(self): 
    
@@ -398,7 +402,7 @@ class GSDCalibrationController(QtCore.QObject):
         filename = open_file_dialog(self.widget, caption="Load calibration...",
                                     directory=self.model.working_directories['calibration'],
                                     filter='*.poni')
-        if filename is not '':
+        if filename != '':
             self.model.working_directories['calibration'] = os.path.dirname(filename)
             self.model.calibration_model.load(filename)
             if self.model.img_model.filename != '':
@@ -459,8 +463,8 @@ class GSDCalibrationController(QtCore.QObject):
         if self.widget.tab_widget.currentIndex() == 0:
             self.widget.tab_widget.setCurrentIndex(1)
 
-        if self.widget.ToolBox.currentIndex() is not 2 or \
-                self.widget.ToolBox.currentIndex() is not 3:
+        if self.widget.ToolBox.currentIndex() != 2 or \
+                self.widget.ToolBox.currentIndex() !=3:
             self.widget.ToolBox.setCurrentIndex(2)
         self.update_calibration_parameter_in_view()
         self.load_calibrant('pyFAI')
@@ -487,7 +491,7 @@ class GSDCalibrationController(QtCore.QObject):
 
         filename = save_file_dialog(self.widget, "Save calibration...",
                                     self.model.working_directories['calibration'], '*.poni')
-        if filename is not '':
+        if filename != '':
             self.model.working_directories['calibration'] = os.path.dirname(filename)
             if not filename.rsplit('.', 1)[-1] == 'poni':
                 filename = filename + '.poni'
