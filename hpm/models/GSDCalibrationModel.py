@@ -16,7 +16,7 @@
 
 
 import numpy as np
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from PyQt5 import QtCore
 
 from functools import partial
@@ -27,6 +27,7 @@ from pyFAI.massif import Massif
 from pyFAI.blob_detection import BlobDetection
 from .calibrant import Calibrant
 from scipy.optimize import curve_fit
+
 
 from .. import calibrants_path
 
@@ -235,7 +236,7 @@ class GSDCalibrationModel(QtCore.QObject):  #
             unique_tth.append(u_tth)
 
         unique_tth = np.asarray(unique_tth)/180*np.pi
-        unique_y = 192 - np.asarray(unique_y)
+        unique_y = 191 - np.asarray(unique_y)
         a, b, c, y_range, tth_range_estimate = fit_and_evaluate_polynomial( unique_y,unique_tth, 191)
         guess_tth = np.mean(tth_range_estimate)
         poni_y, poni_angle, distance,tilt, y_range, tth_range = fit_poni_relationship(unique_y,unique_tth,191)
@@ -266,15 +267,47 @@ class GSDCalibrationModel(QtCore.QObject):  #
         return segments_x, segments_y
 
     def refine_2theta_calibration(self, ):
+        bin = self.bin
         segments_e = []
         segments_y = []
         segments_d = []
-        for d in self.calibrated_d_spacings:
+        segments_channel = []
+        d_spacings = list(self.calibrated_d_spacings.keys())
+        skip_ranges = self.convert_point_E_to_channel(np.asarray([66,70,77,81]))
+        mask = np.zeros(self.data.shape[1])
+        mask[int(skip_ranges[0]):int(skip_ranges[1])] = 1
+        mask[int(skip_ranges[2]):int(skip_ranges[3])] = 1
+
+        for i in range(4): #self.calibrated_d_spacings:
+            d = d_spacings[i]
             energy, y = self.calibrated_d_spacings[d]
-            segments_e.append[energy]
-            segments_y.append[y]
+            
+            channels = self.convert_point_E_to_channel(energy)
+            centers = np.zeros(len(channels))
+            for c, channel in enumerate(channels):
+                ch_low_bound = int(channel - bin* 10)
+                ch_high_bound = int(channel + bin* 10)
+                skip = mask[ch_low_bound:ch_high_bound].any()==1 
+                if not skip:
+                    roi_start = int(channel//bin-10)
+                    roi_end = int(channel//bin+10)
+                    roi = self.data[c, roi_start:roi_end]
+                    roi_center = find_peak_center(roi)
+                    if not np.isnan(roi_center):
+                        center = roi_center + roi_start
+                        centers[c] = center
+
+            plt.plot(centers)
+            
+            plt.xlabel('channel in roi')
+            plt.ylabel('counts')
+            plt.title('counts vs. channel')
+            
+            segments_channel.append(centers)
+            segments_y.append(y)
             d_array = np.zeros_like(energy)+ d
-            segments_d.append[d_array]
+            segments_d.append(d_array)
+        plt.show()
         return segments_e, segments_y
 
 class NotEnoughSpacingsInCalibrant(Exception):
@@ -399,7 +432,7 @@ def fit_poni_relationship(x, tth, x_max=191):
     return poni_x_0, poni_angle * 180 / np.pi, distance, tilt, x_range, y_range
 
 
-def find_peak_center(data, num_points=6):
+def find_peak_center(data, num_points=2):
     n = len(data)
     x = np.arange(n)
 
@@ -424,14 +457,19 @@ def find_peak_center(data, num_points=6):
     fwhm_distance = int((fwhm_points[-1] - fwhm_points[0])*1.5 )
     background_start_index = fwhm_center - fwhm_distance 
     background_end_index = fwhm_center + fwhm_distance 
-    background_start = normalized_data[background_start_index]
-    background_end = normalized_data[background_end_index]
-    indexes_surrounding_center = fwhm_center - fwhm_distance + np.arange(2* fwhm_distance+1)
-    x_tight = trimmed_x[indexes_surrounding_center]
-    tighter_background = (background_end - background_start) / (2 * fwhm_distance) * (x_tight-x_tight[0] ) + background_start
-    normalized_data_tight = normalized_data[indexes_surrounding_center]
-    data_adjusted_tight = normalized_data_tight - tighter_background
-    data_squared = data_adjusted_tight**2
-    # Compute the center of mass of the square of the data, squaring suppresses the contribution from background
-    center_of_mass = np.sum(x_tight * data_squared) / np.sum(data_squared)
-    return center_of_mass #, fwhm_points, x_tight, data_adjusted_tight
+
+    if background_start_index >=0 and background_end_index < len(normalized_data):
+        background_start = normalized_data[background_start_index]
+    
+        background_end = normalized_data[background_end_index]
+        indexes_surrounding_center = fwhm_center - fwhm_distance + np.arange(2* fwhm_distance+1)
+        x_tight = trimmed_x[indexes_surrounding_center]
+        tighter_background = (background_end - background_start) / (2 * fwhm_distance) * (x_tight-x_tight[0] ) + background_start
+        normalized_data_tight = normalized_data[indexes_surrounding_center]
+        data_adjusted_tight = normalized_data_tight - tighter_background
+        data_squared = data_adjusted_tight**2
+        # Compute the center of mass of the square of the data, squaring suppresses the contribution from background
+        center_of_mass = np.sum(x_tight * data_squared) / np.sum(data_squared)
+        return center_of_mass #, fwhm_points, x_tight, data_adjusted_tight
+    else:
+        return np.nan

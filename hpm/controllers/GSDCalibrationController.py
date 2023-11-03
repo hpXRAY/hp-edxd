@@ -132,7 +132,7 @@ class GSDCalibrationController(QtCore.QObject):
 
     def refine_btn_callback(self):
         segments_x, segments_y = self.model.refine_2theta_calibration()  
-        self.widget.plot_lines(segments_x, segments_y)
+        #self.widget.plot_lines(segments_x, segments_y)
 
     def cal_gsd_add_pt_btn_callback(self): 
    
