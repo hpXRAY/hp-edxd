@@ -24,7 +24,7 @@ from .. import calibrants_path
 
 from ..widgets.GSDCalibrationWidget import GSDCalibrationWidget
 from ..widgets.UtilityWidgets import open_file_dialog
-from ..models.GSDCalibrationModel import GSDCalibrationModel, NotEnoughSpacingsInCalibrant
+from ..models.GSDCalibrationModel import GSD2thetaCalibrationModel, NotEnoughSpacingsInCalibrant
 
 
 class GSDCalibrationController(QtCore.QObject):
@@ -44,7 +44,7 @@ class GSDCalibrationController(QtCore.QObject):
         """
         super().__init__()
         self.widget = GSDCalibrationWidget()
-        self.model = GSDCalibrationModel()
+        self.model = GSD2thetaCalibrationModel()
 
         self.widget.set_start_values(self.model.start_values)
         self._first_plot = True
@@ -77,6 +77,7 @@ class GSDCalibrationController(QtCore.QObject):
         #self.widget.cal_gsd_calc_btn.clicked.connect(self.cal_gsd_calc_btn_callback)
         self.widget.calibrate_btn.clicked.connect(self.calibrate_btn_callback)
         self.widget.refine_btn.clicked.connect(self.refine_btn_callback)
+        self.widget.refine_e_btn.clicked.connect(self.refine_energy)
 
         self.widget.plotMouseCursorSignal.connect(self.search_peaks)
 
@@ -84,6 +85,11 @@ class GSDCalibrationController(QtCore.QObject):
         self.model.set_data(E_scale, data)
         self.widget.set_image_scale('E',E_scale)
         self.widget.set_spectral_data(data)
+
+        E = self.model.E
+        flat_E = self.model.flat_E
+        self.widget.plot_flat.win.plotData(E, flat_E)
+
         
 
     def search_peaks(self, cursor):
@@ -142,7 +148,9 @@ class GSDCalibrationController(QtCore.QObject):
 
     def refine_energy(self):
         # TODO implement refining energy calibration based on XRD peaks
-        pass
+        self.model.refine_e()
+
+
 
     def cal_gsd_add_pt_btn_callback(self): 
    

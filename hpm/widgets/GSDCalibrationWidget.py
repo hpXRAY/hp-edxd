@@ -24,7 +24,7 @@ import numpy as np
 import pyqtgraph as pg
 from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, VerticalSpacerItem, NoRectDelegate, \
     HorizontalSpacerItem, ListTableWidget, VerticalLine, DoubleMultiplySpinBoxAlignRight
-from hpm.widgets.PltWidget import PltWidget
+from hpm.widgets.PltWidget import PltWidget, plotWindow
 from hpm.widgets.MaskWidget import MaskWidget
 from hpm.widgets.plot_widgets import ImgWidget2
 from hpm.widgets.CalibrationWidget import CalibrationControlWidget
@@ -139,11 +139,13 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
 
         self._status_layout = QtWidgets.QHBoxLayout()
         self.calibrate_btn = FlatButton("Calibrate")
-        self.refine_btn = FlatButton("Refine")
+        self.refine_btn = FlatButton("Refine 2th")
+        self.refine_e_btn = FlatButton("Refine E")
         self.position_lbl = QtWidgets.QLabel("position_lbl")
 
         self._status_layout.addWidget(self.calibrate_btn)
         self._status_layout.addWidget(self.refine_btn)
+        self._status_layout.addWidget(self.refine_e_btn)
         self._status_layout.addSpacerItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding,
                                                             QtWidgets.QSizePolicy.Minimum))
         self._status_layout.addWidget(self.position_lbl)
@@ -208,6 +210,10 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         self.file_list_view = QtWidgets.QListWidget()
         #self.mask_widget = MaskWidget()
         self.file_view_tabs.addTab(self.file_list_view, 'Files')
+
+        self.plot_flat = plotWindow("flat",'count','E')
+
+        self.file_view_tabs.addTab(self.plot_flat, 'Flat')
 
         '''self.scratch_widget = ImgWidget2()
         self.file_view_tabs.addTab(self.scratch_widget, 'Scratch')

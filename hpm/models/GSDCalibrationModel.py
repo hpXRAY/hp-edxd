@@ -27,11 +27,11 @@ from pyFAI.massif import Massif
 from pyFAI.blob_detection import BlobDetection
 from .calibrant import Calibrant
 from scipy.optimize import curve_fit
-
+from utilities.HelperModule import get_partial_index
 
 from .. import calibrants_path
 
-class GSDCalibrationModel(QtCore.QObject):  # 
+class GSD2thetaCalibrationModel(QtCore.QObject):  # 
     def __init__(self,  *args, **filekw):
         
         """
@@ -54,6 +54,9 @@ class GSDCalibrationModel(QtCore.QObject):  #
                              'wavelength': 0.4e-10}
 
         self.calibrated_d_spacings = {}
+        self.flat_E = np.zeros(4000//self.bin)
+        self.fixed_xrd_points = {}
+        self.fixed_xrf_points = [68.792]
 
     def set_data(self, E_scale, data):
         self.data_raw = data
@@ -71,6 +74,11 @@ class GSDCalibrationModel(QtCore.QObject):  #
         self.clear_peaks()
         
         self.setup_peak_search_algorithm('Massif')
+
+        self.E = (np.linspace(0,3999,reshaped_E_arr.shape[1]) + self.E_scale[1])*self.E_scale[0]
+
+        
+        self.flat_E = reshaped_E_arr.sum(axis=0)
 
     def flip_img_vertically(self):
         data = np.flipud(self.data_raw)
@@ -246,37 +254,14 @@ class GSDCalibrationModel(QtCore.QObject):  #
 
         unique_tth = np.asarray(unique_tth)/180*np.pi
         unique_y = 191 - np.asarray(unique_y)
-        a, b, c, y_range, tth_range_estimate = fit_and_evaluate_polynomial( unique_y,unique_tth, 191)
-        guess_tth = np.mean(tth_range_estimate)
+        '''a, b, c, y_range, tth_range_estimate = fit_and_evaluate_polynomial( unique_y,unique_tth, 191)
+        guess_tth = np.mean(tth_range_estimate)'''
         poni_y, poni_angle, distance,tilt, y_range, tth_range = fit_poni_relationship(unique_y,unique_tth,191)
         tth_range=  np.flip(tth_range) *180/np.pi
 
         self.tth_calibrated = tth_range
 
-    def get_simulated_lines(self,tth_range):
-        tth_range = self.tth_calibrated
-        cal_ds = np.asarray(self.calibrant.get_dSpacing())
-        segments_x = []
-        segments_y = []
-        calibrated_d_spacings = {}
-        for i in range(min(10, len(cal_ds))):
-            x = np.empty_like(tth_range)
-            y = np.empty_like(tth_range)
-            for j, tth in enumerate(tth_range):
-                
-                    q = d_to_q(cal_ds[i])
-                    e = q_to_E(q, tth)
-                    if e <= 100 and e > 0:
-                        y[j] = j
-                        x[j] = e
-                    else:
-                        y[j] = np.nan
-                        x[j] = np.nan
-            segments_x.append(x)
-            segments_y.append(y)
-            calibrated_d_spacings[cal_ds[i]]=[x,y]
-        self.calibrated_d_spacings = calibrated_d_spacings
-        return segments_x, segments_y
+   
 
     def refine_2theta_calibration(self, ):
         bin = self.bin
@@ -325,14 +310,88 @@ class GSDCalibrationModel(QtCore.QObject):  #
             segments_y.append(ys)
             segments_d.append(d_array)
 
+        
         x = np.concatenate(segments_x)* self.bin
         e = self.convert_point_channel_to_E(x)
         y = np.concatenate(segments_y)
         d = np.concatenate(segments_d)
 
+        self.fixed_xrd_points = {}
+        self.fixed_xrd_points['x'] = x
+        self.fixed_xrd_points['e'] = e
+        self.fixed_xrd_points['y'] = y
+        self.fixed_xrd_points['d'] = d
        
         
         self._calibrate_2theta(e,y,d)
+
+
+    def refine_e(self):
+
+        fixed_point_E = self.fixed_xrf_points[0] 
+        E = self.E
+        flat_E = self.flat_E
+        fixed_peak_partial_index = get_partial_index(E,fixed_point_E)
+        fixed_peak_index = int(fixed_peak_partial_index)
+        low_bound = fixed_peak_index - 8
+        up_bound = fixed_peak_index + 8
+        roi = flat_E[low_bound:up_bound]
+        center = find_peak_center(roi,1) + low_bound
+        offset = fixed_peak_partial_index-center
+        dE = self.E[fixed_peak_index+1]-self.E[fixed_peak_index]
+        offset_E = offset*dE
+ 
+        xrd_points = self.fixed_xrd_points
+
+        e = xrd_points['e']
+        d = xrd_points['d']
+        y = xrd_points['y']
+
+        tths = []
+        tth = 2.0 * np.arcsin(12.398 / (2.0*e*d))*180./np.pi
+
+        unique_y = sorted(list(set(list(y))))
+        unique_tth = []
+        for u_y in unique_y:
+            u_tth = np.mean(tth[y==u_y])
+            unique_tth.append(u_tth)
+
+        unique_tth = np.asarray(unique_tth)/180*np.pi
+        unique_y = 191 - np.asarray(unique_y)
+     
+        poni_y, poni_angle, distance,tilt, y_range, tth_range, m, b \
+            = fit_poni_relationship(unique_y,unique_tth,191, refine_E = True,\
+                fixed_E=fixed_point_E, offset_at_fixed_E=offset_E)
+        tth_range=  np.flip(tth_range) *180/np.pi
+
+        self.tth_calibrated = tth_range
+
+
+
+    def get_simulated_lines(self,tth_range):
+        tth_range = self.tth_calibrated
+        cal_ds = np.asarray(self.calibrant.get_dSpacing())
+        segments_x = []
+        segments_y = []
+        calibrated_d_spacings = {}
+        for i in range(min(10, len(cal_ds))):
+            x = np.empty_like(tth_range)
+            y = np.empty_like(tth_range)
+            for j, tth in enumerate(tth_range):
+                
+                    q = d_to_q(cal_ds[i])
+                    e = q_to_E(q, tth)
+                    if e <= 100 and e > 0:
+                        y[j] = j
+                        x[j] = e
+                    else:
+                        y[j] = np.nan
+                        x[j] = np.nan
+            segments_x.append(x)
+            segments_y.append(y)
+            calibrated_d_spacings[cal_ds[i]]=[x,y]
+        self.calibrated_d_spacings = calibrated_d_spacings
+        return segments_x, segments_y
 
 class NotEnoughSpacingsInCalibrant(Exception):
     pass
@@ -341,6 +400,20 @@ class DummyStdOut(object):
     @classmethod
     def write(cls, *args, **kwargs):
         pass
+
+
+def e_correction(fixed_E, offset_at_fixed_E, e, m):
+    '''
+    Defines a E scale correction function that will have a fixed offset at a given E 
+    
+    '''
+    fixed_E = 68.219
+    offset_at_fixed_E = 0.8593
+    m = 0.045
+    e_c = e*m - m* fixed_E + offset_at_fixed_E
+
+    y = e+e_c
+    return y
 
 def second_order_polynomial(x, a, b, c):
     return a * x**2 + b * x + c
@@ -397,10 +470,10 @@ def poni_with_tilt( poni_x, poni_angle, x, tilt, distance):
     return result 
 
 
-def third_order_polynomial(x, a, b, c, d):
-    return a * x**2 + b * x + c + d * x**3
+'''def third_order_polynomial(x, a, b, c, d):
+    return a * x**2 + b * x + c + d * x**3'''
 
-def fit_and_evaluate_polynomial(x_data, y_data, x_max):
+'''def fit_and_evaluate_polynomial(x_data, y_data, x_max):
     popt, _ = curve_fit(second_order_polynomial, x_data, y_data)
 
     # Extract the coefficients
@@ -412,9 +485,11 @@ def fit_and_evaluate_polynomial(x_data, y_data, x_max):
     # Calculate the corresponding y values using the polynomial
     y_range = second_order_polynomial(x_range, a, b, c)
 
-    return a, b, c, x_range, y_range 
+    return a, b, c, x_range, y_range '''
 
-def fit_poni_relationship(x, tth, x_max=191):
+def fit_poni_relationship(x, tth, x_max=191, refine_E = False, fixed_E=0, offset_at_fixed_E=0):
+    m = 1
+    b = 0
     det_size = 50 #mm
     num_elements = 192
 
@@ -452,8 +527,10 @@ def fit_poni_relationship(x, tth, x_max=191):
     plt.grid(True)
     plt.show()'''
 
-
-    return poni_x_0, poni_angle * 180 / np.pi, distance, tilt, x_range, y_range
+    if not refine_E:
+        return poni_x_0, poni_angle * 180 / np.pi, distance, tilt, x_range, y_range
+    else:
+        return poni_x_0, poni_angle * 180 / np.pi, distance, tilt, x_range, y_range, m, b 
 
 
 def find_peak_center(data, num_points=2):

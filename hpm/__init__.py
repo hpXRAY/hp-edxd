@@ -101,6 +101,8 @@ def main():
     controller.file_save_controller.openFile(filename=multi_element)
     #controller.file_save_controller.openFolder(foldername=multi_spectra4)
     controller.load_calibration(filename=multi_element_calibration)
+    controller.multiple_datasets_controller.set_unit('E')
+    controller.multiple_datasets_controller.cal_gsd_2theta_btn_callback()
     #controller.element_number_cmb_currentIndexChanged_callback(1)
     
     #controller.file_save_controller.openFolder(foldername=multi_spectra2)
