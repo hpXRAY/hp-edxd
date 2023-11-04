@@ -127,16 +127,22 @@ class GSDCalibrationController(QtCore.QObject):
                 self.widget.peak_num_sb.setValue(peak_ind + 1)
 
     def calibrate_btn_callback(self):
+        # calibrate based on user picked points
         self.model.do_2theta_calibration()  
         tth = self.model.tth_calibrated 
         segments_x, segments_y = self.model.get_simulated_lines(tth)
         self.widget.plot_lines(segments_x, segments_y)
 
     def refine_btn_callback(self):
+        # calibrate based on automatically found points after the initial calibration
         self.model.refine_2theta_calibration()  
         tth = self.model.tth_calibrated 
         segments_x, segments_y = self.model.get_simulated_lines(tth)
         self.widget.plot_lines(segments_x, segments_y)
+
+    def refine_energy(self):
+        # TODO implement refining energy calibration based on XRD peaks
+        pass
 
     def cal_gsd_add_pt_btn_callback(self): 
    

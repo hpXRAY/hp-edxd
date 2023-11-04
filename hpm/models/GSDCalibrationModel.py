@@ -283,7 +283,7 @@ class GSDCalibrationModel(QtCore.QObject):  #
         segments_x = []
         segments_y = []
         segments_d = []
-        segments_channel = []
+       
         d_spacings = list(self.calibrated_d_spacings.keys())
         skip_ranges = self.convert_point_E_to_channel(np.asarray([66,70,77,81,15,76]))
         mask = np.zeros(self.data_raw.shape[1])
@@ -291,8 +291,10 @@ class GSDCalibrationModel(QtCore.QObject):  #
         mask[int(skip_ranges[2]):int(skip_ranges[3])] = 1
         mask[:int(skip_ranges[4])] = 1
         mask[int(skip_ranges[5]):] = 1
+        
+        d_spacings_for_refinement = d_spacings[:4]
 
-        for i, d in enumerate(d_spacings[:4]):
+        for i, d in enumerate(d_spacings_for_refinement):
             
             energy, y = self.calibrated_d_spacings[d]
             
