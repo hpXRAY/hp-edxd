@@ -219,14 +219,23 @@ class GSDCalibrationModel(QtCore.QObject):  #
     def do_2theta_calibration(self):
         points = self.get_point_array()
         cal_ds = np.asarray(self.calibrant.get_dSpacing())
-        tths = []
+        
         y, x_binned, ind = zip(*points)
         x = np.array(x_binned)* self.bin 
-        e = self.convert_point_channel_to_E(x)
+        
         y = np.array(y)
         ind = np.array(ind, dtype=int)
         
         d = cal_ds[ind]
+        e = self.convert_point_channel_to_E(x)
+        self._calibrate_2theta(e,y,d)
+
+    def _calibrate_2theta(self, e, y, d):
+
+
+        tths = []
+
+        
         tth = 2.0 * np.arcsin(12.398 / (2.0*e*d))*180./np.pi
 
         unique_y = sorted(list(set(list(y))))
@@ -243,7 +252,10 @@ class GSDCalibrationModel(QtCore.QObject):  #
         tth_range=  np.flip(tth_range) *180/np.pi
 
         self.tth_calibrated = tth_range
-        
+
+    def get_simulated_lines(self,tth_range):
+        tth_range = self.tth_calibrated
+        cal_ds = np.asarray(self.calibrant.get_dSpacing())
         segments_x = []
         segments_y = []
         calibrated_d_spacings = {}
@@ -268,7 +280,7 @@ class GSDCalibrationModel(QtCore.QObject):  #
 
     def refine_2theta_calibration(self, ):
         bin = self.bin
-        segments_e = []
+        segments_x = []
         segments_y = []
         segments_d = []
         segments_channel = []
@@ -280,37 +292,45 @@ class GSDCalibrationModel(QtCore.QObject):  #
         mask[:int(skip_ranges[4])] = 1
         mask[int(skip_ranges[5]):] = 1
 
-        for i, d in enumerate(d_spacings[:9]):
+        for i, d in enumerate(d_spacings[:4]):
             
             energy, y = self.calibrated_d_spacings[d]
             
             channels = self.convert_point_E_to_channel(energy)
-            centers = np.zeros(len(channels))
-            for c, channel in enumerate(channels):
-                ch_low_bound = int(channel - bin* 10)
-                ch_high_bound = int(channel + bin* 10)
-                skip = mask[ch_low_bound:ch_high_bound].any()==1 
-                if not skip:
-                    roi_start = int(channel//bin-12)
-                    roi_end = int(channel//bin+12)
-                    roi = self.data[c, roi_start:roi_end]
-                    roi_center = find_peak_center(roi)
-                    if not np.isnan(roi_center):
-                        center = roi_center + roi_start
-                        centers[c] = center
-
-            plt.plot(centers)
+            ys = []
+            centers = []
+            for y, channel in enumerate(channels):
+                if not np.isnan(channel):
+                    ch_low_bound = int(channel - bin* 10)
+                    ch_high_bound = int(channel + bin* 10)
+                    skip = mask[ch_low_bound:ch_high_bound].any()==1 
+                    if not skip:
+                        roi_start = int(channel//bin-12)
+                        roi_end = int(channel//bin+12)
+                        roi = self.data[y, roi_start:roi_end]
+                        roi_center = find_peak_center(roi)
+                        if not np.isnan(roi_center):
+                            center = roi_center + roi_start
+                            centers.append(center)
+                            ys.append(y)
             
-            plt.xlabel('channel in roi')
-            plt.ylabel('counts')
-            plt.title('counts vs. channel')
+            centers = np.asarray(centers)
+            ys = np.asarray(ys)
+            d_array = np.zeros_like(ys)+ d
+        
             
-            segments_channel.append(centers)
-            segments_y.append(y)
-            d_array = np.zeros_like(energy)+ d
+            segments_x.append(centers)
+            segments_y.append(ys)
             segments_d.append(d_array)
-        plt.show()
-        return segments_e, segments_y
+
+        x = np.concatenate(segments_x)* self.bin
+        e = self.convert_point_channel_to_E(x)
+        y = np.concatenate(segments_y)
+        d = np.concatenate(segments_d)
+
+       
+        
+        self._calibrate_2theta(e,y,d)
 
 class NotEnoughSpacingsInCalibrant(Exception):
     pass
