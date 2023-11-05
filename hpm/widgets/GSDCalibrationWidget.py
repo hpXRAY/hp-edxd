@@ -511,19 +511,19 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         current_translate = self.current_scale['scale'][1]
         current_scale = self.current_scale['scale'][0]
 
-        if label != current_label:
-            inverse_translate = -1*current_translate
-            inverse_scale =  1/current_scale
-            self.img.scale(  inverse_scale, 1)
-            self.img.translate(inverse_translate, 0)
-            
-            self.img.translate(scale[1], 0)
-            self.img.scale(scale[0], 1)
-            
-            self.current_scale['label'] = label
-            self.current_scale['scale'] = scale
-            
-            self.p1.setLabel(axis='bottom', text=label)
+        
+        inverse_translate = -1*current_translate
+        inverse_scale =  1/current_scale
+        self.img.scale(  inverse_scale, 1)
+        self.img.translate(inverse_translate, 0)
+        
+        self.img.translate(scale[1], 0)
+        self.img.scale(scale[0], 1)
+        
+        self.current_scale['label'] = label
+        self.current_scale['scale'] = scale
+        
+        self.p1.setLabel(axis='bottom', text=label)
 
 
     def set_image_row_scale(self, row_label, row_scale):

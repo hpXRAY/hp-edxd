@@ -359,8 +359,9 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
                 poni_x,e_translate,e_scale, fixed_E, offset_at_fixed_E, self.poni_angle/180*np.pi, self.distance)
         
 
-        self.m = m
+        self.E_correction = [m, offset_E, offset_at_fixed_E]
 
+        
 
 
     def get_simulated_lines(self,tth_range):

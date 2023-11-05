@@ -23,6 +23,7 @@ import numpy as np
 import utilities.CARSMath as CARSMath
 
 
+
 def fit_energies(roi, degree, calibration):
     """ Private method """
     

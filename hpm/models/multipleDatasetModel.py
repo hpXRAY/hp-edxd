@@ -33,7 +33,7 @@ from .mcaComponents import McaROI
 import hpm.models.Xrf as Xrf
 
 from hpm.models.MaskModel import MaskModel
-from hpm.models.GSDCalibrationModel import GSD2thetaCalibrationModel
+from hpm.models.GSDCalibrationModel import GSD2thetaCalibrationModel, e_correction
 
 class MultipleSpectraModel(QtCore.QObject):  # 
     def __init__(self,  *args, **filekw):
@@ -401,6 +401,22 @@ class MultipleSpectraModel(QtCore.QObject):  #
                 roi.energy = energies[i]
             fit_energies(rois, order,cal)
 
+    def correct_calibration_all_elements(self, E_correction):
+        calibration = self.mca.get_calibration()
+        for det in range(self.mca.n_detectors):
+            cal = calibration[det]
+            translate = cal.offset 
+            scale = cal.slope
+            m = E_correction[0]
+            fixed_E = E_correction[1]
+            offset_at_fixed_E = E_correction[2]
+
+            new_scale = scale + m * scale
+           
+            new_translate = translate + translate * m - m * fixed_E  -offset_at_fixed_E
+
+            cal.offset = new_translate
+            cal.slope = new_scale
 
     def add_new_alignment_roi(self, center):
         new_roi = [int(center-150), int(center+150)]

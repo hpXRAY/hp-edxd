@@ -24,7 +24,7 @@ from .. import calibrants_path
 
 from ..widgets.GSDCalibrationWidget import GSDCalibrationWidget
 from ..widgets.UtilityWidgets import open_file_dialog
-from ..models.GSDCalibrationModel import GSD2thetaCalibrationModel, NotEnoughSpacingsInCalibrant
+from ..models.GSDCalibrationModel import GSD2thetaCalibrationModel, NotEnoughSpacingsInCalibrant, e_correction
 
 
 class GSDCalibrationController(QtCore.QObject):
@@ -149,8 +149,19 @@ class GSDCalibrationController(QtCore.QObject):
     def refine_energy(self):
         # TODO implement refining energy calibration based on XRD peaks
         self.model.refine_e()
-
-
+        e_correction = self.model.E_correction
+        scale = self.widget.current_scale['scale'][0]
+        translate = self.widget.current_scale['scale'][1]
+        m = e_correction[0]
+        fixed_E = e_correction[1]
+        offset_at_fixed_E = e_correction[2]
+        new_scale = scale + scale * m
+        new_translate = translate + translate * m - m * fixed_E + offset_at_fixed_E
+        
+        New_scale = [new_scale, new_translate]
+        self.model. set_data(New_scale, self.model.data_raw)
+        self.widget.set_image_scale('E',New_scale)
+        self.widget.set_spectral_data(self.model.data_raw)
 
     def cal_gsd_add_pt_btn_callback(self): 
    

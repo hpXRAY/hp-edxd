@@ -16,6 +16,7 @@
 
 from cmath import isnan
 from functools import partial
+from this import d
 from tkinter import filedialog
 #from platform import java_ver
 import pyqtgraph as pg
@@ -110,6 +111,7 @@ class MultipleDatasetsController(QObject):
 
         self.widget.cal_gsd_2theta_btn.clicked.connect(self.cal_gsd_2theta_btn_callback)
         self.widget.cal_gsd_2theta_upd_btn.clicked.connect(self.cal_gsd_2theta_upd_btn_callback)
+        self.widget.cal_gsd_E_upd_btn.clicked.connect(self.cal_gsd_E_upd_btn_callback)
         
 
     def set_mca(self, mca, element=0):
@@ -131,6 +133,11 @@ class MultipleDatasetsController(QObject):
             cal.two_theta = tth_calibration[i]
             cal.set_dx_type('edx')
         self.update_view_after_calibration_change()
+
+    def cal_gsd_E_upd_btn_callback(self):
+        e_correction = self.gsd_calibration_controller.model.E_correction
+        self.multi_spectra_model.correct_calibration_all_elements(e_correction)
+        self.multispectra_loaded()
 
     def set_channel_cursor(self, cursor):
         if len(cursor):
