@@ -349,17 +349,17 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
 
         index = y * 4096 + x
         poni_x = 96
-        e_translate = self.E_scale[1]
-        e_scale = self.E_scale[0]
+        
+        e_scale = dE
         fixed_E = fixed_point_E
-        offset_at_fixed_E = offset_E
+        channel_of_fixed_E = center
      
         poni_angle,m, distance \
             = fit_poni_and_E (index, d, \
-                poni_x,e_translate,e_scale, fixed_E, offset_at_fixed_E, self.poni_angle/180*np.pi, self.distance)
+                poni_x,dE, fixed_E, channel_of_fixed_E, self.poni_angle/180*np.pi, self.distance)
         
 
-        self.E_correction = [m, offset_E, offset_at_fixed_E]
+        self.E_correction = [m, channel_of_fixed_E, fixed_E]
 
         
 
@@ -397,6 +397,14 @@ class DummyStdOut(object):
     def write(cls, *args, **kwargs):
         pass
 
+def linear_function(slope, x1, y1):
+    # Calculate the y-intercept (b) using the given point (x1, y1)
+    b = y1 - slope * x1
+
+    # Define the linear function as a lambda function
+    f = lambda x: slope * x + b
+
+    return f
 
 def e_correction(fixed_E, offset_at_fixed_E, e, m):
     '''
@@ -448,13 +456,21 @@ def poni_2theta_relationship_fixed_poni_x(poni_x, x, poni_angle, distance):
     tth = result
     return tth
 
-def poni_and_E_correction(poni_x,e_translate,e_scale, fixed_E, offset_at_fixed_E, index, poni_angle, m,distance):
+def poni_and_E_correction(poni_x, fixed_E, channel_of_fixed_E, index, poni_angle, m,distance):
 
     x =  191 - index // 4096 # strip #
-    channel = index % 4096
-    # output d spacing
-    e_0 = channel  * e_scale + e_translate
-    e = e_correction(fixed_E, offset_at_fixed_E,e_0,-1*m)
+    channel = index % 4096 // 8
+    
+
+    e_function = linear_function(m,  channel_of_fixed_E, fixed_E)
+    e = e_function(channel)
+
+    '''
+    # just to check the correctness of the linear_function
+    channels = np.linspace(0,511,512)
+    es = e_function(channels)
+    p_ind = get_partial_index(es,fixed_E)
+    '''
 
     if np.array_equal(x, poni_x):
         result = poni_angle
@@ -541,15 +557,15 @@ def fit_poni_relationship(x, tth, x_max=191):
 
     return poni_x_0, poni_angle * 180 / np.pi, distance, tilt, x_range, y_range
 
-def fit_poni_and_E(index, d, poni_x,e_translate,e_scale, fixed_E, offset_at_fixed_E, poni_angle, distance):
-    m = 0.1
+def fit_poni_and_E(index, d, poni_x,e_scale, fixed_E, channel_of_fixed_E, poni_angle, distance):
+    
     b = 0
     det_size = 50 #mm
     num_elements = 192
 
 
     
-    popt, _ = curve_fit( partial(poni_and_E_correction,poni_x,e_translate,e_scale, fixed_E, offset_at_fixed_E), index, d, p0= [poni_angle, m, distance])
+    popt, _ = curve_fit( partial(poni_and_E_correction,poni_x, fixed_E, channel_of_fixed_E), index, d, p0= [poni_angle, e_scale, distance])
 
     # Extract the coefficients
     poni_angle,m, distance = popt

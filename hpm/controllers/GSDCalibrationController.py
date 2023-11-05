@@ -150,13 +150,14 @@ class GSDCalibrationController(QtCore.QObject):
         # TODO implement refining energy calibration based on XRD peaks
         self.model.refine_e()
         e_correction = self.model.E_correction
+
         scale = self.widget.current_scale['scale'][0]
         translate = self.widget.current_scale['scale'][1]
         m = e_correction[0]
-        fixed_E = e_correction[1]
-        offset_at_fixed_E = e_correction[2]
-        new_scale = scale + scale * m
-        new_translate = translate + translate * m - m * fixed_E + offset_at_fixed_E
+        channel_of_fixed_E = e_correction[1]
+        fixed_E = e_correction[2]
+        new_scale = m/8
+        new_translate = fixed_E - (m) * channel_of_fixed_E
         
         New_scale = [new_scale, new_translate]
         self.model. set_data(New_scale, self.model.data_raw)
