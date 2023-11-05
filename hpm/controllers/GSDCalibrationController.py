@@ -123,7 +123,7 @@ class GSDCalibrationController(QtCore.QObject):
         if self.widget.automatic_peak_search_rb.isChecked():
             points = self.model.find_peaks_automatic(y, x, peak_ind - 1)
         else:
-            search_size = np.int(self.widget.search_size_sb.value())
+            search_size = int(self.widget.search_size_sb.value())
             points = self.model.find_peak(y, x, search_size, peak_ind - 1)
         if len(points):
             

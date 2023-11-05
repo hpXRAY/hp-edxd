@@ -19,7 +19,7 @@
 
 
 
-import numpy as Numeric
+import numpy as np
 import utilities.CARSMath as CARSMath
 
 
@@ -41,9 +41,9 @@ def fit_energies(roi, degree, calibration):
         message='Must have at least three valid points for quadratic calibration'
         print(message)
         return
-    chan=Numeric.zeros(nuse, Numeric.float)
-    energy=Numeric.zeros(nuse, Numeric.float)
-    weights=Numeric.ones(nuse, Numeric.float)
+    chan=np.zeros(nuse)
+    energy=np.zeros(nuse)
+    weights=np.ones(nuse)
     for i in range(nuse):
         chan[i] = roi[use[i]].centroid
         energy[i] = roi[use[i]].energy

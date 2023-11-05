@@ -118,7 +118,7 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
 
         y_data = np.array(y_data)
         x_max = self.data.shape[0]
-        a, b, c, y_range, x_range = fit_and_evaluate_polynomial(y_data, x_data, x_max)
+        #a, b, c, y_range, x_range = fit_and_evaluate_polynomial(y_data, x_data, x_max)
 
         return x_data, y_data
 
@@ -256,7 +256,7 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
         unique_y = 191 - np.asarray(unique_y)
         '''a, b, c, y_range, tth_range_estimate = fit_and_evaluate_polynomial( unique_y,unique_tth, 191)
         guess_tth = np.mean(tth_range_estimate)'''
-        poni_y, poni_angle, distance,tilt, y_range, tth_range = fit_poni_relationship(unique_y,unique_tth,191)
+        poni_y, self.poni_angle, self.distance,self.tilt, y_range, tth_range = fit_poni_relationship(unique_y,unique_tth,191)
         tth_range=  np.flip(tth_range) *180/np.pi
 
         self.tth_calibrated = tth_range
@@ -343,28 +343,23 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
  
         xrd_points = self.fixed_xrd_points
 
-        e = xrd_points['e']
+        x = xrd_points['x']
         d = xrd_points['d']
         y = xrd_points['y']
 
-        tths = []
-        tth = 2.0 * np.arcsin(12.398 / (2.0*e*d))*180./np.pi
-
-        unique_y = sorted(list(set(list(y))))
-        unique_tth = []
-        for u_y in unique_y:
-            u_tth = np.mean(tth[y==u_y])
-            unique_tth.append(u_tth)
-
-        unique_tth = np.asarray(unique_tth)/180*np.pi
-        unique_y = 191 - np.asarray(unique_y)
+        index = y * 4096 + x
+        poni_x = 96
+        e_translate = self.E_scale[1]
+        e_scale = self.E_scale[0]
+        fixed_E = fixed_point_E
+        offset_at_fixed_E = offset_E
      
-        poni_y, poni_angle, distance,tilt, y_range, tth_range, m, b \
-            = fit_poni_relationship(unique_y,unique_tth,191, refine_E = True,\
-                fixed_E=fixed_point_E, offset_at_fixed_E=offset_E)
-        tth_range=  np.flip(tth_range) *180/np.pi
+        poni_angle,m, distance \
+            = fit_poni_and_E (index, d, \
+                poni_x,e_translate,e_scale, fixed_E, offset_at_fixed_E, self.poni_angle/180*np.pi, self.distance)
+        
 
-        self.tth_calibrated = tth_range
+        self.m = m
 
 
 
@@ -407,9 +402,8 @@ def e_correction(fixed_E, offset_at_fixed_E, e, m):
     Defines a E scale correction function that will have a fixed offset at a given E 
     
     '''
-    fixed_E = 68.219
-    offset_at_fixed_E = 0.8593
-    m = 0.045
+    
+    
     e_c = e*m - m* fixed_E + offset_at_fixed_E
 
     y = e+e_c
@@ -450,7 +444,34 @@ def poni_2theta_relationship_fixed_poni_x(poni_x, x, poni_angle, distance):
         result[x < poni_x] = poni_angle - np.arctan((poni_x - x[x < poni_x]) / distance)
         result[x > poni_x] = poni_angle + np.arctan((x[x > poni_x] - poni_x) / distance)
     
-    return result
+    tth = result
+    return tth
+
+def poni_and_E_correction(poni_x,e_translate,e_scale, fixed_E, offset_at_fixed_E, index, poni_angle, m,distance):
+
+    x =  191 - index // 4096 # strip #
+    channel = index % 4096
+    # output d spacing
+    e_0 = channel  * e_scale + e_translate
+    e = e_correction(fixed_E, offset_at_fixed_E,e_0,-1*m)
+
+    if np.array_equal(x, poni_x):
+        result = poni_angle
+    elif np.all(x < poni_x):
+        result =  poni_angle - np.arctan((poni_x - x) / distance)
+    elif np.all(x > poni_x):
+        result =  poni_angle + np.arctan((x - poni_x) / distance)
+    else:
+        # Handle the case where x contains a mix of values less and greater than poni_x
+        result = np.empty_like(x, dtype=float)
+        result[x == poni_x] = poni_angle
+        result[x < poni_x] = poni_angle - np.arctan((poni_x - x[x < poni_x]) / distance)
+        result[x > poni_x] = poni_angle + np.arctan((x[x > poni_x] - poni_x) / distance)
+    
+    tth = result*180/np.pi
+    wavelength_angstroms = 12.3984 / e 
+    d = tth_to_d (tth, wavelength_angstroms)
+    return d
 
 def poni_with_tilt( poni_x, poni_angle, x, tilt, distance): 
 
@@ -473,7 +494,7 @@ def poni_with_tilt( poni_x, poni_angle, x, tilt, distance):
 '''def third_order_polynomial(x, a, b, c, d):
     return a * x**2 + b * x + c + d * x**3'''
 
-'''def fit_and_evaluate_polynomial(x_data, y_data, x_max):
+def fit_and_evaluate_polynomial(x_data, y_data, x_max):
     popt, _ = curve_fit(second_order_polynomial, x_data, y_data)
 
     # Extract the coefficients
@@ -485,9 +506,9 @@ def poni_with_tilt( poni_x, poni_angle, x, tilt, distance):
     # Calculate the corresponding y values using the polynomial
     y_range = second_order_polynomial(x_range, a, b, c)
 
-    return a, b, c, x_range, y_range '''
+    return a, b, c, x_range, y_range 
 
-def fit_poni_relationship(x, tth, x_max=191, refine_E = False, fixed_E=0, offset_at_fixed_E=0):
+def fit_poni_relationship(x, tth, x_max=191):
     m = 1
     b = 0
     det_size = 50 #mm
@@ -513,25 +534,29 @@ def fit_poni_relationship(x, tth, x_max=191, refine_E = False, fixed_E=0, offset
     # Define the range for x values
     x_range = np.arange(0, int(x_max) + 1, 1)
 
-    # Calculate the corresponding y values using the polynomial
+    
     y_range = poni_with_tilt(poni_x_0, poni_angle,  x_range, tilt, distance)
     y_range_0_tilt = poni_with_tilt(poni_x_0, poni_angle, x_range, 0, distance)
 
-    '''# Plot the results
-    plt.plot(x_range, y_range *180 /np.pi, c='blue')
-    plt.plot(x_range, y_range_0_tilt *180 /np.pi, c='orange')
-    plt.scatter(x, tth *180 /np.pi, c='red', marker='o', s=20, label='Data Points')
-    plt.xlabel('x')
-    plt.ylabel('Angle (radians)')
-    plt.title('Angle vs. x')
-    plt.grid(True)
-    plt.show()'''
+    return poni_x_0, poni_angle * 180 / np.pi, distance, tilt, x_range, y_range
 
-    if not refine_E:
-        return poni_x_0, poni_angle * 180 / np.pi, distance, tilt, x_range, y_range
-    else:
-        return poni_x_0, poni_angle * 180 / np.pi, distance, tilt, x_range, y_range, m, b 
+def fit_poni_and_E(index, d, poni_x,e_translate,e_scale, fixed_E, offset_at_fixed_E, poni_angle, distance):
+    m = 0.1
+    b = 0
+    det_size = 50 #mm
+    num_elements = 192
 
+
+    
+    popt, _ = curve_fit( partial(poni_and_E_correction,poni_x,e_translate,e_scale, fixed_E, offset_at_fixed_E), index, d, p0= [poni_angle, m, distance])
+
+    # Extract the coefficients
+    poni_angle,m, distance = popt
+  
+
+
+    return poni_angle,m, distance
+   
 
 def find_peak_center(data, num_points=2):
     n = len(data)

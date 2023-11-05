@@ -26,7 +26,7 @@ def q_to_d(q):
 
 def tth_to_d(tth,wavelength):
     
-    d = wavelength/(2.0 * sin(tth * 0.008726646259972))
+    d = wavelength/(2.0 * np.sin(tth * 0.008726646259972))
     return d
 
 def tth_to_q(tth,wavelength):

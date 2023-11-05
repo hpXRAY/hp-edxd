@@ -26,7 +26,7 @@ Created:        Sept. 18, 2002
 Modifications:
     Oct. 14, 2018   Ross Hrubiak
         - re-done Python 3
-        - computational routines changed from Numeric to numpy
+        - computational routines changed from np to numpy
         - GUI re-written, changed from tkinter and Pmw to pyqt5
         - plotting library changed from BltPlot to pyqtgraph
         - changes to MCA calibration model: channel_to_energy, etc. moved to the mcaCalibration class
@@ -38,7 +38,7 @@ from PyQt5 import QtCore, QtWidgets
 import pyqtgraph as pg
 
 import copy
-import numpy as Numeric
+import numpy as np
 import hpm.models.Xrf as Xrf
 import utilities.CARSMath as CARSMath
 import functools
@@ -120,7 +120,7 @@ class mcaCalibrateEnergy(QtWidgets.QWidget):
             
             return
         
-        self.fwhm_chan = Numeric.zeros(self.nrois, Numeric.float)
+        self.fwhm_chan = np.zeros(self.nrois)
         self.widgets = mcaCalibrateEnergy_widgets(self.nrois)
         
         # Compute the centroid and FWHM of each ROI
@@ -139,13 +139,13 @@ class mcaCalibrateEnergy(QtWidgets.QWidget):
             right = self.roi[i].right+1
             total_counts = self.data[left:right]
             n_sel        = right - left
-            sel_chans    = left + Numeric.arange(n_sel)
+            sel_chans    = left + np.arange(n_sel)
             left_counts  = self.data[left]
             right_counts = self.data[right]
-            bgd_counts   = (left_counts + Numeric.arange(float(n_sel))/(n_sel-1) *
+            bgd_counts   = (left_counts + np.arange(float(n_sel))/(n_sel-1) *
                                         (right_counts - left_counts))
             net_counts   = total_counts - bgd_counts
-            net          = Numeric.sum(net_counts)
+            net          = np.sum(net_counts)
     
             if ((net > 0.) and (n_sel >= 3)):
                 amplitude, centroid, fwhm = CARSMath.fit_gaussian(sel_chans, net_counts)
@@ -433,7 +433,7 @@ class mcaCalibrateEnergy(QtWidgets.QWidget):
             self.add_row(i+nrois)
         self.nrois = self.nrois + len(rois)
 
-        self.fwhm_chan = Numeric.zeros(self.nrois, Numeric.float)
+        self.fwhm_chan = np.zeros(self.nrois)
         self.compute_centroids()
 
     def menu_plot_calibration(self):
