@@ -611,6 +611,12 @@ class GSDCalibrationWidget(QtWidgets.QWidget):
         # Add the line to the PlotItem
         self.view.addItem(self.lines)
 
+        # Create a PlotDataItem for the lines
+        self.xrf_line = pg.InfiniteLine(movable=False, pen=pg.mkPen(color=(0, 0, 255), width=2 , style=QtCore.Qt.DashLine))
+
+        # Add the line to the PlotItem
+        self.view.addItem(self.xrf_line)
+
         # Contrast/color control
         self.hist = pg.HistogramLUTItem()
         self.hist.setImageItem(self.img)

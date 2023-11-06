@@ -17,8 +17,9 @@
 import numpy as np
 #from mcaModel import McaROI
 import utilities.CARSMath as CARSMath
+from hpm.models.mcaComponents import McaROI
 
-def computeCentroid(data, roi, return_fit=0):    
+def computeCentroid(data, roi:McaROI, return_fit=0):    
     # Compute the centroid and FWHM of each ROI
     roi.fit_ok = False
     left = int(roi.left)
@@ -32,9 +33,9 @@ def computeCentroid(data, roi, return_fit=0):
     right_counts = data[right]
     ave_counts = (left_counts+right_counts)/2
 
-    '''bgd_counts   = (left_counts + np.arange(float(n_sel))/(n_sel-1) *
-                                (right_counts - left_counts))'''
-    net_counts   = total_counts - ave_counts
+    bgd_counts   = (left_counts + np.arange(float(n_sel))/(n_sel-1) *
+                                (right_counts - left_counts))
+    net_counts   = total_counts - bgd_counts
     net          = np.sum(net_counts)
 
     if ((net > 0.) and (n_sel >= 3)):

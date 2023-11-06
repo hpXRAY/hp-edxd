@@ -81,10 +81,15 @@ class GSDCalibrationController(QtCore.QObject):
         self.widget.refine_btn.clicked.connect(self.refine_btn_callback)
         self.widget.refine_e_btn.clicked.connect(self.refine_energy)
 
-        self.widget.plotMouseCursorSignal.connect(self.search_peaks)
+        self.widget.plotMouseCursorSignal.connect(self.cursor_moved_callback)
+
+        xrf_point = self.model.fixed_xrf_points[0]
+        self.widget.plot_flat.win.set_cursorFast_pos(xrf_point)
+        self.widget.xrf_line.setPos(xrf_point)
 
     def set_2D_data(self, E_scale, data):
-        self.model.set_data(E_scale, data)
+        self.model.set_data(data)
+        self.model.set_e_scale(E_scale)
         self.widget.set_image_scale('E',E_scale)
         display_data = self.model.data_raw
         self.widget.set_spectral_data(display_data)
@@ -94,7 +99,16 @@ class GSDCalibrationController(QtCore.QObject):
         flat_E = self.model.flat_E
         self.widget.plot_flat.win.plotData(x, flat_E)
 
+
         
+    def cursor_moved_callback(self, cursor):
+        pick_peaks = self.widget.calibration_control_widget.calibration_parameters_widget.peak_selection_gb.pick_peaks_cb.isChecked()
+        if pick_peaks:
+            self.search_peaks(cursor)
+        else:
+            x, y = cursor[0] ,cursor[1] 
+            self.widget.plot_flat.set_cursor(y)
+            self.widget.set_cursor_pos(x, y)
 
     def search_peaks(self, cursor):
         """
@@ -105,6 +119,7 @@ class GSDCalibrationController(QtCore.QObject):
         :param y:
             y-Position for the search
         """
+        
         x, y = cursor[0] ,cursor[1] 
         x, y = y, x  # indeces for the img array are transposed compared to the mouse position
 
@@ -152,15 +167,28 @@ class GSDCalibrationController(QtCore.QObject):
 
     def refine_energy(self):
         # TODO implement refining energy calibration based on XRD peaks
-        self.model.refine_e()
-        e_corrected= self.model.E_scale_corrected
+        self.model.refine_e_simple()
         
-       
-        self.model. set_data(e_corrected, self.model.data_raw)
-        self.widget.set_image_scale('E',e_corrected)
-        self.widget.set_spectral_data(self.model.data_raw)
+        
 
-        self.scale_correction_signal.emit(self.model.E_scale_corrected)
+        #self.model. set_e_scale(e_corrected)
+
+        x = self.model.E
+        flat_E = self.model.flat_E
+        self.widget.plot_flat.win.plotData(x, flat_E)
+
+        self.widget.set_image_scale('E',self.model.E_scale)
+        self.widget.set_spectral_data(self.model.data_raw)
+        self.widget.lines.clear()
+        self.clear_peaks_btn_click()
+
+        '''#self.widget.set_spectral_data(self.model.data_raw)
+        tth = self.model.tth_calibrated
+        segments_x, segments_y = self.model.get_simulated_lines(tth)
+        self.widget.plot_lines(segments_x, segments_y)'''
+        
+
+        self.scale_correction_signal.emit(self.model.E_scale)
 
     def cal_gsd_add_pt_btn_callback(self): 
    
@@ -169,8 +197,8 @@ class GSDCalibrationController(QtCore.QObject):
         y = cursor_pt[1]
         x_range, y_range = self.model.add_point(x,y)
         
-        x_range = (x_range[::8] )
-        y_range= y_range[::8]+0.5
+        x_range = (x_range[::self.model.bin] )
+        y_range= y_range[::self.model.bin]+0.5
         self.widget.p_scatter.setData(x_range,y_range)
         
 

@@ -27,8 +27,10 @@ from pyFAI.massif import Massif
 from pyFAI.blob_detection import BlobDetection
 from .calibrant import Calibrant
 from scipy.optimize import curve_fit
-from utilities.HelperModule import get_partial_index
-
+from utilities.HelperModule import get_partial_index, get_partial_value
+from .mcaComponents import McaROI
+import utilities.centroid as centroid
+import utilities.CARSMath as CARSMath
 from .. import calibrants_path
 
 class GSD2thetaCalibrationModel(QtCore.QObject):  # 
@@ -41,7 +43,7 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
             m = MultipleSpectraModel()
         """
         self.data_raw = None
-        self.bin = 8
+        self.bin = 1
         self.data = None
         self.E_scale = None
         self.tth_calibrated = np.zeros(192)+15
@@ -54,16 +56,16 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
                              'wavelength': 0.4e-10}
 
         self.calibrated_d_spacings = {}
-        self.flat_E = np.zeros(4000//self.bin)
+        self.flat_E = np.zeros(4096)
         self.fixed_xrd_points = {}
         self.fixed_xrf_points = [68.792]
 
-    def set_data(self, E_scale, data):
+    def set_data(self,  data):
         self.data_raw = data
         flat_raw = data.sum(axis=0)/192
         flat_raw[flat_raw< 1 ]= 1
         self.data_normalized_display= data/flat_raw
-        self.E_scale = E_scale
+        
         n = data.shape[0]
         m = data.shape[1]
         # Calculate the number of new columns
@@ -71,11 +73,14 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
         new_m = m // bin
         # Reshape and sum every 20 columns
         reshaped_E_arr = data.reshape(n, new_m, bin).sum(axis=2)
-        self.clear_peaks()
-        self.E = np.linspace(0,4095,reshaped_E_arr.shape[1]) *self.E_scale[0] + self.E_scale[1]
-        self.flat_E = reshaped_E_arr.sum(axis=0)
         self.data = reshaped_E_arr 
+        self.clear_peaks()
         self.setup_peak_search_algorithm('Massif')
+
+    def set_e_scale(self, e_scale):
+        self.E_scale = e_scale
+        self.E = np.linspace(0,4095,self.data_raw.shape[1]) *self.E_scale[0] + self.E_scale[1]
+        self.flat_E = self.data_raw.sum(axis=0)
 
     def flip_img_vertically(self):
         data = np.flipud(self.data_raw)
@@ -322,6 +327,25 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
         
         self._calibrate_2theta(e,y,d)
 
+    def refine_e_simple(self):
+    
+
+        fixed_point_E = self.fixed_xrf_points[0] 
+        E = self.E
+        flat_E = self.flat_E
+        fixed_peak_partial_index = get_partial_index(E,fixed_point_E)
+        fixed_peak_index = int(fixed_peak_partial_index)
+        low_bound = fixed_peak_index - 32
+        up_bound = fixed_peak_index + 32
+        
+        roi = McaROI(low_bound,up_bound)
+
+        [roi, fwhm_chan] = centroid.computeCentroid(flat_E, roi, 1)
+        center = roi.centroid / self.bin
+        get_current_E_value = get_partial_value(E,center)
+        scale_diff = fixed_point_E - get_current_E_value
+        self.E_scale[1] = self.E_scale[1] + scale_diff
+        self.set_e_scale(self.E_scale)
 
     def refine_e(self):
 
@@ -330,10 +354,24 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
         flat_E = self.flat_E
         fixed_peak_partial_index = get_partial_index(E,fixed_point_E)
         fixed_peak_index = int(fixed_peak_partial_index)
-        low_bound = fixed_peak_index - 5
-        up_bound = fixed_peak_index + 5
-        roi = flat_E[low_bound:up_bound]
-        center = find_peak_center(roi,1) + low_bound
+        low_bound = fixed_peak_index - 32
+        up_bound = fixed_peak_index + 32
+        
+        roi = McaROI(low_bound,up_bound)
+
+        [roi, fwhm_chan] = centroid.computeCentroid(flat_E, roi, 1)
+        center = roi.centroid / self.bin
+        get_current_E_value = get_partial_value(E,center)
+        scale_diff = fixed_point_E/ get_current_E_value
+        self.E_scale[0] = self.E_scale * scale_diff
+        roi_data = roi.counts
+        roi_data_x = roi.channels
+        roi_yFit = roi.yFit
+        roi_x_yfit= roi.x_yfit
+        '''plt.plot(roi_data_x,roi_data)
+        plt.plot(roi_x_yfit, roi_yFit)
+        plt.show()'''
+
    
         dE = self.E[fixed_peak_index+1]-self.E[fixed_peak_index]
 
@@ -349,61 +387,47 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
       
         fixed_E = fixed_point_E
         channel_of_fixed_E = center
-     
+        tilt = self.tilt
+        bins = self.bin
         poni_angle,m, distance \
-            = fit_poni_and_E (index, d, \
+            = fit_poni_and_E (bins, index, d, \
                 poni_x,dE, fixed_E, channel_of_fixed_E, self.poni_angle/180*np.pi, self.distance)
         
-        new_scale = m/8
+        new_scale = m/self.bin
         new_translate = fixed_E - (m) * channel_of_fixed_E
 
         # calculate the d with the refined parameters
-        d_measured = poni_and_E_correction(96,fixed_E,channel_of_fixed_E,index, poni_angle,m, distance)
-        tth_ideal = poni_2theta_relationship(191-y,96,poni_angle, distance)/np.pi*180
+        d_measured = poni_and_E_correction(bins,96,fixed_E,channel_of_fixed_E,index, poni_angle,m, distance )
 
+       
+        tth_ideal = poni_2theta_relationship(191-y,96,poni_angle, distance)
 
         
         row_e_shift = {}
-    
-        for i, ind in enumerate(index):
-
-            row =  y[i]
-            channel = x[i]
-            
-            tth_i = tth_ideal[i]
-            
-            d_i = d[i]
-            d_m = d_measured[i]
-            e_i = 12.398 / (2.0 * np.sin(tth_i /180* np.pi) * d_i)
-            e_m = 12.398 / (2.0 * np.sin(tth_i /180* np.pi) * d_m)
-
-            e_shift = e_i - e_m
-            if not row in row_e_shift:
-                row_e_shift[row]= []
-            row_e_shift[row].append(e_shift)
-        
-        shift_averages = []
-        for row in row_e_shift:
-            shifts = row_e_shift[row]
-            shifts_sum = sum(shifts)
-            shifts_n = len(shifts)
-            if shifts_n:
-                shift_average = shifts_sum/shifts_n
-            else:
-                shift_average = 0
-            shift_averages.append(shift_average)
-        shifts_averages = np.asarray(shift_averages)
-        
-        self.E_scale_corrected = [new_scale, new_translate, shifts_averages]
-
         y_range = np.linspace(0,191,192)
+       
         tth_range = poni_2theta_relationship(191-y_range,96,poni_angle, distance)/np.pi*180
-        self.tth_calibrated = tth_range
-        #plt.plot(y_range, shifts_averages)
-        #plt.show()
+  
+        calibrations = []
+        '''for row in range(192):
+
+            channels = x[y == row]    
+            tth_i= poni_2theta_relationship(191-row,96,poni_angle, distance)
+            d_i = d[y==row]
+            e_i = 12.398 / ( np.sin(tth_i/2 ) * 2*d_i)
+            weights=np.ones(len(e_i))
+            coeffs = CARSMath.polyfitw(channels, e_i, weights, 1)
+            offset = coeffs[0]
+            slope = coeffs[1]
+            calibrations.append([slope,offset])'''
+        
+        
+        self.E_scale_corrected = [new_scale, new_translate, calibrations]
 
         
-
+        self.tth_calibrated = tth_range
+        self.poni_angle = poni_angle/np.pi*180
+        
 
     def get_simulated_lines(self,tth_range):
         tth_range = self.tth_calibrated
@@ -487,10 +511,10 @@ def poni_2theta_relationship_fixed_poni_x(poni_x, x, poni_angle, distance):
     tth = result
     return tth
 
-def poni_and_E_correction(poni_x, fixed_E, channel_of_fixed_E, index, poni_angle, m,distance):
+def poni_and_E_correction(bins, poni_x, fixed_E, channel_of_fixed_E, index, poni_angle, m,distance):
 
     x =  191 - index // 4096 # strip #
-    channel = index % 4096 // 8
+    channel = index % 4096 // bins
     
 
     e_function = linear_function(m,  channel_of_fixed_E, fixed_E)
@@ -588,7 +612,7 @@ def fit_poni_relationship(x, tth, x_max=191):
 
     return poni_x_0, poni_angle * 180 / np.pi, distance, tilt, x_range, y_range
 
-def fit_poni_and_E(index, d, poni_x,e_scale, fixed_E, channel_of_fixed_E, poni_angle, distance):
+def fit_poni_and_E(bins, index, d, poni_x,e_scale, fixed_E, channel_of_fixed_E, poni_angle, distance):
     
     b = 0
     det_size = 50 #mm
@@ -596,10 +620,12 @@ def fit_poni_and_E(index, d, poni_x,e_scale, fixed_E, channel_of_fixed_E, poni_a
 
 
     
-    popt, _ = curve_fit( partial(poni_and_E_correction,poni_x, fixed_E, channel_of_fixed_E), index, d, p0= [poni_angle, e_scale, distance])
+    popt, _ = curve_fit( partial(poni_and_E_correction,bins, poni_x, fixed_E, channel_of_fixed_E), index, d, p0= [poni_angle, e_scale, distance])
 
     # Extract the coefficients
     poni_angle,m, distance = popt
+    print('fit_poni_and_E')
+    print( ' distance ', distance, ' poni_angle ', poni_angle * 180 / np.pi, ' m ',  m)
   
 
 

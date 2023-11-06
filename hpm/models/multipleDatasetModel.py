@@ -409,7 +409,7 @@ class MultipleSpectraModel(QtCore.QObject):  #
         new_scale = E_corrected[0]
         new_translate = E_corrected[1]
 
-        row_shifts = E_corrected[2]
+        #row_shifts = E_corrected[2]
 
         diff_scale = new_scale/c_scale
         diff_translate = new_translate-c_translate
@@ -422,7 +422,7 @@ class MultipleSpectraModel(QtCore.QObject):  #
             new_scale = scale * diff_scale
             new_translate = translate + diff_translate
 
-            additional_shift = row_shifts[det]
+            #additional_shift = row_shifts[det]
             cal.offset = new_translate #+ additional_shift
             cal.slope = new_scale
 
