@@ -25,7 +25,7 @@ from utilities.HelperModule import get_partial_index
 
 from ..widgets.GSDCalibrationWidget import GSDCalibrationWidget
 from ..widgets.UtilityWidgets import open_file_dialog
-from ..models.GSDCalibrationModel import GSD2thetaCalibrationModel, NotEnoughSpacingsInCalibrant, e_correction
+from ..models.GSDCalibrationModel import GSD2thetaCalibrationModel, NotEnoughSpacingsInCalibrant
 
 
 class GSDCalibrationController(QtCore.QObject):
@@ -160,7 +160,7 @@ class GSDCalibrationController(QtCore.QObject):
         self.widget.set_image_scale('E',e_corrected)
         self.widget.set_spectral_data(self.model.data_raw)
 
-        self.scale_correction_signal.emit(e_corrected)
+        self.scale_correction_signal.emit(self.model.E_scale_corrected)
 
     def cal_gsd_add_pt_btn_callback(self): 
    

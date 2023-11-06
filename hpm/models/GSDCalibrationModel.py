@@ -334,21 +334,19 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
         up_bound = fixed_peak_index + 5
         roi = flat_E[low_bound:up_bound]
         center = find_peak_center(roi,1) + low_bound
-        center_full_bins = center*8
-        offset = fixed_peak_partial_index-center
+   
         dE = self.E[fixed_peak_index+1]-self.E[fixed_peak_index]
-        offset_E = offset*dE
- 
+
         xrd_points = self.fixed_xrd_points
 
         x = xrd_points['x']
         d = xrd_points['d']
         y = xrd_points['y']
+        e = xrd_points['e']
 
         index = y * 4096 + x
         poni_x = 96
-        
-        e_scale = dE
+      
         fixed_E = fixed_point_E
         channel_of_fixed_E = center
      
@@ -359,11 +357,50 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
         new_scale = m/8
         new_translate = fixed_E - (m) * channel_of_fixed_E
 
-        bins = np.linspace(0,4095, 4096)
-        e = bins* new_scale+ new_translate
-        ind = get_partial_index(e,self.fixed_xrf_points[0] )
+        # calculate the d with the refined parameters
+        d_measured = poni_and_E_correction(96,fixed_E,channel_of_fixed_E,index, poni_angle,m, distance)
+        tth_ideal = poni_2theta_relationship(191-y,96,poni_angle, distance)/np.pi*180
+
+
         
-        self.E_scale_corrected = [new_scale, new_translate]
+        row_e_shift = {}
+    
+        for i, ind in enumerate(index):
+
+            row =  y[i]
+            channel = x[i]
+            
+            tth_i = tth_ideal[i]
+            
+            d_i = d[i]
+            d_m = d_measured[i]
+            e_i = 12.398 / (2.0 * np.sin(tth_i /180* np.pi) * d_i)
+            e_m = 12.398 / (2.0 * np.sin(tth_i /180* np.pi) * d_m)
+
+            e_shift = e_i - e_m
+            if not row in row_e_shift:
+                row_e_shift[row]= []
+            row_e_shift[row].append(e_shift)
+        
+        shift_averages = []
+        for row in row_e_shift:
+            shifts = row_e_shift[row]
+            shifts_sum = sum(shifts)
+            shifts_n = len(shifts)
+            if shifts_n:
+                shift_average = shifts_sum/shifts_n
+            else:
+                shift_average = 0
+            shift_averages.append(shift_average)
+        shifts_averages = np.asarray(shift_averages)
+        
+        self.E_scale_corrected = [new_scale, new_translate, shifts_averages]
+
+        y_range = np.linspace(0,191,192)
+        tth_range = poni_2theta_relationship(191-y_range,96,poni_angle, distance)/np.pi*180
+        self.tth_calibrated = tth_range
+        #plt.plot(y_range, shifts_averages)
+        #plt.show()
 
         
 
@@ -410,17 +447,7 @@ def linear_function(slope, x1, y1):
 
     return f
 
-def e_correction(fixed_E, offset_at_fixed_E, e, m):
-    '''
-    Defines a E scale correction function that will have a fixed offset at a given E 
-    
-    '''
-    
-    
-    e_c = e*m - m* fixed_E + offset_at_fixed_E
 
-    y = e+e_c
-    return y
 
 def second_order_polynomial(x, a, b, c):
     return a * x**2 + b * x + c
