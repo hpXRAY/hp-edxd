@@ -111,7 +111,9 @@ class MultipleDatasetsController(QObject):
 
         self.widget.cal_gsd_2theta_btn.clicked.connect(self.cal_gsd_2theta_btn_callback)
         self.widget.cal_gsd_2theta_upd_btn.clicked.connect(self.cal_gsd_2theta_upd_btn_callback)
-        self.widget.cal_gsd_E_upd_btn.clicked.connect(self.cal_gsd_E_upd_btn_callback)
+      
+
+        self.gsd_calibration_controller.scale_correction_signal.connect(self.cal_gsd_E_upd_btn_callback)
         
 
     def set_mca(self, mca, element=0):
@@ -134,10 +136,10 @@ class MultipleDatasetsController(QObject):
             cal.set_dx_type('edx')
         self.update_view_after_calibration_change()
 
-    def cal_gsd_E_upd_btn_callback(self):
-        e_correction = self.gsd_calibration_controller.model.E_correction
-        self.multi_spectra_model.correct_calibration_all_elements(e_correction)
-        self.multispectra_loaded()
+    def cal_gsd_E_upd_btn_callback(self, e_corrected):
+       
+        self.multi_spectra_model.correct_calibration_all_elements(e_corrected)
+        self.set_mca(self.multi_spectra_model.mca)
 
     def set_channel_cursor(self, cursor):
         if len(cursor):
@@ -221,6 +223,8 @@ class MultipleDatasetsController(QObject):
             self.file_changed(index) # in case the mca in multifile
             
             self.widget.select_value(pos)
+            self.gsd_calibration_controller.widget.select_value(pos)
+            self.gsd_calibration_controller.widget.plot_flat.set_cursor(pos)
             self.set_channel(index, pos)
             files_loaded = self.multi_spectra_model.mca.files_loaded
             if index < len(files_loaded):
@@ -447,7 +451,7 @@ class MultipleDatasetsController(QObject):
         self.add_rois_signal.emit(all_new_rois)
 
     def calibrate_all_elements(self):
-        self.multi_spectra_model.calibrate_all_elements(1)
+        self.multi_spectra_model.calibrate_all_elements(2)
         self.update_view_after_calibration_change()
 
     def update_view_after_calibration_change(self):

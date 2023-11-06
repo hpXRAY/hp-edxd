@@ -401,19 +401,23 @@ class MultipleSpectraModel(QtCore.QObject):  #
                 roi.energy = energies[i]
             fit_energies(rois, order,cal)
 
-    def correct_calibration_all_elements(self, E_correction):
+    def correct_calibration_all_elements(self, E_corrected):
         calibration = self.mca.get_calibration()
+        current_E_scale = self.E_scale
+        c_scale = current_E_scale[0]
+        c_translate = current_E_scale[1]
+        new_scale = E_corrected[0]
+        new_translate = E_corrected[1]
+        diff_scale = new_scale/c_scale
+        diff_translate = new_translate-c_translate
+        self.E_scale = [new_scale,new_translate]
         for det in range(self.mca.n_detectors):
             cal = calibration[det]
             translate = cal.offset 
             scale = cal.slope
-            m = E_correction[0]
-            fixed_E = E_correction[1]
-            offset_at_fixed_E = E_correction[2]
-
-            new_scale = scale + m * scale
-           
-            new_translate = translate + translate * m - m * fixed_E  -offset_at_fixed_E
+            
+            new_scale = scale * diff_scale
+            new_translate = translate + diff_translate
 
             cal.offset = new_translate
             cal.slope = new_scale

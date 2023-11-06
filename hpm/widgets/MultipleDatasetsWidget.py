@@ -27,6 +27,7 @@ from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, Verti
 from hpm.widgets.PltWidget import PltWidget
 from hpm.widgets.MaskWidget import MaskWidget
 from hpm.widgets.plot_widgets import ImgWidget2
+from utilities.HelperModule import get_partial_index
 
 class MultiSpectraWidget(QtWidgets.QWidget):
 
@@ -101,9 +102,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self.cal_gsd_2theta_upd_btn.setMaximumWidth(90)
         self.cal_gsd_2theta_upd_btn.setMinimumWidth(90)
 
-        self.cal_gsd_E_upd_btn = FlatButton('GSD E update')
-        self.cal_gsd_E_upd_btn.setMaximumWidth(90)
-        self.cal_gsd_E_upd_btn.setMinimumWidth(90)
+
 
         #self._button_layout.addWidget(self.refresh_folder_btn)
         self._button_layout.addSpacerItem(HorizontalSpacerItem())
@@ -117,7 +116,6 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self._button_layout.addWidget(self.cal_btn)
         self._button_layout.addWidget(self.cal_gsd_2theta_btn)
         self._button_layout.addWidget(self.cal_gsd_2theta_upd_btn)
-        self._button_layout.addWidget(self.cal_gsd_E_upd_btn)
 
         
         self.button_widget.setLayout(self._button_layout)
@@ -379,7 +377,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         current_translate = self.current_scale['scale'][1]
         current_scale = self.current_scale['scale'][0]
 
-        if label != current_label:
+        if current_translate != scale[1] or current_scale != scale[0] or current_label != label:
             inverse_translate = -1*current_translate
             inverse_scale =  1/current_scale
             self.img.scale(inverse_scale, 1)
@@ -387,6 +385,10 @@ class MultiSpectraWidget(QtWidgets.QWidget):
             
             self.img.translate(scale[1], 0)
             self.img.scale(scale[0], 1)
+
+            bins = np.linspace(0,4095, 4096)
+            e = bins* scale[0]+ scale[1]
+            ind = get_partial_index(e,68.792)
             
             self.current_scale['label'] = label
             self.current_scale['scale'] = scale
@@ -400,7 +402,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         current_row_translate = self.current_row_scale['scale'][1]
         current_row_scale = self.current_row_scale['scale'][0]
 
-        if row_label != current_row_label:
+        if current_row_translate != row_scale[1] or current_row_scale != row_scale[0] or current_row_label != row_label:
             inverse_row_translate = -1*current_row_translate
             inverse_row_scale =  1/current_row_scale
             

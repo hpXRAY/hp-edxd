@@ -75,7 +75,7 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
         
         self.setup_peak_search_algorithm('Massif')
 
-        self.E = (np.linspace(0,3999,reshaped_E_arr.shape[1]) + self.E_scale[1])*self.E_scale[0]
+        self.E = np.linspace(0,4095,reshaped_E_arr.shape[1]) *self.E_scale[0] + self.E_scale[1]
 
         
         self.flat_E = reshaped_E_arr.sum(axis=0)
@@ -333,10 +333,11 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
         flat_E = self.flat_E
         fixed_peak_partial_index = get_partial_index(E,fixed_point_E)
         fixed_peak_index = int(fixed_peak_partial_index)
-        low_bound = fixed_peak_index - 8
-        up_bound = fixed_peak_index + 8
+        low_bound = fixed_peak_index - 5
+        up_bound = fixed_peak_index + 5
         roi = flat_E[low_bound:up_bound]
         center = find_peak_center(roi,1) + low_bound
+        center_full_bins = center*8
         offset = fixed_peak_partial_index-center
         dE = self.E[fixed_peak_index+1]-self.E[fixed_peak_index]
         offset_E = offset*dE
@@ -358,8 +359,14 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
             = fit_poni_and_E (index, d, \
                 poni_x,dE, fixed_E, channel_of_fixed_E, self.poni_angle/180*np.pi, self.distance)
         
+        new_scale = m/8
+        new_translate = fixed_E - (m) * channel_of_fixed_E
 
-        self.E_correction = [m, channel_of_fixed_E, fixed_E]
+        bins = np.linspace(0,4095, 4096)
+        e = bins* new_scale+ new_translate
+        ind = get_partial_index(e,self.fixed_xrf_points[0] )
+        
+        self.E_scale_corrected = [new_scale, new_translate]
 
         
 
@@ -615,4 +622,4 @@ def find_peak_center(data, num_points=2):
         center_of_mass = np.sum(x_tight * data_squared) / np.sum(data_squared)
         return center_of_mass #, fwhm_points, x_tight, data_adjusted_tight
     else:
-        return np.nan
+        return fwhm_center

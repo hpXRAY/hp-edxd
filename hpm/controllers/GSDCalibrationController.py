@@ -14,13 +14,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+from signal import signal
 from PyQt5 import QtWidgets, QtCore
 
 import numpy as np
 
 from ..widgets.UtilityWidgets import open_file_dialog, save_file_dialog
 from .. import calibrants_path
-
+from utilities.HelperModule import get_partial_index
 
 from ..widgets.GSDCalibrationWidget import GSDCalibrationWidget
 from ..widgets.UtilityWidgets import open_file_dialog
@@ -31,6 +32,7 @@ class GSDCalibrationController(QtCore.QObject):
     """
     CalibrationController handles all the interaction between the CalibrationView and the CalibrationData class
     """
+    scale_correction_signal = QtCore.pyqtSignal(list)
 
     def __init__(self):
         """Manages the connection between the calibration GUI and data
@@ -86,9 +88,10 @@ class GSDCalibrationController(QtCore.QObject):
         self.widget.set_image_scale('E',E_scale)
         self.widget.set_spectral_data(data)
 
-        E = self.model.E
+        
+        x = self.model.E
         flat_E = self.model.flat_E
-        self.widget.plot_flat.win.plotData(E, flat_E)
+        self.widget.plot_flat.win.plotData(x, flat_E)
 
         
 
@@ -149,20 +152,14 @@ class GSDCalibrationController(QtCore.QObject):
     def refine_energy(self):
         # TODO implement refining energy calibration based on XRD peaks
         self.model.refine_e()
-        e_correction = self.model.E_correction
-
-        scale = self.widget.current_scale['scale'][0]
-        translate = self.widget.current_scale['scale'][1]
-        m = e_correction[0]
-        channel_of_fixed_E = e_correction[1]
-        fixed_E = e_correction[2]
-        new_scale = m/8
-        new_translate = fixed_E - (m) * channel_of_fixed_E
+        e_corrected= self.model.E_scale_corrected
         
-        New_scale = [new_scale, new_translate]
-        self.model. set_data(New_scale, self.model.data_raw)
-        self.widget.set_image_scale('E',New_scale)
+       
+        self.model. set_data(e_corrected, self.model.data_raw)
+        self.widget.set_image_scale('E',e_corrected)
         self.widget.set_spectral_data(self.model.data_raw)
+
+        self.scale_correction_signal.emit(e_corrected)
 
     def cal_gsd_add_pt_btn_callback(self): 
    
