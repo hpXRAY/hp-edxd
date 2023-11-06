@@ -86,7 +86,8 @@ class GSDCalibrationController(QtCore.QObject):
     def set_2D_data(self, E_scale, data):
         self.model.set_data(E_scale, data)
         self.widget.set_image_scale('E',E_scale)
-        self.widget.set_spectral_data(data)
+        display_data = self.model.data_raw
+        self.widget.set_spectral_data(display_data)
 
         
         x = self.model.E

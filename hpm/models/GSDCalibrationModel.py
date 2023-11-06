@@ -60,25 +60,22 @@ class GSD2thetaCalibrationModel(QtCore.QObject):  #
 
     def set_data(self, E_scale, data):
         self.data_raw = data
+        flat_raw = data.sum(axis=0)/192
+        flat_raw[flat_raw< 1 ]= 1
+        self.data_normalized_display= data/flat_raw
         self.E_scale = E_scale
         n = data.shape[0]
         m = data.shape[1]
         # Calculate the number of new columns
         bin = self.bin
         new_m = m // bin
-
         # Reshape and sum every 20 columns
         reshaped_E_arr = data.reshape(n, new_m, bin).sum(axis=2)
-        self.data = reshaped_E_arr
-
         self.clear_peaks()
-        
-        self.setup_peak_search_algorithm('Massif')
-
         self.E = np.linspace(0,4095,reshaped_E_arr.shape[1]) *self.E_scale[0] + self.E_scale[1]
-
-        
         self.flat_E = reshaped_E_arr.sum(axis=0)
+        self.data = reshaped_E_arr 
+        self.setup_peak_search_algorithm('Massif')
 
     def flip_img_vertically(self):
         data = np.flipud(self.data_raw)
