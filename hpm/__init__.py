@@ -89,8 +89,8 @@ def main():
     #mask_path =  os.path.normpath( os.path.join(resources_path,'my.mask'))
     #multi_element =  os.path.normpath( os.path.join(resources_path,'basalt_xrf.002'))
     
-    multi_element_calibration =  os.path.normpath( os.path.join(desktop,'dt/GSD/ECAL/20221203_Cd109-Co57_5400sec_gain100kev_summed.hpmca'))
-    multi_element = os.path.normpath( os.path.join(desktop, 'dt/GSD/sio2/20221204_Au_60sec_filter-glassy-C_beam-0p05x0p05_angle-2_003.dat.hpmca'))
+    multi_element_calibration =  os.path.normpath( os.path.join('/Users/hrubiak/Library/CloudStorage/Box-Box/0 File pass','dt/GSD/ECAL/20221203_Cd109-Co57_5400sec_gain100kev_summed.hpmca'))
+    multi_element = os.path.normpath( os.path.join('/Users/hrubiak/Library/CloudStorage/Box-Box/0 File pass', 'dt/GSD/sio2/20221204_Au_60sec_filter-glassy-C_beam-0p05x0p05_angle-2_003.dat.hpmca'))
     #multi_element =  os.path.normpath( os.path.join(resources_path,'20221116_test_010.hpmca'))
     #pattern = os.path.join(resources_path,'LaB6_40keV_MarCCD.chi')
     #jcpds = os.path.join(resources_path,'LaB6.jcpds')
