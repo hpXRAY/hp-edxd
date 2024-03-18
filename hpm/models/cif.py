@@ -360,15 +360,18 @@ class CifPhase(object):
         self.volume = convert_cif_number_to_float(cif_dictionary['_cell_volume'])
 
         cif_keys = cif_dictionary.keys()
+        self.space_group = None
         for key in cif_keys:
             if 'space_group_name' in key:
         
                 self.space_group = cif_dictionary[key]
-   
-        else:
-            self.space_group = None
+      
 
-        self.space_group_number = cif_dictionary.get('_symmetry_Int_Tables_number')
+        if '_symmetry_Int_Tables_number' in cif_keys:
+
+            self.space_group_number = cif_dictionary.get('_symmetry_Int_Tables_number')
+        elif '_space_group_it_number' in cif_keys:
+            self.space_group_number = cif_dictionary.get('_space_group_it_number')
         if self.space_group_number is not None:
             self.space_group_number = int(self.space_group_number)
         self.symmetry = self.get_symmetry_from_space_group_number(self.space_group_number)
