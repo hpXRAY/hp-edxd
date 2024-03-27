@@ -36,7 +36,7 @@ OCT. 30, 2018 Ross Hrubiak
 from audioop import mul
 from socket import timeout
 from epics import caput, caget, PV
-from epics.utils import BYTES2STR
+#from epics.utils import BYTES2STR
 import numpy as np
 #from epics.clibs import *
 import copy
