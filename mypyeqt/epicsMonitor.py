@@ -1,7 +1,7 @@
         
 
 from epics import caput, caget, PV
-from epics.utils import BYTES2STR
+#from epics.utils import BYTES2STR
 import numpy as np
 #from epics.clibs import *
 import copy
