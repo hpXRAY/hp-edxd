@@ -248,8 +248,8 @@ class PltWidget(pg.PlotWidget):
 
         self.selectionMode = False # Selection mode used to mark histo data
         
-        self.viewBox.setMouseMode(self.viewBox.RectMode) # Set mouse mode to rect for convenient zooming
-        self.setMenuEnabled(enableMenu=False)
+        #self.viewBox.setMouseMode(self.viewBox.RectMode) # Set mouse mode to rect for convenient zooming
+        #self.setMenuEnabled(enableMenu=False)
         # cursor
         
         
