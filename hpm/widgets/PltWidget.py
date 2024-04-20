@@ -25,12 +25,12 @@ from PyQt5.QtGui import QColor, QPen, QPainter
 from utilities.HelperModule import calculate_color
 from hpm.widgets.ExLegendItem import LegendItem
 from hpm.widgets.PhasePlot import PhasePlot
-import pyqtgraph.exporters
-import unicodedata
+'''import pyqtgraph.exporters
+import unicodedata'''
 from numpy import argmax, nan
 from PyQt5 import QtWidgets
-import copy
-import numpy as np
+'''import copy
+import numpy as np'''
 
 from .. import _platform
 
@@ -137,6 +137,8 @@ class plotWindow(QtWidgets.QWidget):
 class CustomViewBox(pg.ViewBox):  
     plotMouseCursorSignal = pyqtSignal(float)
     plotMouseCursor2Signal = pyqtSignal(float)  
+    viewBoxScrollSingal = pyqtSignal(float)
+    cursor_y_signal = pyqtSignal(float)
     def __init__(self, *args, **kwds):
         super().__init__()
         
@@ -151,6 +153,7 @@ class CustomViewBox(pg.ViewBox):
         self.addItem(self.vLineFast, ignoreBounds=True)
         self.enableAutoRange(self.XYAxes, True)
         self.cursorPoint = 0
+        self.cursorPoint_y = 0
         # Enable dragging and dropping onto the GUI 
         self.setAcceptDrops(True) 
 
@@ -174,10 +177,24 @@ class CustomViewBox(pg.ViewBox):
             mousePoint = self.mapSceneToView(pos)
 
             mptx = mousePoint.x()
+            mpty = mousePoint.y()
             self.cursorPoint=mptx
+            self.cursorPoint_y = mpty
 
             self.plotMouseCursorSignal.emit(self.cursorPoint) 
         ev.accept()   
+
+    def wheelEvent(self, ev, axis=None):
+
+        '''
+        don't scroll if control key is down
+        '''
+        if ev.modifiers() == Qt.ControlModifier and self.scrollModifierEnabled:
+            delta = ev.delta() / 120
+            self.viewBoxScrollSingal.emit(float(delta))
+        else:
+            
+            return super().wheelEvent(ev, axis)
 
 class myLegendItem(LegendItem):
     def __init__(self, size=None, offset=None, horSpacing=25, verSpacing=0, box=True, labelAlignment='center', showLines=True):
