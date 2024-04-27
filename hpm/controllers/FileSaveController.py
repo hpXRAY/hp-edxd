@@ -482,7 +482,7 @@ class FileSaveController(object):
         files = natsort.natsorted(paths)
         files_filtered = []
         for f in files:
-            if f.endswith('.hpmca') or f.endswith('.chi') or f.endswith('.mca') or f.endswith('.xy') or f[-3:].isnumeric() :
+            if f.endswith('.hpmca') or f.endswith('.chi') or f.endswith('.mca') or f.endswith('.xy') or f.endswith('.nxs') or f[-3:].isnumeric() :
                 
                 
                 files_filtered.append(f)

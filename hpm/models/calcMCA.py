@@ -8,7 +8,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 from PyQt5.QtWidgets import QMessageBox
 from hpm.models.mcaModel import *
 from PyQt5 import QtCore, QtWidgets
-
+from .nxsexport_batch import read_nxs
 from .mcaModel import McaCalibration, McaElapsed, McaROI, McaEnvironment
 
 import natsort
@@ -108,7 +108,7 @@ class multiFileMCA(MCA):
             if os.path.exists(folder):
                 files = natsort.natsorted([f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f)) and not f.startswith('.')]) 
                 for f in files:
-                    if f.endswith('.hpmca') or f.endswith('.chi') or f.endswith('.mca') or f.endswith('.xy') or f[-3:].isnumeric() :
+                    if f.endswith('.hpmca') or f.endswith('.chi') or f.endswith('.mca') or f.endswith('.xy') or f.endswith('.nxs') or f[-3:].isnumeric() :
                         file = os.path.join(folder, f) 
                         paths.append(file)  
                         #files_filtered.append(f)
@@ -143,6 +143,8 @@ class multiFileMCA(MCA):
             firstfile = filenames[0]
             if firstfile.endswith('.hpmca')or firstfile[-3:].isnumeric():
                 [r, success] =self.read_ascii_files_2d(filenames, progress_dialog=progress_dialog)
+            if firstfile.endswith('.nxs'):
+                [r, success] =self.read_nxs_files_2d(filenames, progress_dialog=progress_dialog)
             elif firstfile.endswith('.chi') or firstfile.endswith('.xy'):
                 [r, success] = self.read_chi_files_2d(filenames, progress_dialog=progress_dialog)
                 wavelength = r['calibration'][0].wavelength
@@ -498,4 +500,89 @@ class multiFileMCA(MCA):
         return coeffs
 
 
+    def read_nxs_files_2d(self, paths, *args, **kwargs):
+        #fit2d or dioptas chi type file
+
+        if 'progress_dialog' in kwargs:
+            progress_dialog = kwargs['progress_dialog']
+        else:
+            progress_dialog = QtWidgets.QProgressDialog()
+
+        if 'wavelength' in kwargs:
+            wavelength = kwargs['wavelength']
+        else:
+            wavelength = None
+
+        '''if wavelength == None:
+            basefile=os.path.basename(paths[0])
+            wavelength = xyPatternParametersDialog.showDialog(basefile,'wavelength',.4)
+        '''
+
+        paths = paths [:self.max_spectra]
+        nfiles = len (paths)   
+
+        det_to_read = '0'
+        two_theta= [5.00588, 2.99675]
+        calibrations =          [McaCalibration(offset=9.261257763597*1e-3,
+                                                slope=40.145783749552*1e-3,
+                                                quad=-0.000002461285*1e-3, 
+                                                two_theta= two_theta[0],
+                                                units='keV',
+                                                wavelength=None),
+                                McaCalibration(offset=10.428138841333*1e-3,
+                                                slope=40.171133274681*1e-3,
+                                                quad=-0.000011833096*1e-3, 
+                                                two_theta= two_theta[0],
+                                                units='keV',
+                                                wavelength=None)]
+        first_data = read_nxs(paths[0],det_to_read)
+
+        nchans = len(first_data[0])
+        data = np.zeros([nfiles, nchans])
+        n_detectors = nfiles
+        files_loaded = []
+        times = []
+        self.nchans = nchans
+        QtWidgets.QApplication.processEvents()
+        for d, file in enumerate(paths):
+            if d % 5 == 0:
+                #update progress bar only every 5 files to save time
+                progress_dialog.setValue(d)
+                QtWidgets.QApplication.processEvents()
     
+            d_file_data = read_nxs(file,det_to_read)
+            data[d][:]=d_file_data[0][:]
+           
+            files_loaded.append(os.path.normpath(file))
+           
+            
+            if progress_dialog.wasCanceled():
+                break
+        QtWidgets.QApplication.processEvents()
+        # Built dictionary to return
+
+        calibration = []
+        elapsed = []
+        rois = []
+        environment = []
+        skiprows = 4
+        
+        for n in range(n_detectors):
+            cal = calibrations[0]
+            cal.set_dx_type('edx')
+            calibration.append(cal)
+            elapsed.append(McaElapsed())
+            rois.append([])
+        r = {}
+        r['n_detectors'] = n_detectors
+        r['calibration'] = calibration
+        r['elapsed'] = elapsed
+        r['rois'] = rois
+        r['data'] = data
+        r['environment'] = environment
+        r['wavelength'] = wavelength
+        r['dx_type'] = 'adx'
+
+        r['files_loaded'] = files_loaded
+        success = True
+        return [r, success]

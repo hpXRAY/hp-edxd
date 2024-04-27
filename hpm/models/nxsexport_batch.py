@@ -14,7 +14,7 @@ import numpy as np
 import os
 
 
-def def_read_nxs(fname, Channel='both'):
+def read_nxs(fname, Channel='both'):
 
     out = {}
 

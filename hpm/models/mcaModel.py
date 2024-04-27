@@ -690,9 +690,9 @@ class MCA():  #
                 wavelength = r['calibration'][0].wavelength
                 self.wavelength = wavelength
             elif file.endswith('.nxs'):
-                [r, success] = self.fileIO.read_chi_file(file, wavelength=self.wavelength)
-                wavelength = r['calibration'][0].wavelength
-                self.wavelength = wavelength
+                [r, success] = self.fileIO.read_nsx_file(file)
+                '''wavelength = r['calibration'][0].wavelength
+                self.wavelength = wavelength'''
             else:
                 [r, success] = self.fileIO.read_ascii_file(file)
      

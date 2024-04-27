@@ -4,7 +4,7 @@ from math import sqrt, sin, pi
 from hpm.models.mcareaderGeStrip import *
 from hpm.widgets.UtilityWidgets import xyPatternParametersDialog
 from hpm.models.mcareader import McaReader
-from hpm.models.nxs
+from hpm.models.nxsexport_batch import read_nxs
 
 import os
 
@@ -422,7 +422,7 @@ class mcaFileIO():
             r['calibration'] = [McaCalibration(offset=coeffs[0],
                                                slope=coeffs[1],
                                                quad=0, 
-                                               two_theta= np.mean(x),
+                                               two_theta= None,
                                                units='degrees',
                                                wavelength=wavelength)]
             r['calibration'][0].set_dx_type('adx')
@@ -438,22 +438,35 @@ class mcaFileIO():
 
     ######################################################################
 
-    def read_nsx_file(self, filenamem, angle=None):
-        r = {}
-        r['n_detectors'] = 1
-        r['calibration'] = [McaCalibration(offset=coeffs[0],
-                                            slope=coeffs[1],
-                                            quad=0, 
-                                            two_theta= np.mean(x),
-                                            units='degrees',
-                                            wavelength=wavelength)]
-        r['calibration'][0].set_dx_type('adx')
-        r['elapsed'] = [McaElapsed()]
-        r['rois'] = [[]]
-        r['data'] = [y]
-        r['environment'] = []
-        r['dx_type'] = 'adx'
-        return[r,True]
+    def read_nsx_file(self, filename, two_theta= [5.00588, 2.99675]):
+        ok = False
+
+        data = read_nxs(filename, 'both')
+        if len(data):
+            r = {}
+            r['n_detectors'] = 1
+            r['calibration'] = [McaCalibration(offset=9.261257763597*1e-3,
+                                                slope=40.145783749552*1e-3,
+                                                quad=-0.000002461285*1e-3, 
+                                                two_theta= two_theta[0],
+                                                units='keV',
+                                                wavelength=None),
+                                McaCalibration(offset=10.428138841333*1e-3,
+                                                slope=40.171133274681*1e-3,
+                                                quad=-0.000011833096*1e-3, 
+                                                two_theta= two_theta[0],
+                                                units='keV',
+                                                wavelength=None)]
+            r['calibration'][0].set_dx_type('edx')
+            r['calibration'][1].set_dx_type('edx')
+            r['elapsed'] = [McaElapsed(),McaElapsed()]
+            r['rois'] = [[],[]]
+            r['data'] = [data[0], data[1]]
+            r['environment'] = []
+            r['dx_type'] = 'edx'
+            ok = True
+
+        return[r,ok]
         
     #######################################################################
     def write_ascii_file(self, file, data, calibration, elapsed, presets, rois,
