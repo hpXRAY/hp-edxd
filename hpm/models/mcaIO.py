@@ -4,6 +4,7 @@ from math import sqrt, sin, pi
 from hpm.models.mcareaderGeStrip import *
 from hpm.widgets.UtilityWidgets import xyPatternParametersDialog
 from hpm.models.mcareader import McaReader
+from hpm.models.nxs
 
 import os
 
@@ -433,6 +434,26 @@ class mcaFileIO():
             return[r,True]
             
         return [None, False]
+    
+
+    ######################################################################
+
+    def read_nsx_file(self, filenamem, angle=None):
+        r = {}
+        r['n_detectors'] = 1
+        r['calibration'] = [McaCalibration(offset=coeffs[0],
+                                            slope=coeffs[1],
+                                            quad=0, 
+                                            two_theta= np.mean(x),
+                                            units='degrees',
+                                            wavelength=wavelength)]
+        r['calibration'][0].set_dx_type('adx')
+        r['elapsed'] = [McaElapsed()]
+        r['rois'] = [[]]
+        r['data'] = [y]
+        r['environment'] = []
+        r['dx_type'] = 'adx'
+        return[r,True]
         
     #######################################################################
     def write_ascii_file(self, file, data, calibration, elapsed, presets, rois,
