@@ -10,7 +10,7 @@ from hpm.models.mcaModel import *
 from PyQt5 import QtCore, QtWidgets
 from .nxsexport_batch import read_nxs
 from .mcaModel import McaCalibration, McaElapsed, McaROI, McaEnvironment
-
+from .. widgets.dialogBox import MultiChoiceDialog
 import natsort
 
 
@@ -66,7 +66,11 @@ class multiFileMCA(MCA):
 
     ########################################################################
     
-    
+    def display_multi_choice_dialog(self, choices):
+        dialog = MultiChoiceDialog(choices)
+        if dialog.exec_():
+            return dialog.choice
+        return None
     
     def read_files(self, *args, **kwargs):
         """
@@ -144,7 +148,13 @@ class multiFileMCA(MCA):
             if firstfile.endswith('.hpmca')or firstfile[-3:].isnumeric():
                 [r, success] =self.read_ascii_files_2d(filenames, progress_dialog=progress_dialog)
             if firstfile.endswith('.nxs'):
-                [r, success] =self.read_nxs_files_2d(filenames, progress_dialog=progress_dialog)
+                channel_choices = ["1", "2"]  # Example choices, you can generate these dynamically
+                response =  self.display_multi_choice_dialog(channel_choices)
+                if response is not None:
+                    [r, success] =self.read_nxs_files_2d(filenames, det_to_read = str(response), progress_dialog=progress_dialog)
+                else:
+                    print("No option chosen")
+                
             elif firstfile.endswith('.chi') or firstfile.endswith('.xy'):
                 [r, success] = self.read_chi_files_2d(filenames, progress_dialog=progress_dialog)
                 wavelength = r['calibration'][0].wavelength
@@ -499,8 +509,8 @@ class multiFileMCA(MCA):
         coeffs = CARSMath.polyfitw(chan, tth, weights, 1)
         return coeffs
 
-
-    def read_nxs_files_2d(self, paths, *args, **kwargs):
+ 
+    def read_nxs_files_2d(self, paths,det_to_read='both', *args, **kwargs):
         #fit2d or dioptas chi type file
 
         if 'progress_dialog' in kwargs:
@@ -517,11 +527,12 @@ class multiFileMCA(MCA):
             basefile=os.path.basename(paths[0])
             wavelength = xyPatternParametersDialog.showDialog(basefile,'wavelength',.4)
         '''
-
+        r = {}
+        
         paths = paths [:self.max_spectra]
         nfiles = len (paths)   
 
-        det_to_read = '0'
+         
         two_theta= [5.00588, 2.99675]
         calibrations =          [McaCalibration(offset=9.261257763597*1e-3,
                                                 slope=40.145783749552*1e-3,
@@ -536,53 +547,53 @@ class multiFileMCA(MCA):
                                                 units='keV',
                                                 wavelength=None)]
         first_data = read_nxs(paths[0],det_to_read)
-
-        nchans = len(first_data[0])
-        data = np.zeros([nfiles, nchans])
-        n_detectors = nfiles
-        files_loaded = []
-        times = []
-        self.nchans = nchans
-        QtWidgets.QApplication.processEvents()
-        for d, file in enumerate(paths):
-            if d % 5 == 0:
-                #update progress bar only every 5 files to save time
-                progress_dialog.setValue(d)
-                QtWidgets.QApplication.processEvents()
-    
-            d_file_data = read_nxs(file,det_to_read)
-            data[d][:]=d_file_data[0][:]
-           
-            files_loaded.append(os.path.normpath(file))
-           
-            
-            if progress_dialog.wasCanceled():
-                break
-        QtWidgets.QApplication.processEvents()
-        # Built dictionary to return
-
-        calibration = []
-        elapsed = []
-        rois = []
-        environment = []
-        skiprows = 4
+        if det_to_read in first_data:
+            nchans = len(first_data[det_to_read])
+            data = np.zeros([nfiles, nchans])
+            n_detectors = nfiles
+            files_loaded = []
+            times = []
+            self.nchans = nchans
+            QtWidgets.QApplication.processEvents()
+            for d, file in enumerate(paths):
+                if d % 5 == 0:
+                    #update progress bar only every 5 files to save time
+                    progress_dialog.setValue(d)
+                    QtWidgets.QApplication.processEvents()
         
-        for n in range(n_detectors):
-            cal = calibrations[0]
-            cal.set_dx_type('edx')
-            calibration.append(cal)
-            elapsed.append(McaElapsed())
-            rois.append([])
-        r = {}
-        r['n_detectors'] = n_detectors
-        r['calibration'] = calibration
-        r['elapsed'] = elapsed
-        r['rois'] = rois
-        r['data'] = data
-        r['environment'] = environment
-        r['wavelength'] = wavelength
-        r['dx_type'] = 'adx'
+                d_file_data = read_nxs(file,det_to_read)
+                data[d][:]=d_file_data[det_to_read][:]
+            
+                files_loaded.append(os.path.normpath(file))
+            
+                
+                if progress_dialog.wasCanceled():
+                    break
+            QtWidgets.QApplication.processEvents()
+            # Built dictionary to return
 
-        r['files_loaded'] = files_loaded
-        success = True
+            calibration = []
+            elapsed = []
+            rois = []
+            environment = []
+            skiprows = 4
+            
+            for n in range(n_detectors):
+                cal = calibrations[0]
+                cal.set_dx_type('edx')
+                calibration.append(cal)
+                elapsed.append(McaElapsed())
+                rois.append([])
+            
+            r['n_detectors'] = n_detectors
+            r['calibration'] = calibration
+            r['elapsed'] = elapsed
+            r['rois'] = rois
+            r['data'] = data
+            r['environment'] = environment
+            r['wavelength'] = wavelength
+            r['dx_type'] = 'adx'
+
+            r['files_loaded'] = files_loaded
+            success = True
         return [r, success]

@@ -440,10 +440,10 @@ class mcaFileIO():
 
     def read_nsx_file(self, filename, two_theta= [5.00588, 2.99675]):
         ok = False
-
+        r = {}
         data = read_nxs(filename, 'both')
         if len(data):
-            r = {}
+            
             r['n_detectors'] = 1
             r['calibration'] = [McaCalibration(offset=9.261257763597*1e-3,
                                                 slope=40.145783749552*1e-3,
@@ -461,7 +461,7 @@ class mcaFileIO():
             r['calibration'][1].set_dx_type('edx')
             r['elapsed'] = [McaElapsed(),McaElapsed()]
             r['rois'] = [[],[]]
-            r['data'] = [data[0], data[1]]
+            r['data'] = [data['1'], data['2']]
             r['environment'] = []
             r['dx_type'] = 'edx'
             ok = True

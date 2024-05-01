@@ -18,7 +18,7 @@ def read_nxs(fname, Channel='both'):
 
     out = {}
 
-    if Channel == '0':
+    if Channel == '2':
         
         f = h5py.File(fname, 'r')
         
@@ -34,7 +34,7 @@ def read_nxs(fname, Channel='both'):
         
         dset_corr2 = np.sum(dset_corr, axis = 1)
 
-        out[0] = dset_corr2
+        out['2'] = dset_corr2
             
         #num_rows = dset_corr2.shape
         #print(num_rows)
@@ -50,7 +50,7 @@ def read_nxs(fname, Channel='both'):
         
         np.savetxt(output, dset_fix, delimiter=",")'''
             
-        print("Conversion", "The nxs to csv conversion is complete")    
+        #print("Conversion", "The nxs to csv conversion is complete")    
         return out    
 
     if Channel == '1':
@@ -69,7 +69,7 @@ def read_nxs(fname, Channel='both'):
         
         dset_corr2 = np.sum(dset_corr, axis = 1)
 
-        out[1] = dset_corr2
+        out['1'] = dset_corr2
             
         #num_rows = dset_corr2.shape
         #print(num_rows)
@@ -85,7 +85,7 @@ def read_nxs(fname, Channel='both'):
         
         np.savetxt(output, dset_fix, delimiter=",")'''
 
-        print("Conversion", "The nxs to csv conversion is complete")      
+        #print("Conversion", "The nxs to csv conversion is complete")      
         return out    
             
     if Channel == 'both':
@@ -104,7 +104,7 @@ def read_nxs(fname, Channel='both'):
         dset_corr = np.delete(dset_transpose, 4095, 0)
             
         dset_corr2 = np.sum(dset_corr, axis = 1)
-        out[0] = dset_corr2
+        out['2'] = dset_corr2
                 
         #num_rows = dset_corr2.shape
         #print(num_rows)
@@ -136,7 +136,7 @@ def read_nxs(fname, Channel='both'):
         
         dset_corr2 = np.sum(dset_corr, axis = 1)
 
-        out[1] = dset_corr2
+        out['1'] = dset_corr2
             
         #num_rows = dset_corr2.shape
         #print(num_rows)
@@ -152,5 +152,5 @@ def read_nxs(fname, Channel='both'):
         
         np.savetxt(output, dset_fix, delimiter=",")'''
             
-        print("Conversion", "The nxs to csv conversion is complete")  
+        #print("Conversion", "The nxs to csv conversion is complete")  
         return out
