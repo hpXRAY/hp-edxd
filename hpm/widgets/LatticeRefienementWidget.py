@@ -20,9 +20,9 @@
 
 from functools import partial
 import numpy as Numeric
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication
+from PyQt6 import QtWidgets, QtCore
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QApplication
 
 import copy
 import functools

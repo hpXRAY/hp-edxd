@@ -27,8 +27,8 @@
 
 
 from multiangle.controllers.multiangle_controller import multiangleController
-from PyQt5.QtWidgets import QApplication
-from PyQt5 import QtCore
+from PyQt6.QtWidgets import QApplication
+from PyQt6 import QtCore
 import sys
 
 def run():

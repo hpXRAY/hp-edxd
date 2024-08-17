@@ -29,7 +29,7 @@ from hpm.widgets.RoiWidget import RoiWidget, plotFitWindow
 from hpm.widgets.LatticeRefienementWidget import LatticeRefinementWidget
 from hpm.models.mcaModel import  McaROI
 from hpm.models.LatticeRefinementModel import LatticeRefinementModel
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt6.QtCore import pyqtSignal, QObject
 
 import pyqtgraph as pg
 

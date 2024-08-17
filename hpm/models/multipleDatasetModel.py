@@ -19,7 +19,7 @@ from fileinput import filelineno
 from operator import truediv
 import numpy as np
 from scipy import interpolate
-from PyQt5 import QtCore, QtWidgets
+from PyQt6 import QtCore, QtWidgets
 #from pyqtgraph.functions import pseudoScatter
 import os
 import time

@@ -1,6 +1,6 @@
-from PyQt5.QtCore import *
-from PyQt5.QtGui import QDrag
-from PyQt5.QtWidgets import *
+from PyQt6.QtCore import *
+from PyQt6.QtGui import QDrag
+from PyQt6.QtWidgets import *
 
 
 class TreeWidget(QTreeWidget):

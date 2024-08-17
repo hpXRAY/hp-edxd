@@ -23,7 +23,7 @@ import numpy as np
 import copy
 import time
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt6 import QtCore, QtWidgets
 from mypyeqt.pvWidgets import pvQDoubleSpinBox, pvQOZButton, pvQCheckBox, \
                                 pvQMessageButton, pvQLineEdit, pvQLabel
 

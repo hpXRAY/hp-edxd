@@ -14,8 +14,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os.path, os, time
-from PyQt5 import QtWidgets, QtCore, QtGui
-from PyQt5.QtCore import Qt
+from PyQt6 import QtWidgets, QtCore, QtGui
+from PyQt6.QtCore import Qt
 from functools import partial
 import json, ast
 import copy

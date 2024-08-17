@@ -15,9 +15,9 @@
 
 
 import os.path, sys
-from PyQt5 import uic, QtWidgets,QtCore, QtGui
-from  PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
+from PyQt6 import uic, QtWidgets,QtCore, QtGui
+from  PyQt6.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel
+from PyQt6.QtCore import QObject, pyqtSignal, Qt
 import numpy as np
 from functools import partial
 import json
@@ -28,7 +28,7 @@ from hpm.widgets.PltWidget import plotWindow
 from pathlib import Path
 from utilities.HelperModule import calculate_color
 from numpy import arange
-from PyQt5.QtWidgets import QMainWindow
+from PyQt6.QtWidgets import QMainWindow
 from utilities.HelperModule import getInterpolatedCounts
 from hpm.widgets.UtilityWidgets import save_file_dialog, open_file_dialog, open_files_dialog
 from axd.models.aEDXD_model import aEDXD_model

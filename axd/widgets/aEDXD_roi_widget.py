@@ -17,7 +17,7 @@
 
 from functools import partial
 from numpy import argmax, nan
-from PyQt5 import QtWidgets, QtCore
+from PyQt6 import QtWidgets, QtCore
 import copy
 import pyqtgraph as pg
 from pyqtgraph import QtCore, mkPen, mkColor, hsvColor

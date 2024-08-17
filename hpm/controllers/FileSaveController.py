@@ -20,10 +20,10 @@
 import os
 from posixpath import basename
 from typing import TextIO
-from PyQt5.QtGui import QFontMetrics
+from PyQt6.QtGui import QFontMetrics
 import numpy as np
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import pyqtSignal, QObject, QFileSystemWatcher, QDir
+from PyQt6 import QtWidgets, QtCore
+from PyQt6.QtCore import pyqtSignal, QObject, QFileSystemWatcher, QDir
 from datetime import datetime
 import pyqtgraph as pg
 import time

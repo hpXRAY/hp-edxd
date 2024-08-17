@@ -20,7 +20,7 @@ from axd.models import aEDXD_atomic_parameters
 
 import numpy as np
 from scipy import interpolate
-from PyQt5 import QtCore, QtWidgets
+from PyQt6 import QtCore, QtWidgets
 #from pyqtgraph.functions import pseudoScatter
 import os
 import time

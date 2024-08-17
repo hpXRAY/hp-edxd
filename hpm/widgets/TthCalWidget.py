@@ -26,7 +26,7 @@ Modifications:  MLR, Sept. 20, 2002.  Numerous bug fixes.
                 Ross Hrubiak, Oct. 14, 2018  
                     - re-done for Python 3
                     - computational routines changed from Numeric, MLab to numpy
-                    - GUI re-written, changed from tkinter and Pmw to pyqt5
+                    - GUI re-written, changed from tkinter and Pmw to PyQt6
                     - plotting library changed from BltPlot to pyqtgraph
                     - changes to MCA calibration model: channel_to_energy, etc. moved to the mcaCalibration class
                     - this module now only copies the rois and the calibration objects from MCA not the entire MCA
@@ -34,7 +34,7 @@ Modifications:  MLR, Sept. 20, 2002.  Numerous bug fixes.
 """
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 
 import copy

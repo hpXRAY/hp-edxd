@@ -24,7 +24,7 @@ from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, Verti
 from hpm.widgets.UtilityWidgets import save_file_dialog, open_file_dialog, open_files_dialog
 from hpm.widgets.EvironmentWidget import EnvironmentWidget
 
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt6.QtCore import pyqtSignal, QObject
 
 class EnvironmentController(QObject):
 

@@ -1,10 +1,10 @@
 
 import json
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt6.QtCore import pyqtSignal, Qt
 
 import os
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QWidget
+from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QWidget
 
 from functools import partial
 import copy

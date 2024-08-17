@@ -4,8 +4,8 @@ sip.setapi('QString', 2)
 sip.setapi('QVariant', 2)
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QItemDelegate, QTableView
+from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtWidgets import QItemDelegate, QTableView
 
 class TableModel(QtCore.QAbstractTableModel):
     """

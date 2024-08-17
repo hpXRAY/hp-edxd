@@ -24,11 +24,11 @@ __version__ = "0.7.4"
 
 import os
 
-import PyQt5
+import PyQt6
 import pyqtgraph as pg
-from PyQt5 import QtCore
+from PyQt6 import QtCore
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 import platform
 
@@ -64,13 +64,7 @@ def make_dpi_aware():
 
 def main():
   
-    make_dpi_aware()
-    if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
-      PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
-    if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
-        PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
-    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
    
     app = QtWidgets.QApplication([])
 

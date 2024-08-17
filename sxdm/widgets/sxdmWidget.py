@@ -14,9 +14,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets
 
-from  PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel
+from  PyQt6.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel
 from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, VerticalSpacerItem, NoRectDelegate, \
     HorizontalSpacerItem, ListTableWidget, VerticalLine, DoubleMultiplySpinBoxAlignRight
 

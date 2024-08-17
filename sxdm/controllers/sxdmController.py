@@ -15,10 +15,10 @@
 
 import os.path, sys
 
-from PyQt5.QtCore import QObject
+from PyQt6.QtCore import QObject
 import numpy as np
 from functools import partial
-from PyQt5 import QtWidgets, QtCore
+from PyQt6 import QtWidgets, QtCore
 
 from sxdm.widgets.sxdmWidget import sxdmWidget
 from hpm.models.multipleDatasetModel import MultipleSpectraModel

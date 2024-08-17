@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QToolBar, QAction
+from PyQt6.QtWidgets import QApplication, QMainWindow, QToolBar, QAction
 import sys
 
 class MainWindow(QMainWindow):

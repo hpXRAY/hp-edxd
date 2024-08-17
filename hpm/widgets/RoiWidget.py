@@ -19,8 +19,8 @@
 from email.policy import strict
 from functools import partial
 from typing import List
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
-from PyQt5 import QtWidgets, QtCore
+from PyQt6.QtCore import QObject, pyqtSignal, Qt
+from PyQt6 import QtWidgets, QtCore
 import copy
 import pyqtgraph as pg
 from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, VerticalSpacerItem, NoRectDelegate, \

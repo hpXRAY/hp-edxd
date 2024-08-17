@@ -17,8 +17,8 @@
 # Copyright (C) 2018-2019 ANL, Lemont, USA
 
 from functools import partial
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
-from PyQt5 import QtWidgets, QtCore
+from PyQt6.QtCore import QObject, pyqtSignal, Qt
+from PyQt6 import QtWidgets, QtCore
 import copy
 import pyqtgraph as pg
 from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, VerticalSpacerItem, NoRectDelegate, \

@@ -29,7 +29,7 @@
 from copy import deepcopy
 
 import numpy as np
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt6 import QtWidgets, QtCore, QtGui
 
 from hpm.widgets.UtilityWidgets import save_file_dialog
 from hpm.widgets.JcpdsEditorWidget import JcpdsEditorWidget

@@ -7,11 +7,11 @@ import sys
 import os
 import time
 
-import PyQt5
+import PyQt6
 import pyqtgraph
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import QApplication
-from PyQt5 import QtWidgets
+from PyQt6 import QtCore
+from PyQt6.QtWidgets import QApplication
+from PyQt6 import QtWidgets
 
 
 
@@ -39,9 +39,9 @@ aEDXD = os.path.join(resources_path, 'aEDXD')
 def main():
     
     if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
-        PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+        PyQt6.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
     if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
-        PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+        PyQt6.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
     app = QApplication(sys.argv)
     app.aboutToQuit.connect(app.deleteLater)

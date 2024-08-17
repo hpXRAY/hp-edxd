@@ -30,7 +30,7 @@ from hpm.widgets.RoiWidget import RoiWidget, plotFitWindow
 from hpm.models.roiSetsModel import RoiModel
 
 from hpm.models.mcaModel import  McaROI
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt6.QtCore import pyqtSignal, QObject
 
 class RoiController(QObject):
 

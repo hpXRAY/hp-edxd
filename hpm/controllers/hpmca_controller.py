@@ -17,9 +17,9 @@
 
 import os, os.path, sys, platform, copy
 
-from PyQt5 import uic, QtWidgets,QtCore
-from PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QMessageBox, QErrorMessage
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
+from PyQt6 import uic, QtWidgets,QtCore
+from PyQt6.QtWidgets import QMainWindow, QApplication, QInputDialog, QMessageBox, QErrorMessage
+from PyQt6.QtCore import QObject, pyqtSignal, Qt
 from epics.clibs import *  # makes sure dlls are included in the exe
 
 from hpm.models.mcaModel import MCA

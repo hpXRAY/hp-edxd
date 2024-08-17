@@ -27,14 +27,14 @@ Modifications:
     Oct. 14, 2018   Ross Hrubiak
         - re-done Python 3
         - computational routines changed from np to numpy
-        - GUI re-written, changed from tkinter and Pmw to pyqt5
+        - GUI re-written, changed from tkinter and Pmw to PyQt6
         - plotting library changed from BltPlot to pyqtgraph
         - changes to MCA calibration model: channel_to_energy, etc. moved to the mcaCalibration class
         - this module now only copies the rois and the calibration objects from MCA not the entire MCA
             
 """
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt6 import QtCore, QtWidgets
 import pyqtgraph as pg
 
 import copy

@@ -18,7 +18,7 @@
 
 # Based on code from Dioptas - GUI program for fast processing of 2D X-ray diffraction data
 
-from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt6 import QtCore, QtWidgets, QtGui
 import os
 from hpm.widgets.CustomWidgets import FlatButton, CleanLooksComboBox 
 import copy
@@ -330,14 +330,14 @@ def open_file_dialog(parent_widget, caption, directory=None, filter=None):
     filename = QtWidgets.QFileDialog.getOpenFileName(parent_widget, caption=caption,
                                                      directory=directory, 
                                                      filter=filter)
-    if isinstance(filename, tuple):  # PyQt5 returns a tuple...
+    if isinstance(filename, tuple):  # PyQt6 returns a tuple...
         return str(filename[0])
     return str(filename)
 
 def open_folder_dialog(parent_widget, caption, directory=None ):
     folder = QtWidgets.QFileDialog.getExistingDirectory(parent_widget, caption=caption,
                                                      directory=directory)
-    if isinstance(folder, tuple):  # PyQt5 returns a tuple...
+    if isinstance(folder, tuple):  # PyQt6 returns a tuple...
         return str(folder[0])
     return str(folder)
 
@@ -346,7 +346,7 @@ def open_files_dialog(parent_widget, caption, directory=None, filter=None):
     filenames = QtWidgets.QFileDialog.getOpenFileNames(parent_widget, caption=caption,
                                                        directory=directory,
                                                        filter=filter)
-    if isinstance(filenames, tuple):  # PyQt5 returns a tuple...
+    if isinstance(filenames, tuple):  # PyQt6 returns a tuple...
         filenames = filenames[0]
     return filenames
 
@@ -362,6 +362,6 @@ def save_file_dialog(parent_widget, caption, directory=None, filter=None,  warn_
         filename = QtWidgets.QFileDialog.getSaveFileName(parent_widget, caption,
                                                      directory=directory,
                                                      filter=filter,initialFilter=selectedFilter)
-    if isinstance(filename, tuple):  # PyQt5 returns a tuple...
+    if isinstance(filename, tuple):  # PyQt6 returns a tuple...
         return str(filename[0])
     return str(filename)

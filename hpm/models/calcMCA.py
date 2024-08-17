@@ -4,10 +4,10 @@ import numpy as np
 import copy
 import time
 import utilities.hpMCAutilities as hpUtil
-from PyQt5.QtCore import pyqtSignal, QObject
-from PyQt5.QtWidgets import QMessageBox
+from PyQt6.QtCore import pyqtSignal, QObject
+from PyQt6.QtWidgets import QMessageBox
 from hpm.models.mcaModel import *
-from PyQt5 import QtCore, QtWidgets
+from PyQt6 import QtCore, QtWidgets
 from .nxsexport_batch import read_nxs
 from .mcaModel import McaCalibration, McaElapsed, McaROI, McaEnvironment
 from .. widgets.dialogBox import MultiChoiceDialog

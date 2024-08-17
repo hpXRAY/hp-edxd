@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import multiprocessing, time, random, sys
-from PyQt5.QtCore import * # equivalent: from PyQt4.QtCore import *
-from PyQt5.QtGui import *   # equivalent: from PyQt4.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt6.QtCore import * # equivalent: from PyQt4.QtCore import *
+from PyQt6.QtGui import *   # equivalent: from PyQt4.QtGui import *
+from PyQt6.QtWidgets import *
 
 def compute(num):
     print("worker() started at %d" % num)

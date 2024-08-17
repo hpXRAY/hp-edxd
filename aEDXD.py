@@ -45,7 +45,7 @@
 # 
 #   0.5.0:  Author: R. Hrubiak, ANL
 #       1. Upgraded to Python 3.7
-#       2. Created a GUI based on PyQt5 and pyqtgraph
+#       2. Created a GUI based on PyQt6 and pyqtgraph
 #       3. Visual peak removal via interactive plot
 #       4. Improved interpolation under removed peaks 
 #       4. GUI options editing / operation possible without a config file

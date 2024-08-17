@@ -20,7 +20,7 @@
 
 
 from functools import partial
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt6 import QtWidgets, QtCore, QtGui
 import copy
 from multiangle.utilities.utilities import optimize_tth, tth_e_to_d, d_to_q
 import time

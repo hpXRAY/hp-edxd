@@ -26,12 +26,12 @@ __version__ = "0.0.1"
 import sys
 import os
  
-import PyQt5
+import PyQt6
 import pyqtgraph
-from PyQt5 import QtCore
+from PyQt6 import QtCore
 
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication
+from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QApplication
 
 
 resources_path = os.path.join(os.path.dirname(__file__), 'resources')

@@ -15,9 +15,9 @@
 
 
 import os.path, sys
-from PyQt5 import uic, QtWidgets,QtCore, QtGui
-from  PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
+from PyQt6 import uic, QtWidgets,QtCore, QtGui
+from  PyQt6.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel
+from PyQt6.QtCore import QObject, pyqtSignal, Qt
 import numpy as np
 from functools import partial
 import json #, h5py

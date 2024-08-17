@@ -16,12 +16,12 @@
 
 import os, sys
 
-from PyQt5.QtCore import QModelIndex, Qt
-from PyQt5.QtGui import QStandardItem, QStandardItemModel
-from PyQt5.QtWidgets import QApplication,  \
+from PyQt6.QtCore import QModelIndex, Qt
+from PyQt6.QtGui import QStandardItem, QStandardItemModel
+from PyQt6.QtWidgets import QApplication,  \
                         QPushButton, \
                          QTreeView
-from PyQt5.uic import loadUi
+from PyQt6.uic import loadUi
 
 
 class App(QTreeView):

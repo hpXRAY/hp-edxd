@@ -14,10 +14,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import pyqtSignal, QByteArray, QDataStream, QIODevice, Qt
-from PyQt5.QtGui import QDrag
-from  PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel, QTreeWidget, QTreeWidgetItem, QAbstractItemView
+from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtCore import pyqtSignal, QByteArray, QDataStream, QIODevice, Qt
+from PyQt6.QtGui import QDrag
+from  PyQt6.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel, QTreeWidget, QTreeWidgetItem, QAbstractItemView
 from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, VerticalSpacerItem, NoRectDelegate, \
     HorizontalSpacerItem, ListTableWidget, VerticalLine, DoubleMultiplySpinBoxAlignRight, HorizontalLine
 from hpm.widgets.PltWidget import plotWindow

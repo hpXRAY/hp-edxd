@@ -17,7 +17,7 @@ import numpy as np
 from scipy import interpolate
 import copy
 from numpy import pi
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt6.QtCore import pyqtSignal, QObject
 from hpm.controllers.RoiController import RoiController
 from utilities.HelperModule import getInterpolatedCounts
 from hpm.models.mcaModel import MCA

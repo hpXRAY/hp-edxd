@@ -1,13 +1,13 @@
 # -*- coding: utf8 -*-
 
-from PyQt5 import uic, QtWidgets,QtCore
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
+from PyQt6 import uic, QtWidgets,QtCore
+from PyQt6.QtCore import QObject, pyqtSignal, Qt
 import pyqtgraph as pg
 from mypyeqt.CustomWidgets import HorizontalSpacerItem, VerticalSpacerItem, FlatButton
 from functools import partial
 import time
 #from pyeqt.pv_model import PV
-from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QComboBox, QDoubleSpinBox, QCheckBox, QPushButton, QAction, QProgressBar
+from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QComboBox, QDoubleSpinBox, QCheckBox, QPushButton, QProgressBar
 
 from mypyeqt.pvServer import pvServer
 import numpy as np

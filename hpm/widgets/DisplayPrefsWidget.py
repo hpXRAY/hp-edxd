@@ -17,9 +17,9 @@
 # Principal author: R. Hrubiak (hrubiak@anl.gov)
 # Copyright (C) 2018-2019 ANL, Lemont, USA
 
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets
 
-from  PyQt5.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel
+from  PyQt6.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel
 from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, VerticalSpacerItem, NoRectDelegate, \
     HorizontalSpacerItem, ListTableWidget, VerticalLine, DoubleMultiplySpinBoxAlignRight, HorizontalLine, NumberTextField
 from hpm.widgets.PltWidget import plotWindow

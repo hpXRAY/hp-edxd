@@ -20,15 +20,15 @@
 
 import pyqtgraph as pg
 from pyqtgraph import QtCore, mkPen, mkColor, hsvColor
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
-from PyQt5.QtGui import QColor, QPen, QPainter
+from PyQt6.QtCore import QObject, pyqtSignal, Qt
+from PyQt6.QtGui import QColor, QPen, QPainter
 from utilities.HelperModule import calculate_color
 from hpm.widgets.ExLegendItem import LegendItem
 from hpm.widgets.PhasePlot import PhasePlot
 '''import pyqtgraph.exporters
 import unicodedata'''
 from numpy import argmax, nan
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 '''import copy
 import numpy as np'''
 

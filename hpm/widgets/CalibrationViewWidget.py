@@ -1,5 +1,5 @@
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 
 from .CustomWidgets import NumberTextField, LabelAlignRight, CleanLooksComboBox, SpinBoxAlignRight, \
     DoubleSpinBoxAlignRight, FlatButton

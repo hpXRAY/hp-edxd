@@ -20,13 +20,13 @@ import pyqtgraph as pg
 import copy
 import numpy as np
 import os
-from PyQt5 import QtWidgets, QtCore
+from PyQt6 import QtWidgets, QtCore
 from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, VerticalSpacerItem, NoRectDelegate, \
     HorizontalSpacerItem, ListTableWidget, VerticalLine, DoubleMultiplySpinBoxAlignRight
 from hpm.widgets.UtilityWidgets import save_file_dialog, open_file_dialog, open_files_dialog, open_folder_dialog
 from hpm.widgets.AmorphousAnalysisWidget import AmorphousAnalysisWidget
 from hpm.models.AmorphousAnalysisModel import AmorphousAnalysisModel
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt6.QtCore import pyqtSignal, QObject
 import natsort
 from hpm.controllers.DisplayPrefsController import DisplayPreferences
 from hpm.models.mcaModel import MCA

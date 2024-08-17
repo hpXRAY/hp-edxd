@@ -18,8 +18,8 @@
 
 # Based on code from Dioptas - GUI program for fast processing of 2D X-ray diffraction data
 
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
-from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt6.QtCore import QObject, pyqtSignal, Qt
+from PyQt6 import QtCore, QtWidgets, QtGui
 from math import floor, log10
 
 class TabWidget(QtWidgets.QWidget):

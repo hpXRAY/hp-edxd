@@ -17,7 +17,7 @@
 import os
 
 import numpy as np
-from PyQt5 import QtWidgets, QtCore
+from PyQt6 import QtWidgets, QtCore
 import copy
 
 from hpm.models.hklGenModel import hklGenModel_viewModel

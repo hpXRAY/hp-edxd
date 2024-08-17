@@ -23,7 +23,7 @@ from collections import deque
 import numpy as np
 import skimage.draw
 from PIL import Image
-from PyQt5 import QtGui, QtCore
+from PyQt6 import QtGui, QtCore
 from math import sqrt, atan2, cos, sin
 
 from .util.cosmics import cosmicsimage

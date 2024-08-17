@@ -21,8 +21,8 @@
 
 
 from functools import partial
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QItemDelegate, QTreeView
+from PyQt6 import QtWidgets, QtCore
+from PyQt6.QtWidgets import QItemDelegate, QTreeView
 
 
 from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, VerticalSpacerItem, NoRectDelegate, \

@@ -25,8 +25,8 @@ from pyqtgraph import ViewBox
 from pyqtgraph.exporters.ImageExporter import ImageExporter
 import numpy as np
 #from skimage.measure import find_contours
-from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
+from PyQt6 import QtCore, QtWidgets, QtGui
+from PyQt6.QtCore import QObject, pyqtSignal, Qt
 from .HistogramLUTItem import HistogramLUTItem 
 from utilities.HelperModule import calculate_color
 

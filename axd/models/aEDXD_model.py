@@ -35,7 +35,7 @@ import sys
 import copy
 import json
 import numpy as np
-from PyQt5.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QObject, pyqtSignal
 from utilities.hpMCAutilities import readconfig
 from axd.models.aEDXD_components import primaryBeam, structureFactor, Pdf, PdfInverse
 from .. import data_path

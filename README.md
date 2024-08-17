@@ -4,7 +4,7 @@ Python-based suite of programs for data collection, viewing and analysis of ener
 
 The programs work with Anaconda Python 3.7 <br>
 required python packages: <br>
-pyqt5 5.9.2 (Some compatiblity issues with newer versions)<br>
+PyQt6 5.9.2 (Some compatiblity issues with newer versions)<br>
 pyqtgraph 0.11.0 (Not compatible with 0.13)<br> 
 pyepics 3.4.0<br>
 burnman 0.9.0<br>

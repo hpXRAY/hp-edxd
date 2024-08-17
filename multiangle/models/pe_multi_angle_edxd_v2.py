@@ -25,7 +25,7 @@ import time
 import sys
 
 
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt6.QtCore import QThread, pyqtSignal
 
 class MultiangleSweep(QThread):
     callbackSignal = pyqtSignal(dict)  

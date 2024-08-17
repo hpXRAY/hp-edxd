@@ -18,7 +18,7 @@
 
 # Based on code from Dioptas - GUI program for fast processing of 2D X-ray diffraction data
 
-from PyQt5.QtGui import QColor, QPen
+from PyQt6.QtGui import QColor, QPen
 import pyqtgraph as pg
 from utilities.HelperModule import calculate_color
 from pyqtgraph import QtCore, mkPen, mkColor, hsvColor

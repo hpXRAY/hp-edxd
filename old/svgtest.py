@@ -2,7 +2,7 @@ import pyqtgraph as pg
 import numpy as np
 from pyqtgraph.exporters.SVGExporter import SVGExporter
 from pyqtgraph.exporters.ImageExporter import ImageExporter
-from PyQt5 import QtGui
+from PyQt6 import QtGui
 
 if __name__ == '__main__':
     app = QtGui.QApplication([])

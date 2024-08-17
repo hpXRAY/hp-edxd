@@ -15,9 +15,9 @@
 
 import gsas.GSASIIscriptable as G2sc
 from utilities.HelperModule import convert_d_to_two_theta, calculate_color
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
-from PyQt5 import QtWidgets
+from PyQt6.QtGui import QStandardItemModel, QStandardItem
+from PyQt6.QtCore import QObject, pyqtSignal, Qt
+from PyQt6 import QtWidgets
 
 class Cell():
     def __init__(self, name, color, use=True ):

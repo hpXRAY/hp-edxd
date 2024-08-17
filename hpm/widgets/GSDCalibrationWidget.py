@@ -17,8 +17,8 @@
 # Copyright (C) 2018-2019 ANL, Lemont, USA
 
 from functools import partial
-from PyQt5.QtCore import  pyqtSignal, Qt
-from PyQt5 import QtWidgets, QtCore
+from PyQt6.QtCore import  pyqtSignal, Qt
+from PyQt6 import QtWidgets, QtCore
 import copy
 import numpy as np
 import pyqtgraph as pg

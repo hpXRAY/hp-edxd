@@ -1,6 +1,6 @@
 
 import sys
-from PyQt5.QtWidgets import QApplication, QDialog, QVBoxLayout, QPushButton
+from PyQt6.QtWidgets import QApplication, QDialog, QVBoxLayout, QPushButton
 
 class MultiChoiceDialog(QDialog):
     def __init__(self, choices):

@@ -22,7 +22,7 @@
 import logging
 import os
 from copy import copy
-from PyQt5 import QtCore
+from PyQt6 import QtCore
 import numpy as np
 from numpy import sin, pi
 from .UnitConversions import *

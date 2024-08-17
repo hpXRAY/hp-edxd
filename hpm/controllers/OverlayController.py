@@ -21,7 +21,7 @@
 import os
 
 import numpy as np
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 from hpm.widgets.UtilityWidgets import open_files_dialog
 from hpm.widgets.OverlayWidget import OverlayWidget
 from hpm.models.OverlayModel import OverlayModel

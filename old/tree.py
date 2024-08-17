@@ -1,8 +1,8 @@
 #!/usr/bin/env python2
 
-from PyQt5 import QtCore
-from  PyQt5.QtWidgets import QWidget, QTreeView, QVBoxLayout
-from PyQt5.QtWidgets import QApplication
+from PyQt6 import QtCore
+from  PyQt6.QtWidgets import QWidget, QTreeView, QVBoxLayout
+from PyQt6.QtWidgets import QApplication
 import sys
 
 class SI(object):

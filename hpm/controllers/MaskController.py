@@ -22,7 +22,7 @@ from operator import mod
 import sys
 import os
 
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt6 import QtWidgets, QtCore, QtGui
 from math import sqrt
 import numpy as np
 

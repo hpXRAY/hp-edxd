@@ -19,13 +19,13 @@
 
 
 import sys
-from PyQt5.QtGui import QIcon
-from PyQt5 import QtCore
+from PyQt6.QtGui import QIcon
+from PyQt6 import QtCore
  
-from PyQt5.QtCore import (QDate, QDateTime, QRegExp, QSortFilterProxyModel, Qt,
+from PyQt6.QtCore import (QDate, QDateTime, QRegExp, QSortFilterProxyModel, Qt,
             QTime)
-from PyQt5.QtGui import QStandardItemModel
-from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
+from PyQt6.QtGui import QStandardItemModel
+from PyQt6.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
             QGroupBox, QHBoxLayout, QLabel, QLineEdit, QTreeView, QVBoxLayout,
             QWidget)
 from multiangle.models.colimation_depth import get_collimation_depth

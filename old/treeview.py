@@ -1,6 +1,6 @@
 import sys
 from collections import deque
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets
 
 class Window(QtWidgets.QWidget):
     def __init__(self, data):

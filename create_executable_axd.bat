@@ -44,8 +44,8 @@ rmdir /s /q bokeh, ^
     msgpack, ^
     pandas, ^
     share, ^
-    PyQt5\Qt\bin, ^
-    PyQt5\Qt\uic
+    PyQt6\Qt\bin, ^
+    PyQt6\Qt\uic
 
 
 aEDXD_run.exe

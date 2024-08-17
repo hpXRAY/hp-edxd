@@ -1,4 +1,4 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtGui, QtWidgets
 import os
 from .. import style_path, icons_path
 
@@ -143,7 +143,7 @@ class EliderLabel(QtWidgets.QLabel):
 
     elision_changed = QtCore.pyqtSignal(bool)
 
-    def __init__(self, text='', mode=QtCore.Qt.ElideRight, **kwargs):
+    def __init__(self, text='', mode=QtCore.Qt. TextElideMode.ElideRight, **kwargs):
         super().__init__(**kwargs)
 
         self._mode = mode

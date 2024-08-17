@@ -3,7 +3,7 @@
 import  time, logging, os, struct, sys, copy
 
 from pyqtgraph.Qt import QtCore
-from PyQt5.QtCore import QThread, pyqtSignal, QObject
+from PyQt6.QtCore import QThread, pyqtSignal, QObject
 import queue 
 from functools import partial
 import json

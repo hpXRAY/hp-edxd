@@ -21,9 +21,9 @@
 
 import os, os.path, sys, platform, copy
 
-from PyQt5 import uic, QtWidgets,QtCore
-from PyQt5.QtCore import QObject, pyqtSignal, Qt
-from PyQt5.QtWidgets import QMainWindow
+from PyQt6 import uic, QtWidgets,QtCore
+from PyQt6.QtCore import QObject, pyqtSignal, Qt
+from PyQt6.QtWidgets import QMainWindow
 
 from hpm.widgets.PltWidget import PltWidget
 
