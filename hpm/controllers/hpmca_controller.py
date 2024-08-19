@@ -65,10 +65,10 @@ class hpmcaController(QObject):
         super().__init__()
         self.app : QtWidgets.QApplication
         self.app = app  # app object
-        global Theme
-        self.Theme = Theme
-        self.style_path = style_path
-        self.setStyle(self.Theme)
+        #global Theme
+        #self.Theme = Theme
+        #self.style_path = style_path
+        #self.setStyle(self.Theme)
         self.widget = hpMCAWidget(app) 
         
         self.displayPrefs = DisplayPreferences(self.widget.pg)
@@ -970,7 +970,7 @@ class hpmcaController(QObject):
     ########################################################################################
     ########################################################################################    
 
-    def setStyle(self, Style):
+    '''def setStyle(self, Style):
         
         if Style==1:
             WStyle = 'plastique'
@@ -983,7 +983,7 @@ class hpmcaController(QObject):
             WStyle = "windowsvista"
             self.app.setStyleSheet(" ")
             #self.app.setPalette(self.win_palette)
-            self.app.setStyle(WStyle)
+            self.app.setStyle(WStyle)'''
       
         
     ########################################################################################
