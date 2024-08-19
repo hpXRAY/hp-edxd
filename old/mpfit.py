@@ -135,7 +135,7 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
     # stop the calculation.
     status = 0
     if (dojac):
-       pderiv = Numeric.zeros([len(x), len(p)], Numeric.Float)
+       pderiv = Numeric.zeros([len(x), len(p)], float)
        for j in range(len(p)):
          pderiv[:,j] = FGRAD(x, p, j)
     else:
@@ -273,7 +273,7 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
 
    import mpfit
    import Numeric
-   x = Numeric.arange(100, Numeric.float)
+   x = Numeric.arange(100, float)
    p0 = [5.7, 2.2, 500., 1.5, 2000.]
    y = ( p[0] + p[1]*[x] + p[2]*[x**2] + p[3]*Numeric.sqrt(x) +
          p[4]*Numeric.log(x))
@@ -889,8 +889,8 @@ Keywords:
             self.errmsg = 'ERROR: either P or PARINFO(*)["value"] must be supplied.'
             return
 
-      ## Make sure parameters are Numeric arrays of type Numeric.Float
-      xall = Numeric.asarray(xall, Numeric.Float)
+      ## Make sure parameters are Numeric arrays of type float
+      xall = Numeric.asarray(xall, float)
 
       npar = len(xall)
       self.fnorm  = -1.
@@ -986,8 +986,8 @@ Keywords:
          if (len(wh) > 0): return
          self.errmsg = ''
 
-      # Make sure x is a Numeric array of type Numeric.Float
-      x = Numeric.asarray(x, Numeric.Float)
+      # Make sure x is a Numeric array of type float
+      x = Numeric.asarray(x, float)
       
       [self.status, fvec] = self.call(fcn, self.params, functkw)
       if (self.status < 0):
@@ -1320,14 +1320,14 @@ Keywords:
           
             ## Fill in actual covariance matrix, accounting for fixed
             ## parameters.
-            self.covar = Numeric.zeros([nn, nn], Numeric.Float)
+            self.covar = Numeric.zeros([nn, nn], float)
             for i in range(n):
                indices = ifree+ifree[i]*n
                Numeric.put(self.covar, indices, cv[:,i])
           
             ## Compute errors in parameters
             catch_msg = 'computing parameter errors'
-            self.perror = Numeric.zeros(nn, Numeric.Float)
+            self.perror = Numeric.zeros(nn, float)
             d = Numeric.diagonal(self.covar)
             wh = Numeric.nonzero(d >= 0)
             if len(wh) > 0:
@@ -1401,7 +1401,7 @@ Keywords:
       if (type(test) == types.IntType):
          values = Numeric.asarray(values, Numeric.Int)
       elif (type(test) == types.FloatType):
-         values = Numeric.asarray(values, Numeric.Float)
+         values = Numeric.asarray(values, float)
       return(values)
 
 
@@ -1473,7 +1473,7 @@ Keywords:
       ## Compute analytical derivative if requested
       if (autoderivative == 0):
          mperr = 0
-         fjac = Numeric.zeros(nall, Numeric.Float)
+         fjac = Numeric.zeros(nall, float)
          Numeric.Put(fjac, ifree, 1.0)  ## Specify which parameters need derivatives
          [status, fp] = self.call(fcn, xall, functkw, fjac=fjac)
 
@@ -1492,7 +1492,7 @@ Keywords:
             fjac.shape = [m, n]
             return(fjac)
 
-      fjac = Numeric.zeros([m, n], Numeric.Float)
+      fjac = Numeric.zeros([m, n], float)
 
       h = eps * abs(x)
 
@@ -1677,7 +1677,7 @@ Keywords:
       n = sz[1]
 
       ## Compute the initial column norms and initialize arrays
-      acnorm = Numeric.zeros(n, Numeric.Float)
+      acnorm = Numeric.zeros(n, float)
       for j in range(n):
          acnorm[j] = self.enorm(a[:,j])
       rdiag = acnorm.copy()

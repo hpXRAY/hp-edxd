@@ -123,11 +123,11 @@ class xrfWidget(QtWidgets.QWidget):
         self.atoms = dict()
 
         #self.show_parameter_in_pattern = True
-        header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self.xrf_tw)
+        header_view = QtWidgets.QHeaderView(QtCore.Qt.Orientation.Horizontal, self.xrf_tw)
         self.xrf_tw.setHorizontalHeader(header_view)
 
-        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)  
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.Stretch)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeMode.Stretch)  
         
         self.xrf_tw.setHorizontalHeaderLabels(self.header)
         #header_view.hide()
@@ -161,7 +161,7 @@ class xrfWidget(QtWidgets.QWidget):
         self.log_scale = log_scale 
 
     def style_widgets(self):
-        self.xrf_tw.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        self.xrf_tw.setSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.MinimumExpanding)
         self.xrf_tw.setMinimumWidth(200)
         self.xrf_tw.setMinimumHeight(110)
 
@@ -274,13 +274,13 @@ class xrfWidget(QtWidgets.QWidget):
         self.xrf_tw.blockSignals(True)
         
         z = QtWidgets.QTableWidgetItem(str(Z))
-        z.setFlags(z.flags() & ~QtCore.Qt.ItemIsEditable)
-        z.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        z.setFlags(z.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        z.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.xrf_tw.setItem(current_rows, 0, z)
         
         symbol_item= QtWidgets.QTableWidgetItem(symbol)
-        symbol_item.setFlags(symbol_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        symbol_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        symbol_item.setFlags(symbol_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        symbol_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.xrf_tw.setItem(current_rows, 1, symbol_item)
         
         self.xrf_tw.blockSignals(False)
@@ -304,7 +304,7 @@ class xrfWidget(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        #self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        #self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 

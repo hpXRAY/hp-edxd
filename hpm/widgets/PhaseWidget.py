@@ -153,13 +153,13 @@ class PhaseWidget(QtWidgets.QWidget):
         self.phase_color_btns = []
         #self.phase_roi_btns = [] #add ROIs (RH)
         self.show_parameter_in_pattern = True
-        header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self.phase_tw)
+        header_view = QtWidgets.QHeaderView(QtCore.Qt.Orientation.Horizontal, self.phase_tw)
         self.phase_tw.setHorizontalHeader(header_view)
         
-        #header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        header_view.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+        #header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeMode.Stretch)
+        header_view.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        header_view.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
         header_view.hide()
         self.phase_tw.setItemDelegate(NoRectDelegate())
 
@@ -202,8 +202,8 @@ class PhaseWidget(QtWidgets.QWidget):
         self.temperature_sb_value_changed.emit(cur_ind, temperature)
 
     def style_widgets(self):
-        self.phase_tw.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.MinimumExpanding)
-        self.parameter_widget.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        self.phase_tw.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.MinimumExpanding)
+        self.parameter_widget.setSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum)
         self.phase_tw.setMinimumHeight(120)
 
         self.temperature_step_msb.setMaximumWidth(75)
@@ -284,18 +284,18 @@ class PhaseWidget(QtWidgets.QWidget):
         self.phase_color_btns.append(color_button)
 
         name_item = QtWidgets.QTableWidgetItem(name)
-        name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        name_item.setTextAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        name_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignLeft | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.phase_tw.setItem(current_rows, 2, name_item)
 
         pressure_item = QtWidgets.QTableWidgetItem('0 GPa')
-        pressure_item.setFlags(pressure_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        pressure_item.setTextAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        pressure_item.setFlags(pressure_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        pressure_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.phase_tw.setItem(current_rows, 3, pressure_item)
 
         temperature_item = QtWidgets.QTableWidgetItem('298 K')
-        temperature_item.setFlags(temperature_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        temperature_item.setTextAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        temperature_item.setFlags(temperature_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        temperature_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.phase_tw.setItem(current_rows, 4, temperature_item)
 
         self.phase_tw.setColumnWidth(0, 35)
@@ -379,7 +379,7 @@ class PhaseWidget(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 
@@ -420,10 +420,10 @@ class PhaseWidget(QtWidgets.QWidget):
 
     def show_error_msg(self, msg):
         msg_box = QtWidgets.QMessageBox(self)
-        msg_box.setWindowFlags(QtCore.Qt.Tool)
+        msg_box.setWindowFlags(QtCore.Qt.WindowType.Tool)
         msg_box.setText(msg)
         msg_box.setIcon(QtWidgets.QMessageBox.Critical)
         msg_box.setWindowTitle('Error')
-        msg_box.setStandardButtons(QtWidgets.QMessageBox.Ok)
-        msg_box.setDefaultButton(QtWidgets.QMessageBox.Ok)
+        msg_box.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
+        msg_box.setDefaultButton(QtWidgets.QMessageBox.StandardButton.Ok)
         msg_box.exec_()

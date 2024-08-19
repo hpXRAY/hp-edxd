@@ -98,9 +98,9 @@ class PhaseWidget(QtWidgets.QWidget):
         self.phase_tw.horizontalHeader().setStretchLastSection(False)
         self.phase_tw.setColumnWidth(0, 20)
         self.phase_tw.setColumnWidth(1, 25)
-        self.phase_tw.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        self.phase_tw.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
-        self.phase_tw.horizontalHeader().setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+        self.phase_tw.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeMode.Stretch)
+        self.phase_tw.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        self.phase_tw.horizontalHeader().setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
         self.phase_tw.setItemDelegate(NoRectDelegate())
         self._body_layout.addWidget(self.phase_tw, 10)
         self._body_layout.addWidget(self.parameter_widget, 0)
@@ -154,8 +154,8 @@ class PhaseWidget(QtWidgets.QWidget):
         modify_btn_to_icon_size(self.clear_btn)
         modify_btn_to_icon_size(self.edit_btn)
 
-        self.phase_tw.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.MinimumExpanding)
-        self.parameter_widget.setSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+        self.phase_tw.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.MinimumExpanding)
+        self.parameter_widget.setSizePolicy(QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum)
 
         step_txt_width = 70
 
@@ -206,8 +206,8 @@ class PhaseWidget(QtWidgets.QWidget):
         self.phase_color_btns.append(color_button)
 
         name_item = QtWidgets.QTableWidgetItem(name)
-        name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        name_item.setTextAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        name_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignLeft | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.phase_tw.setItem(current_rows, 2, name_item)
 
         pressure_sb = DoubleSpinBoxAlignRight()
@@ -234,8 +234,8 @@ class PhaseWidget(QtWidgets.QWidget):
         self.select_phase(current_rows)
         self.phase_tw.blockSignals(False)
 
-        self.phase_tw.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
-        self.phase_tw.horizontalHeader().setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+        self.phase_tw.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        self.phase_tw.horizontalHeader().setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
 
     def select_phase(self, ind):
         self.phase_tw.selectRow(ind)

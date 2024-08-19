@@ -366,8 +366,8 @@ class GSDCalibrationController(QtCore.QObject):
                                  progress_dialog.size().height() / 2.0))
 
         progress_dialog.setWindowTitle('   ')
-        progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-        progress_dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        progress_dialog.setWindowModality(QtCore.Qt.WindowModality. WindowModal)
+        progress_dialog.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
         if not show_cancel_btn:
             progress_dialog.setCancelButton(None)
         progress_dialog.show()
@@ -428,7 +428,7 @@ class GSDCalibrationController(QtCore.QObject):
                 QtWidgets.QMessageBox.critical(self.widget,
                                                'Not enough d-spacings!.',
                                                'The calibrant file does not contain enough d-spacings.',
-                                               QtWidgets.QMessageBox.Ok)
+                                               QtWidgets.QMessageBox.StandardButton.Ok)
                 break
             self.widget.peak_num_sb.setValue(i + 4)
             if len(self.model.calibration_model.points):

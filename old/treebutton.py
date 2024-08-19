@@ -14,16 +14,16 @@ class TableModel(QtCore.QAbstractTableModel):
     def rowCount(self, parent=QtCore.QModelIndex()): return 5
     def columnCount(self, parent=QtCore.QModelIndex()): return 4
 
-    def data(self, index, role=QtCore.Qt.DisplayRole):
+    def data(self, index, role=QtCore.Qt.ItemDataRole.DisplayRole):
         if not index.isValid(): return None
-        if not role==QtCore.Qt.DisplayRole: return None
+        if not role==QtCore.Qt.ItemDataRole.DisplayRole: return None
         return "{0:02d}".format(index.row())
         
-    def setData(self, index, value, role=QtCore.Qt.DisplayRole):
+    def setData(self, index, value, role=QtCore.Qt.ItemDataRole.DisplayRole):
         print ("setData", index.row(), index.column(), value)
     def flags(self, index):
         if (index.column() == 0):
-            return QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled
+            return QtCore.Qt.ItemFlag.ItemIsEditable | QtCore.Qt.ItemIsEnabled
         else:
             return QtCore.Qt.ItemIsEnabled
 

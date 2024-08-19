@@ -210,7 +210,7 @@ class hklGenModel_viewModel(QStandardItemModel):
         header = [ 'Use', 'Color', 'Cell']
         super().__init__(0, len(header), parent)
         for ind, h in enumerate(header):
-            self.setHeaderData(ind, Qt.Horizontal, h)
+            self.setHeaderData(ind, Qt.Orientation.Horizontal, h)
         self.itemChanged.connect(self.on_item_changed)
         print('init hklGenModel')
         self.cells = []

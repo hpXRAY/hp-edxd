@@ -67,7 +67,7 @@ class LatticeRefinementWidget(QtWidgets.QWidget):
         self.lbltwo_theta = t = QtWidgets.QLabel(self.button_widget)
         t.setText(f'2\N{GREEK SMALL LETTER THETA}:')
         t.setFixedWidth(30)
-        t.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        t.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self._button_layout.addWidget(t)
         self.two_theta = t = QtWidgets.QLabel(self.button_widget)
         self._button_layout.addWidget(t)
@@ -146,7 +146,7 @@ class LatticeRefinementWidget(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 
@@ -231,12 +231,12 @@ class reflectionsTableWidget(ListTableWidget):
         
 
         self.setMinimumWidth(400)
-        header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self)
+        header_view = QtWidgets.QHeaderView(QtCore.Qt.Orientation.Horizontal, self)
         self.setHorizontalHeader(header_view)
-        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        header_view.setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeMode.Stretch)
+        header_view.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeMode.Stretch)
         self.default_header = ['Use','ROI','HKL',
             'd obs','d calc',f'\N{GREEK CAPITAL LETTER DELTA} d']
         self.header = copy.deepcopy(self.default_header)
@@ -292,8 +292,8 @@ class reflectionsTableWidget(ListTableWidget):
 
         index_item = QtWidgets.QTableWidgetItem(str(row))
         #index_item.setText(str(ind))
-        index_item.setFlags(index_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        index_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        index_item.setFlags(index_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        index_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 1, index_item)
         self.index_items.append(index_item)
         
@@ -307,24 +307,24 @@ class reflectionsTableWidget(ListTableWidget):
 
         name_item = QtWidgets.QTableWidgetItem(label)
         name_item.setText(label)
-        name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        name_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        name_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 2, name_item)
         self.name_items.append(name_item)
 
         centroid_item = QtWidgets.QTableWidgetItem(dobs)
-        centroid_item.setFlags(centroid_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        centroid_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        centroid_item.setFlags(centroid_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        centroid_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 3, centroid_item)
 
         counts_item = QtWidgets.QTableWidgetItem(dcalc)
-        counts_item.setFlags(counts_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        counts_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        counts_item.setFlags(counts_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        counts_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 4, counts_item)
 
         fwhm_item = QtWidgets.QTableWidgetItem(ddiff)
-        fwhm_item.setFlags(fwhm_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        fwhm_item.setTextAlignment(QtCore.Qt.AlignHCenter| QtCore.Qt.AlignVCenter)
+        fwhm_item.setFlags(fwhm_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        fwhm_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter| QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 5, fwhm_item)
 
         self.setColumnWidth(0, 25)
@@ -391,12 +391,12 @@ class parametersTableWidget(QtWidgets.QTableWidget):
         self.verticalHeader().setVisible(False)
 
         self.setMinimumWidth(170)
-        header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self)
+        header_view = QtWidgets.QHeaderView(QtCore.Qt.Orientation.Horizontal, self)
         self.setHorizontalHeader(header_view)
-        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.Stretch)
         
-        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeMode.Stretch)
+        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeMode.Stretch)
         self.default_header = ['Parameter','Value','esd']
         self.header = copy.deepcopy(self.default_header)
         self.setHorizontalHeaderLabels(self.header)
@@ -490,19 +490,19 @@ class parametersTableWidget(QtWidgets.QTableWidget):
 
         name_item = QtWidgets.QTableWidgetItem(label)
         name_item.setText(label)
-        name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        name_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        name_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 0, name_item)
         self.name_items.append(name_item)
 
         val_item = QtWidgets.QTableWidgetItem(val)
-        val_item.setFlags(val_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        val_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        val_item.setFlags(val_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        val_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 1, val_item)
 
         esd_item = QtWidgets.QTableWidgetItem(esd)
-        esd_item.setFlags(esd_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        esd_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        esd_item.setFlags(esd_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        esd_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 2, esd_item)
 
         

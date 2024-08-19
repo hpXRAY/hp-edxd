@@ -252,8 +252,8 @@ class PhaseController(object):
 
             progress_dialog = QtWidgets.QProgressDialog("Loading multiple phases.", "Abort Loading", 0, len(filenames),
                                                         None)
-            progress_dialog.setWindowModality(QtCore.Qt.WindowModal)
-            progress_dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+            progress_dialog.setWindowModality(QtCore.Qt.WindowModality.WindowModal)
+            progress_dialog.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
             progress_dialog.show()
             QtWidgets.QApplication.processEvents()
             for ind, filename in enumerate(filenames):

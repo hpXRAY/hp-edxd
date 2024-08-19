@@ -128,7 +128,7 @@ class NumberTextField(QtWidgets.QLineEdit):
     def __init__(self, *args, **kwargs):
         super(NumberTextField, self).__init__(*args, **kwargs)
         
-        self.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.min = None
         self.max = None
 
@@ -167,13 +167,13 @@ class IntegerTextField(QtWidgets.QLineEdit):
     def __init__(self, *args, **kwargs):
         super(IntegerTextField, self).__init__(*args, **kwargs)
         self.setValidator(QtGui.QIntValidator())
-        self.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
 
 
 class LabelAlignRight(QtWidgets.QLabel):
     def __init__(self, *args, **kwargs):
         super(LabelAlignRight, self).__init__(*args, **kwargs)
-        self.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
 
 
 class CleanLooksComboBox(QtWidgets.QComboBox):
@@ -187,20 +187,20 @@ class CleanLooksComboBox(QtWidgets.QComboBox):
 class SpinBoxAlignRight(QtWidgets.QSpinBox):
     def __init__(self, *args, **kwargs):
         super(SpinBoxAlignRight, self).__init__(*args, **kwargs)
-        self.setAlignment(QtCore.Qt.AlignRight)
+        self.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
 
 
 class DoubleSpinBoxAlignRight(QtWidgets.QDoubleSpinBox):
     def __init__(self, *args, **kwargs):
         super(DoubleSpinBoxAlignRight, self).__init__(*args, **kwargs)
-        self.setAlignment(QtCore.Qt.AlignRight)
+        self.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
 
 
 
 class DoubleMultiplySpinBoxAlignRight(QtWidgets.QDoubleSpinBox):
     def __init__(self, *args, **kwargs):
         super(DoubleMultiplySpinBoxAlignRight, self).__init__(*args, **kwargs)
-        self.setAlignment(QtCore.Qt.AlignRight)
+        self.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
 
     def stepBy(self, p_int):
         self.setValue(self.calc_new_step(self.value(), p_int))
@@ -265,19 +265,19 @@ class RotatedCheckableFlatButton(CheckableFlatButton):
         size.transpose()
         options.rect.setSize(size)
         if self.isFlat():
-            options.features |= QtWidgets.QStyleOptionButton.Flat
+            options.features |= QtWidgets.QStyleOptionButton.ButtonFeature.Flat
         if self.menu():
-            options.features |= QtWidgets.QStyleOptionButton.HasMenu
+            options.features |= QtWidgets.QStyleOptionButton.ButtonFeature.HasMenu
         if self.autoDefault() or self.isDefault():
-            options.features |= QtWidgets.QStyleOptionButton.AutoDefaultButton
+            options.features |= QtWidgets.QStyleOptionButton.ButtonFeature.AutoDefaultButton
         if self.isDefault():
-            options.features |= QtWidgets.QStyleOptionButton.DefaultButton
+            options.features |= QtWidgets.QStyleOptionButton.ButtonFeature.DefaultButton
         if self.isDown() or (self.menu() and self.menu().isVisible()):
-            options.state |= QtWidgets.QStyle.State_Sunken
+            options.state |= QtWidgets.QStyle.StateFlag.Sunken
         if self.isChecked():
-            options.state |= QtWidgets.QStyle.State_On
+            options.state |= QtWidgets.QStyle.StateFlag.On
         if not self.isFlat() and not self.isDown():
-            options.state |= QtWidgets.QStyle.State_Raised
+            options.state |= QtWidgets.QStyle.StateFlag.Raised
 
         options.text = self.text()
         options.icon = self.icon()
@@ -288,23 +288,23 @@ class RotatedCheckableFlatButton(CheckableFlatButton):
 class HorizontalLine(QtWidgets.QFrame):
     def __init__(self):
         super(HorizontalLine, self).__init__()
-        self.setFrameShape(QtWidgets.QFrame.HLine)
-        self.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.setFrameShape(QtWidgets.QFrame.Shape.HLine)
+        self.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
 
 
 class VerticalLine(QtWidgets.QFrame):
     def __init__(self):
         super(VerticalLine, self).__init__()
-        self.setFrameShape(QtWidgets.QFrame.VLine)
-        self.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.setFrameShape(QtWidgets.QFrame.Shape.VLine)
+        self.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
 
 
 class ListTableWidget(QtWidgets.QTableWidget):
     def __init__(self, columns=3):
         super(ListTableWidget, self).__init__()
 
-        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
+        self.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.SingleSelection)
         self.setColumnCount(columns)
         self.horizontalHeader().setVisible(False)
         self.verticalHeader().setVisible(False)
@@ -315,8 +315,8 @@ class MultirowListTableWidget(QtWidgets.QTableWidget):
     def __init__(self, columns=3):
         super(ListTableWidget, self).__init__()
 
-        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
+        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
+        self.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.MultiSelection)
         self.setColumnCount(columns)
         self.horizontalHeader().setVisible(False)
         self.verticalHeader().setVisible(False)
@@ -329,16 +329,16 @@ class NoRectDelegate(QtWidgets.QItemDelegate):
         super(NoRectDelegate, self).__init__()
 
     def drawFocus(self, painter, option, rect):
-        option.state &= ~QtWidgets.QStyle.State_HasFocus
+        option.state &= ~QtWidgets.QStyle.StateFlag.State_HasFocus
         QtWidgets.QItemDelegate.drawFocus(self, painter, option, rect)
 
 
 
 
 def HorizontalSpacerItem(minimum_width=0):
-    return QtWidgets.QSpacerItem(minimum_width, 0, QtWidgets.QSizePolicy.MinimumExpanding,
-                                 QtWidgets.QSizePolicy.Minimum)
+    return QtWidgets.QSpacerItem(minimum_width, 0, QtWidgets.QSizePolicy.Policy.MinimumExpanding,
+                                 QtWidgets.QSizePolicy.Policy.Minimum)
 
 
 def VerticalSpacerItem():
-    return QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+    return QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)

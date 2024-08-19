@@ -131,7 +131,7 @@ class parameterWidget(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
         
@@ -223,7 +223,7 @@ class multiangleWidget(QtWidgets.QWidget):
         self.tth_tv.resizeColumnToContents(0)
         header = self.tth_tv.header()
         for ind in range(columns):
-            header.setSectionResizeMode(ind, QtWidgets.QHeaderView.Stretch)
+            header.setSectionResizeMode(ind, QtWidgets.QHeaderView.ResizeMode.Stretch)
 
         self.make_connections()
 
@@ -277,7 +277,7 @@ class multiangleWidget(QtWidgets.QWidget):
         self.parameter_widget.raise_widget()
 
     def style_widgets(self):
-        self.tth_tv.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        self.tth_tv.setSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.MinimumExpanding)
         self.tth_tv.setMinimumWidth(600)
         self.tth_tv.setMinimumHeight(110)
         self.setStyleSheet("""
@@ -315,7 +315,7 @@ class multiangleWidget(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 

@@ -100,14 +100,14 @@ class SM(QtCore.QAbstractItemModel):
             item = index.internalPointer()
         return item.hasChildren()
 
-    def data(self, index, role=QtCore.Qt.DisplayRole):
-       if index.isValid() and role == QtCore.Qt.DisplayRole:
+    def data(self, index, role=QtCore.Qt.ItemDataRole.DisplayRole):
+       if index.isValid() and role == QtCore.Qt.ItemDataRole.DisplayRole:
             return index.internalPointer().data(index.column())
        elif not index.isValid():
             return self.root.getData()
 
     def headerData(self, section, orientation, role):
-        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+        if orientation == QtCore.Qt.Orientation.Horizontal and role == QtCore.Qt.ItemDataRole.DisplayRole:
             return self.root.data(section)
 
 class MyTree(QTreeView):

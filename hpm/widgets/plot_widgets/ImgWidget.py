@@ -86,9 +86,9 @@ class ImgWidget2(QtWidgets.QWidget):
         self.img.setImage(data.T)
 
     def customMouseClickEvent(self, ev):
-        if ev.button() == QtCore.Qt.RightButton:
+        if ev.button() == QtCore.Qt.MouseButton.RightButton:
             self.view.enableAutoRange(enable=1) 
-        elif ev.button() == QtCore.Qt.LeftButton:
+        elif ev.button() == QtCore.Qt.MouseButton.LeftButton:
             pos = self.img_view_box.mapFromScene(ev.pos())
             pos = self.img_scatter_plot_item.mapFromScene(2 * ev.pos() - pos)
             self.mouse_left_clicked.emit(pos.x(), pos.y())
@@ -112,7 +112,7 @@ class ImgWidget2(QtWidgets.QWidget):
 
     def myMouseDoubleClickEvent(self, ev):
         self.img_view_box = self.view
-        if ev.button() == QtCore.Qt.LeftButton:
+        if ev.button() == QtCore.Qt.MouseButton.LeftButton:
             pos = self.img_view_box.mapFromScene(ev.pos())
             pos = self.img_scatter_plot_item.mapFromScene(2 * ev.pos() - pos)
             self.mouse_left_double_clicked.emit(pos.x(), pos.y())
@@ -265,23 +265,23 @@ class ImgWidget(QtCore.QObject):
         self.img_view_box.wheelEvent = self.myWheelEvent
 
     def myMouseClickEvent(self, ev):
-        if ev.button() == QtCore.Qt.RightButton or \
-                (ev.button() == QtCore.Qt.LeftButton and
+        if ev.button() == QtCore.Qt.MouseButton.RightButton or \
+                (ev.button() == QtCore.Qt.MouseButton.LeftButton and
                  ev.modifiers() & QtCore.Qt.ControlModifier):
             view_range = np.array(self.img_view_box.viewRange()) * 2
             self.auto_range()
             '''else:
                 self.img_view_box.scaleBy(2)'''
 
-        elif ev.button() == QtCore.Qt.LeftButton:
+        elif ev.button() == QtCore.Qt.MouseButton.LeftButton:
             pos = self.img_view_box.mapFromScene(ev.pos())
             pos = self.img_scatter_plot_item.mapFromScene(2 * ev.pos() - pos)
             self.mouse_left_clicked.emit(pos.x(), pos.y())
 
     def myMouseDoubleClickEvent(self, ev):
-        if ev.button() == QtCore.Qt.RightButton:
+        if ev.button() == QtCore.Qt.MouseButton.RightButton:
             self.auto_range()
-        if ev.button() == QtCore.Qt.LeftButton:
+        if ev.button() == QtCore.Qt.MouseButton.LeftButton:
             pos = self.img_view_box.mapFromScene(ev.pos())
             pos = self.img_scatter_plot_item.mapFromScene(2 * ev.pos() - pos)
             self.mouse_left_double_clicked.emit(pos.x(), pos.y())
@@ -299,8 +299,8 @@ class ImgWidget(QtCore.QObject):
         if axis is not None:
             mask[1 - axis] = 0.0
 
-        if ev.button() == QtCore.Qt.RightButton or \
-                (ev.button() == QtCore.Qt.LeftButton and \
+        if ev.button() == QtCore.Qt.MouseButton.RightButton or \
+                (ev.button() == QtCore.Qt.MouseButton.LeftButton and \
                  ev.modifiers() & QtCore.Qt.ControlModifier):
             # determine the amount of translation
             tr = dif * mask

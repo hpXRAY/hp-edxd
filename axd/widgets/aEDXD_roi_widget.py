@@ -175,10 +175,10 @@ class aEDXDRoiWidget(QtWidgets.QWidget):
         self.tth_items = []
        
         self.show_parameter_in_pattern = True
-        header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self.roi_tw)
+        header_view = QtWidgets.QHeaderView(QtCore.Qt.Orientation.Horizontal, self.roi_tw)
         self.roi_tw.setHorizontalHeader(header_view)
-        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeMode.Stretch)
         
         self.default_header = [' Cut ', 'E range', f'2\N{GREEK SMALL LETTER THETA}']
         self.header = copy.deepcopy(self.default_header)
@@ -200,7 +200,7 @@ class aEDXDRoiWidget(QtWidgets.QWidget):
     
 
     def style_widgets(self):
-        self.roi_tw.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        self.roi_tw.setSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.MinimumExpanding)
         self.roi_tw.setMinimumWidth(370)
         self.roi_tw.setMinimumHeight(110)
         self.setStyleSheet("""
@@ -259,15 +259,15 @@ class aEDXDRoiWidget(QtWidgets.QWidget):
 
         name_item = QtWidgets.QTableWidgetItem(name)
         name_item.setText(name)
-        #name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        name_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        #name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        name_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.roi_tw.setItem(current_rows, 1, name_item)
         self.name_items.append(name_item)
 
         tth_item = QtWidgets.QTableWidgetItem(tth)
         tth_item.setText(tth)
-        #tth_item.setFlags(tth_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        tth_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        #tth_item.setFlags(tth_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        tth_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.roi_tw.setItem(current_rows, 2, tth_item)
         self.tth_items.append(tth_item)
 
@@ -319,7 +319,7 @@ class aEDXDRoiWidget(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 
@@ -391,7 +391,7 @@ class plotFitWindow(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 

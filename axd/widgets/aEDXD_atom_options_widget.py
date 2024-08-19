@@ -88,13 +88,13 @@ class aEDXDAtomWidget(QtWidgets.QWidget):
         self.index_items = []
         self.fract_items = []
         self.show_parameter_in_pattern = True
-        header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self.atom_tw)
+        header_view = QtWidgets.QHeaderView(QtCore.Qt.Orientation.Horizontal, self.atom_tw)
         self.atom_tw.setHorizontalHeader(header_view)
-        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
         
-        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        header_view.setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeMode.Stretch)
+        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeMode.Stretch)
+        header_view.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeMode.Stretch)
         self.default_header = ['#', 'Atom','Note', 'Fraction', 'ind']
         self.header = copy.deepcopy(self.default_header)
         self.atom_tw.setHorizontalHeaderLabels(self.header)
@@ -110,7 +110,7 @@ class aEDXDAtomWidget(QtWidgets.QWidget):
         
 
     def style_widgets(self):
-        self.atom_tw.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        self.atom_tw.setSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.MinimumExpanding)
         self.atom_tw.setMinimumWidth(400)
         self.atom_tw.setMinimumHeight(110)
         self.setStyleSheet("""
@@ -136,27 +136,27 @@ class aEDXDAtomWidget(QtWidgets.QWidget):
 
         index_item = QtWidgets.QTableWidgetItem(str(ind))
         #index_item.setText(str(ind))
-        index_item.setFlags(index_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        index_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        index_item.setFlags(index_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        index_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.atom_tw.setItem(current_rows, 0, index_item)
         self.index_items.append(index_item)
 
         name_item = QtWidgets.QTableWidgetItem(name)
         name_item.setText(name)
-        name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        name_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        name_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.atom_tw.setItem(current_rows, 1, name_item)
         self.name_items.append(name_item)
 
         note_item = QtWidgets.QTableWidgetItem(note)
-        note_item.setFlags(note_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        note_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        note_item.setFlags(note_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        note_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.atom_tw.setItem(current_rows, 2, note_item)
 
         fract_item = QtWidgets.QTableWidgetItem(str(fract))
         self.fract_items.append(fract_item)
-        #fract_item.setFlags(fract_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        fract_item.setTextAlignment(QtCore.Qt.AlignHCenter| QtCore.Qt.AlignVCenter)
+        #fract_item.setFlags(fract_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        fract_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter| QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.atom_tw.setItem(current_rows, 3, fract_item)
 
         self.atom_tw.setColumnWidth(0, 25)
@@ -189,7 +189,7 @@ class aEDXDAtomWidget(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 
@@ -241,7 +241,7 @@ class plotFitWindow(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 

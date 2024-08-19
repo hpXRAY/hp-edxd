@@ -26,7 +26,7 @@ class CollapsibleBox(QtWidgets.QWidget):
         self.toggle_button.setStyleSheet(''' QToolButton { border-top: 1px solid #ADADAD; 
                                             font: normal 14px;}''')
         self.toggle_button.setToolButtonStyle(
-            QtCore.Qt.ToolButtonTextBesideIcon
+            QtCore.Qt.ToolButtonStyle.ToolButtonTextBesideIcon
         )
         #self.toggle_button.setArrowType(QtCore.Qt.RightArrow)
         self.toggle_button.pressed.connect(self.on_pressed)
@@ -38,9 +38,9 @@ class CollapsibleBox(QtWidgets.QWidget):
         )
         #self.content_area.setStyleSheet("QScrollArea { border: 1px solid #101112; border-radius: 1px ;font: normal 12px;}")
         self.content_area.setSizePolicy(
-            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed
+            QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Fixed
         )
-        self.content_area.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.content_area.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
 
         lay = QtWidgets.QVBoxLayout(self)
         lay.setSpacing(0)
@@ -69,9 +69,9 @@ class CollapsibleBox(QtWidgets.QWidget):
             self.state0_arrow if not checked else self.state1_arrow
         )
         self.toggle_animation.setDirection(
-            QtCore.QAbstractAnimation.Forward
+            QtCore.QAbstractAnimation.Direction.Forward
             if not checked
-            else QtCore.QAbstractAnimation.Backward
+            else QtCore.QAbstractAnimation.Direction.Backward
         )
         self.toggle_animation.start()
 
@@ -149,7 +149,7 @@ class EliderLabel(QtWidgets.QLabel):
         self._mode = mode
         self.elided = False
 
-        self.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Expanding)
         self.setText(text)
 
     def setText(self, text):
@@ -174,7 +174,7 @@ class EliderLabel(QtWidgets.QLabel):
         painter = QtGui.QPainter(self)
         font_metrics = painter.fontMetrics()
         # if fontMetrics.width() is deprecated; use horizontalAdvance
-        text_width = font_metrics.width(self.text())
+        text_width = font_metrics.horizontalAdvance(self.text())
 
         # Layout phase, per the docs
         text_layout = QtGui.QTextLayout(self._contents, painter.font())
@@ -231,7 +231,7 @@ class EliderLabel(QtWidgets.QLabel):
             label.setStyleSheet(
                 "background-color: {}; color : white;".format(color.name())
             )
-            label.setAlignment(QtCore.Qt.AlignCenter)
+            label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
             lay.addWidget(label)
 
         box.setContentLayout(lay)

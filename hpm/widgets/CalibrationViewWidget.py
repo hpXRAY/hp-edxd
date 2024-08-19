@@ -39,7 +39,7 @@ class CalibrationParametersWidget(QtWidgets.QWidget):
         self.update_btn = FlatButton('update')
         self._layout.addWidget(self.update_btn, 10, 0, 1, 4)
 
-        self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding),
+        self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding),
                              11, 0, 1, 4)
 
         self.setLayout(self._layout)

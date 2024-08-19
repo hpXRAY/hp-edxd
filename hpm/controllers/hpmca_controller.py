@@ -17,7 +17,7 @@
 
 import os, os.path, sys, platform, copy
 
-from PyQt6 import uic, QtWidgets,QtCore
+from PyQt6 import uic, QtWidgets,QtCore, QtGui
 from PyQt6.QtWidgets import QMainWindow, QApplication, QInputDialog, QMessageBox, QErrorMessage
 from PyQt6.QtCore import QObject, pyqtSignal, Qt
 from epics.clibs import *  # makes sure dlls are included in the exe
@@ -201,9 +201,9 @@ class hpmcaController(QObject):
         _platform = platform.system()
         if _platform == "Darwin":    # macOs has a 'special' way of handling preferences menu
             # TODO upgrade the preferences menu
-            pact = QtWidgets.QAction('Preferences', self.app)
+            pact = QtGui.QAction('Preferences', self.app)
             pact.triggered.connect(self.file_save_controller.preferences_module)
-            pact.setMenuRole(QtWidgets.QAction.PreferencesRole)
+            pact.setMenuRole(QtGui.QAction.MenuRole.PreferencesRole)
             pmenu = QtWidgets.QMenu('Preferences')
             pmenu.addAction(pact)
             menu = self.widget.menuBar()
@@ -211,12 +211,12 @@ class hpmcaController(QObject):
 
     def about_module(self):
         self.msg = QMessageBox()
-        self.msg.setIcon(QMessageBox.Information)
+        self.msg.setIcon(QMessageBox.Icon.Information)
         self.msg.setText('This program was written by R. Hrubiak')
         self.msg.setInformativeText('More info to come...')
         self.msg.setWindowTitle('About')
         self.msg.setDetailedText('The details are as follows:')
-        self.msg.setStandardButtons(QMessageBox.Ok)
+        self.msg.setStandardButtons(QMessageBox.StandardButton.Ok)
         self.msg.show()
 
     def key_sig_callback(self, sig):

@@ -106,8 +106,8 @@ class multiangleController(QObject):
         row_count = self.model.rowCount()
         if row_count>0:
             qm = QtWidgets.QMessageBox()
-            ret = qm.question(self.widget,'Warning', "Clear current rows?", qm.Yes | qm.No)
-            if ret == qm.Yes:
+            ret = qm.question(self.widget,'Warning', "Clear current rows?", qm.StandardButton.Yes | qm.No)
+            if ret == qm.StandardButton.Yes:
                 self.clear_callback()
 
     def load_btn_callback(self, *args, **kwargs):

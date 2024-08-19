@@ -171,15 +171,15 @@ class OverlayWidget(QtWidgets.QWidget):
         self.color_btns.append(color_button)
 
         name_item = QtWidgets.QTableWidgetItem(name)
-        name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemIsEditable)
+        name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
         self.overlay_tw.setItem(current_rows, 2, name_item)
 
         x_scale_item = QtWidgets.QTableWidgetItem(det_mode)
-        x_scale_item.setFlags(x_scale_item.flags() & ~QtCore.Qt.ItemIsEditable)
+        x_scale_item.setFlags(x_scale_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
         self.overlay_tw.setItem(current_rows, 3, x_scale_item)
 
         det_item = QtWidgets.QTableWidgetItem(value)
-        det_item.setFlags(det_item.flags() & ~QtCore.Qt.ItemIsEditable)
+        det_item.setFlags(det_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
         self.overlay_tw.setItem(current_rows, 4, det_item)
 
         self.overlay_tw.setColumnWidth(0, 20)
@@ -269,7 +269,7 @@ class OverlayWidget(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        #self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        #self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         #self.activateWindow()
         self.raise_()
         

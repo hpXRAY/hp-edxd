@@ -20,8 +20,9 @@
 
 
 import os, os.path, sys, platform, copy
+from PyQt6.QtGui import QGuiApplication
 
-from PyQt6 import uic, QtWidgets,QtCore
+from PyQt6 import uic, QtWidgets,QtCore, QtGui
 from PyQt6.QtCore import QObject, pyqtSignal, Qt
 from PyQt6.QtWidgets import QMainWindow
 
@@ -44,11 +45,16 @@ class hpMCAWidget(QMainWindow, Ui_hpMCA):
         QMainWindow.__init__(self)
         Ui_hpMCA.__init__(self)
         self.app = app
-        desktop = QtWidgets.QDesktopWidget()
-        dpi = desktop.physicalDpiX()
-        self.retina_display = False
-        if dpi > 96:
-            self.retina_display = True
+     # Get the primary screen
+        primary_screen = QGuiApplication.primaryScreen()
+
+        # Get the device pixel ratio
+        device_pixel_ratio = primary_screen.devicePixelRatio()
+
+        # Check if the device pixel ratio is greater than 1 (commonly 2 or more for Retina displays)
+        is_high_dpi = device_pixel_ratio > 1
+        self.retina_display = is_high_dpi
+        
         self.setupUi(self)
         
         self._plot_toolbar_top_widget_layout.addSpacerItem(HorizontalSpacerItem())
@@ -90,12 +96,12 @@ class hpMCAWidget(QMainWindow, Ui_hpMCA):
 
     def add_menu_items(self):
         
-        self.actionPresets = QtWidgets.QAction(self)
+        self.actionPresets = QtGui.QAction(self)
         self.actionPresets.setText("Presets...")
         self.actionPresets.setEnabled(False)
         self.menuControl.addAction(self.actionPresets)
 
-        self.actionhklGen = QtWidgets.QAction(self)
+        self.actionhklGen = QtGui.QAction(self)
         self.actionhklGen.setText("hklGen")
         self.actionhklGen.setEnabled(False)
         #self.menuDisplay.addAction(self.actionhklGen)

@@ -75,11 +75,11 @@ class EnvironmentWidget(QtWidgets.QWidget):
         self.index_items = []
         #self.env_color_btns = []
         self.show_parameter_in_pattern = True
-        header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self.env_tw)
+        header_view = QtWidgets.QHeaderView(QtCore.Qt.Orientation.Horizontal, self.env_tw)
         self.env_tw.setHorizontalHeader(header_view)
-        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
         
-        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeMode.Stretch)
         self.default_header = [ 'Variable', 'Value']
         self.header = copy.deepcopy(self.default_header)
         self.env_tw.setHorizontalHeaderLabels(self.header)
@@ -109,7 +109,7 @@ class EnvironmentWidget(QtWidgets.QWidget):
     
 
     def style_widgets(self):
-        self.env_tw.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        self.env_tw.setSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.MinimumExpanding)
         self.env_tw.setMinimumWidth(280)
         self.env_tw.setMinimumHeight(110)
         self.setStyleSheet("""
@@ -131,19 +131,19 @@ class EnvironmentWidget(QtWidgets.QWidget):
 
         '''pv_item = QtWidgets.QTableWidgetItem(pv)
         pv_item.setText(pv)
-        pv_item.setFlags(pv_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        pv_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        pv_item.setFlags(pv_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        pv_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.env_tw.setItem(current_rows, 0, pv_item)
         self.pv_items.append(pv_item)'''
 
         description_item = QtWidgets.QTableWidgetItem(description)
-        description_item.setFlags(description_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        description_item.setTextAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        description_item.setFlags(description_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        description_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignLeft | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.env_tw.setItem(current_rows, 0, description_item)
 
         value_item = QtWidgets.QTableWidgetItem(value)
-        value_item.setFlags(value_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        value_item.setTextAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        value_item.setFlags(value_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        value_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignLeft | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.env_tw.setItem(current_rows, 1, value_item)
 
    
@@ -169,7 +169,7 @@ class EnvironmentWidget(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 

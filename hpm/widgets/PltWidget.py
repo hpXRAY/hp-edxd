@@ -129,7 +129,7 @@ class plotWindow(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
         
@@ -143,10 +143,10 @@ class CustomViewBox(pg.ViewBox):
         super().__init__()
         
         self.cursor_signals = [self.plotMouseCursorSignal, self.plotMouseCursor2Signal]
-        self.vLine = myVLine(movable=False, pen=pg.mkPen(color=(0, 255, 0), width=2 , style=QtCore.Qt.DashLine))
+        self.vLine = myVLine(movable=False, pen=pg.mkPen(color=(0, 255, 0), width=2 , style=QtCore.Qt.PenStyle.DashLine))
         
         #self.vLine.sigPositionChanged.connect(self.cursor_dragged)
-        self.vLineFast = myVLine(movable=False,pen=mkPen({'color': '#606060', 'width': 1, 'style':QtCore.Qt.DashLine}))
+        self.vLineFast = myVLine(movable=False,pen=mkPen({'color': '#606060', 'width': 1, 'style':QtCore.Qt.PenStyle.DashLine}))
         self.cursors = [self.vLine, self.vLineFast]
         self.setMouseMode(self.RectMode)
         self.addItem(self.vLine, ignoreBounds=True)
@@ -168,11 +168,11 @@ class CustomViewBox(pg.ViewBox):
 
     ## reimplement right-click to zoom out
     def mouseClickEvent(self, ev):
-        if ev.button() == QtCore.Qt.RightButton:
+        if ev.button() == QtCore.Qt.MouseButton.RightButton:
             #self.enableAutoRange(self.XYAxes, True)    
             
             self.enableAutoRange(enable=1) 
-        elif ev.button() == QtCore.Qt.LeftButton: 
+        elif ev.button() == QtCore.Qt.MouseButton.LeftButton: 
             pos = ev.pos()  ## using signal proxy turns original arguments into a tuple
             mousePoint = self.mapSceneToView(pos)
 
@@ -185,16 +185,15 @@ class CustomViewBox(pg.ViewBox):
         ev.accept()   
 
     def wheelEvent(self, ev, axis=None):
-
         '''
-        don't scroll if control key is down
+        Don't scroll if the control key is down
         '''
-        if ev.modifiers() == Qt.ControlModifier and self.scrollModifierEnabled:
-            delta = ev.delta() / 120
-            self.viewBoxScrollSingal.emit(float(delta))
+        if ev.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier and self.scrollModifierEnabled:
+            # Handle the wheel event angle delta for vertical scrolling
+            delta = ev.angleDelta().y() / 120  # PyQt6 uses angleDelta, which returns a QPoint
+            self.viewBoxScrollSignal.emit(float(delta))
         else:
-            
-            return super().wheelEvent(ev, axis)
+            return super().wheelEvent(ev)  # In PyQt6, super().wheelEvent() typically does not need the 'axis' parameter
 
 class myLegendItem(LegendItem):
     def __init__(self, size=None, offset=None, horSpacing=25, verSpacing=0, box=True, labelAlignment='center', showLines=True):

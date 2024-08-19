@@ -199,7 +199,7 @@ class hklGenWidget(QtWidgets.QWidget):
         self.cell_color_btns = []
         self.cell_roi_btns = [] #add ROIs 
         self.show_parameter_in_pattern = True
-        #header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self.cell_tw)
+        #header_view = QtWidgets.QHeaderView(QtCore.Qt.Orientation.Horizontal, self.cell_tw)
         #self.cell_tw.setHorizontalHeader(header_view)
         
         
@@ -319,7 +319,7 @@ class hklGenWidget(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        #self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        #self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 

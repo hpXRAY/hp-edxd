@@ -122,7 +122,7 @@ class HistogramLUTItem(GraphicsWidget):
 
         if image is not None:
             self.setImageItem(image)
-            # self.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Expanding)
+            # self.setSizePolicy(QtWidgets.QSizePolicy.Policy.Preferred, QtWidgets.QSizePolicy.Policy.Expanding)
 
         self.vb.mouseClickEvent = self.empty_function
         self.vb.mouseDragEvent = self.empty_function

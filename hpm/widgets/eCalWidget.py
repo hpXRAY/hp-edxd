@@ -164,26 +164,26 @@ class mcaCalibrateEnergy(QtWidgets.QWidget):
 
         t = QtWidgets.QLabel(self.groupBox)
         t.setText(str(i))
-        t.setAlignment(QtCore.Qt.AlignHCenter)
-        self.gridLayout.addWidget(t, row, 0, QtCore.Qt.AlignHCenter)  
+        t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
+        self.gridLayout.addWidget(t, row, 0, QtCore.Qt.AlignmentFlag.AlignHCenter)  
 
         self.widgets.use_flag[i] = t = QtWidgets.QCheckBox(self.groupBox)
         t.setChecked(self.roi[i].use==1)
         t.toggled.connect(functools.partial(self.menu_use, i)) # lambda expression didn't work so using functools.partial instead
-        self.gridLayout.addWidget(t, row, 1, QtCore.Qt.AlignHCenter)
+        self.gridLayout.addWidget(t, row, 1, QtCore.Qt.AlignmentFlag.AlignHCenter)
         
         self.widgets.centroid[i] = t = QtWidgets.QLineEdit(self.groupBox)
         t.setText('%.3f' % self.roi[i].centroid)
         t.setFixedWidth(70)
-        t.setAlignment(QtCore.Qt.AlignHCenter)
+        t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
         t.returnPressed.connect(functools.partial(self.menu_centroid, i))
-        self.gridLayout.addWidget(t, row, 2, QtCore.Qt.AlignHCenter)
+        self.gridLayout.addWidget(t, row, 2, QtCore.Qt.AlignmentFlag.AlignHCenter)
 
         self.widgets.fwhm[i] = t =  QtWidgets.QLineEdit(self.groupBox)
         t.setText('%.3f' % self.roi[i].fwhm)
         t.setFixedWidth(70)
-        t.setAlignment(QtCore.Qt.AlignHCenter)
-        self.gridLayout.addWidget(t, row, 3, QtCore.Qt.AlignHCenter)
+        t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
+        self.gridLayout.addWidget(t, row, 3, QtCore.Qt.AlignmentFlag.AlignHCenter)
 
         # If the ROI energy is zero, then try to use the label to lookup an
         # XRF line energy
@@ -197,22 +197,22 @@ class mcaCalibrateEnergy(QtWidgets.QWidget):
         self.widgets.energy[i] = t = QtWidgets.QLineEdit(self.groupBox)
         t.setText('%.3f' % self.roi[i].energy)
         t.setFixedWidth(70)
-        t.setAlignment(QtCore.Qt.AlignHCenter)
+        t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
         t.returnPressed.connect(functools.partial(self.menu_energy, i))
-        self.gridLayout.addWidget(t, row, 4, QtCore.Qt.AlignHCenter)
+        self.gridLayout.addWidget(t, row, 4, QtCore.Qt.AlignmentFlag.AlignHCenter)
 
         self.widgets.line[i] = t = QtWidgets.QLineEdit(self.groupBox)
         t.setText(self.roi[i].label)
         t.setFixedWidth(70)
-        t.setAlignment(QtCore.Qt.AlignHCenter)
+        t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
         self.widgets.line[i].returnPressed.connect(functools.partial(self.menu_line, i))
-        self.gridLayout.addWidget(t, row, 5, QtCore.Qt.AlignHCenter)
+        self.gridLayout.addWidget(t, row, 5, QtCore.Qt.AlignmentFlag.AlignHCenter)
 
         self.widgets.energy_diff[i] = t = QtWidgets.QLineEdit(self.groupBox)
         t.setText('%.3f' % 0.0)
         t.setFixedWidth(70)
-        t.setAlignment(QtCore.Qt.AlignHCenter)
-        self.gridLayout.addWidget(t, row, 6, QtCore.Qt.AlignHCenter)
+        t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
+        self.gridLayout.addWidget(t, row, 6, QtCore.Qt.AlignmentFlag.AlignHCenter)
 
     def initUI(self):
         
@@ -243,7 +243,7 @@ class mcaCalibrateEnergy(QtWidgets.QWidget):
 
         self.cc_label_11 = QtWidgets.QLabel(self.groupBox_current_calibration)
         self.cc_label_11.setText("Calibration coefficients:")
-        self.cc_label_11.setAlignment(QtCore.Qt.AlignRight)
+        self.cc_label_11.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.gridLayout_current_calibration.addWidget(self.cc_label_11, 1, 0, 1, 1)
 
         self.cc_cal_units = t = QtWidgets.QLabel(self.groupBox_current_calibration)
@@ -282,9 +282,9 @@ class mcaCalibrateEnergy(QtWidgets.QWidget):
         for key, col in header.items():
             t = QtWidgets.QLabel(self.groupBox)
             t.setText(key)
-            t.setAlignment(QtCore.Qt.AlignHCenter)
+            t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
             #t.setMinimumSize(QtCore.QSize(60, 0))
-            self.gridLayout.addWidget(t, row, col, QtCore.Qt.AlignHCenter)
+            self.gridLayout.addWidget(t, row, col, QtCore.Qt.AlignmentFlag.AlignHCenter)
 
 
         for i in range(self.nrois):
@@ -304,7 +304,7 @@ class mcaCalibrateEnergy(QtWidgets.QWidget):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.lblCalibrationType = QtWidgets.QLabel(self.groupBox_2)
         self.lblCalibrationType.setText("Calibration type:")
-        self.lblCalibrationType.setAlignment(QtCore.Qt.AlignRight)
+        self.lblCalibrationType.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.horizontalLayout.addWidget(self.lblCalibrationType)
         self.fit_type = QtWidgets.QComboBox(self.groupBox_2)
         self.fit_type.addItem('Linear')
@@ -350,7 +350,7 @@ class mcaCalibrateEnergy(QtWidgets.QWidget):
 
         self.label_11 = QtWidgets.QLabel(self.groupBox_3)
         self.label_11.setText("Calibration coefficients:")
-        self.label_11.setAlignment(QtCore.Qt.AlignRight)
+        self.label_11.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
         self.gridLayout_2.addWidget(self.label_11, 1, 0, 1, 1)
 
         self.cal_units = t = QtWidgets.QLineEdit(self.groupBox_3)
@@ -400,7 +400,7 @@ class mcaCalibrateEnergy(QtWidgets.QWidget):
         
         #self.setFixedSize(self.verticalLayout_4.sizeHint())
 
-        #self.setWindowFlags(QtCore.Qt.Tool)
+        #self.setWindowFlags(QtCore.Qt.WindowType.Tool)
         #self.setAttribute(QtCore.Qt.WA_MacAlwaysShowToolWindow) 
 
 
@@ -408,7 +408,7 @@ class mcaCalibrateEnergy(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 

@@ -14,7 +14,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from PyQt6 import QtCore, QtGui, QtWidgets, Qt
+from PyQt6 import QtCore, QtGui, QtWidgets
 
 from  PyQt6.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel
 from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, VerticalSpacerItem, NoRectDelegate, \
@@ -68,7 +68,7 @@ class aEDXDWidget(QMainWindow):
    
     def raise_widget(self):
         self.show()
-        #self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        #self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         #self.activateWindow()
         #self.raise_()    
     
@@ -101,23 +101,23 @@ class aEDXDWidget(QMainWindow):
 
 
         self._menu_layout.addSpacerItem(
-            QtWidgets.QSpacerItem(10, 25, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed))
+            QtWidgets.QSpacerItem(10, 25, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed))
         self._menu_layout.addWidget(self.load_btn)
         self._menu_layout.addWidget(self.save_btn)
         self._menu_layout.addWidget(self.save_as_btn)
         self._menu_layout.addSpacerItem(
-            QtWidgets.QSpacerItem(10, 30, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed))
+            QtWidgets.QSpacerItem(10, 30, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed))
         self._menu_layout.addWidget(self.undo_btn)
         self._menu_layout.addWidget(self.reset_btn)
         self._menu_layout.addSpacerItem(
-            QtWidgets.QSpacerItem(10, 30, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed))
+            QtWidgets.QSpacerItem(10, 30, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed))
         self._menu_layout.addWidget(self.angle_btn)
         self._menu_layout.addWidget(self.spectra_btn)
         self._menu_layout.addWidget(self.atoms_btn)
         self._menu_layout.addWidget(self.sq_btn)
         self._menu_layout.addWidget(self.pdf_btn)
         self._menu_layout.addSpacerItem(
-            QtWidgets.QSpacerItem(10, 30, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed))
+            QtWidgets.QSpacerItem(10, 30, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed))
         
         self._menu_layout.addWidget(self.peaks_btn)
 
@@ -185,47 +185,47 @@ class aEDXDWidget(QMainWindow):
         self.menubar.setGeometry(QtCore.QRect(0, 0, 793, 22))
 
         self.file_menu = self.menubar.addMenu('&File')
-        self.file_op_act = QtWidgets.QAction('&Open project', self)        
+        self.file_op_act = QtGui.QAction('&Open project', self)        
         self.file_menu.addAction(self.file_op_act)
-        self.file_save_act = QtWidgets.QAction('&Save project', self)  
+        self.file_save_act = QtGui.QAction('&Save project', self)  
         self.file_save_act.setEnabled(False)      
         self.file_menu.addAction(self.file_save_act)
-        self.file_save_as_act = QtWidgets.QAction('Save project &as...', self)  
+        self.file_save_as_act = QtGui.QAction('Save project &as...', self)  
         self.file_save_as_act.setEnabled(False)
         self.file_menu.addAction(self.file_save_as_act)
-        self.file_save_hdf5_act = QtWidgets.QAction('Save to HDF5', self)        
+        self.file_save_hdf5_act = QtGui.QAction('Save to HDF5', self)        
         #self.file_menu.addAction(self.file_save_hdf5_act)
 
         self.file_exp_menu = QtWidgets.QMenu('&Export', self)
-        self.file_exp_data_act = QtWidgets.QAction('&I(E)', self) 
+        self.file_exp_data_act = QtGui.QAction('&I(E)', self) 
         self.file_exp_menu.addAction(self.file_exp_data_act)
-        self.file_exp_sf_act = QtWidgets.QAction('&S(q)', self) 
+        self.file_exp_sf_act = QtGui.QAction('&S(q)', self) 
         self.file_exp_menu.addAction(self.file_exp_sf_act)
 
-        self.file_exp_sf_plot_act = QtWidgets.QAction('S(q) &plot', self) 
+        self.file_exp_sf_plot_act = QtGui.QAction('S(q) &plot', self) 
         self.file_exp_menu.addAction(self.file_exp_sf_plot_act)
 
-        self.file_exp_pdf_act = QtWidgets.QAction('&G(r)', self) 
+        self.file_exp_pdf_act = QtGui.QAction('&G(r)', self) 
         self.file_exp_menu.addAction(self.file_exp_pdf_act)
-        self.file_exp_sf_inv_act = QtWidgets.QAction('Inverse &Fourier-filtered S(q)', self) 
+        self.file_exp_sf_inv_act = QtGui.QAction('Inverse &Fourier-filtered S(q)', self) 
         self.file_exp_menu.addAction(self.file_exp_sf_inv_act)
         self.file_menu.addMenu(self.file_exp_menu)
         
         self.opts_menu = self.menubar.addMenu('Options')
-        self.tools_files_act = QtWidgets.QAction(f'2\N{GREEK SMALL LETTER THETA} Files Input', self)    
+        self.tools_files_act = QtGui.QAction(f'2\N{GREEK SMALL LETTER THETA} Files Input', self)    
         self.opts_menu.addAction(self.tools_files_act)
 
-        self.opts_proc_act = QtWidgets.QAction('Spectra', self)        
+        self.opts_proc_act = QtGui.QAction('Spectra', self)        
         self.opts_menu.addAction(self.opts_proc_act)
-        self.tools_atoms_act = QtWidgets.QAction('Atoms', self)        
+        self.tools_atoms_act = QtGui.QAction('Atoms', self)        
         self.opts_menu.addAction(self.tools_atoms_act)
-        self.opts_sq_act = QtWidgets.QAction('Scattering factor', self)        
+        self.opts_sq_act = QtGui.QAction('Scattering factor', self)        
         self.opts_menu.addAction(self.opts_sq_act)
-        self.opts_gr_act = QtWidgets.QAction('PDF', self)        
+        self.opts_gr_act = QtGui.QAction('PDF', self)        
         self.opts_menu.addAction(self.opts_gr_act)
 
         self.tools_menu = self.menubar.addMenu('Tools')
-        self.tools_peaks_act = QtWidgets.QAction('Peak cutting', self)        
+        self.tools_peaks_act = QtGui.QAction('Peak cutting', self)        
         self.tools_menu.addAction(self.tools_peaks_act)
         
         self.setMenuBar(self.menubar)
@@ -464,7 +464,7 @@ class customWidget(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         
 

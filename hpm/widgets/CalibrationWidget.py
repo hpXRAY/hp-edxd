@@ -87,8 +87,8 @@ class CalibrationParameterWidget(QtWidgets.QWidget):
         self._layout.addWidget(self.start_values_gb)
         self._layout.addWidget(self.peak_selection_gb)
         self._layout.addWidget(self.refinement_options_gb)
-        self._layout.addSpacerItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding,
-                                                     QtWidgets.QSizePolicy.Expanding))
+        self._layout.addSpacerItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Policy.Expanding,
+                                                     QtWidgets.QSizePolicy.Policy.Expanding))
 
         self.setLayout(self._layout)
 
@@ -168,16 +168,16 @@ class PeakSelectionGroupBox(QtWidgets.QGroupBox):
         self._layout.addWidget(self.pick_peaks_cb, 0, 0, 1, 3)
 
 
-        self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding,
-                                               QtWidgets.QSizePolicy.Minimum), 1, 0)
+        self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Policy.Expanding,
+                                               QtWidgets.QSizePolicy.Policy.Minimum), 1, 0)
         self._layout.addWidget(LabelAlignRight('Current Ring Number:'), 1, 0, 1, 3)
         self.peak_num_sb = SpinBoxAlignRight()
         self.peak_num_sb.setValue(1)
         self.peak_num_sb.setMinimum(1)
         self._layout.addWidget(self.peak_num_sb, 1, 3)
 
-        self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding,
-                                               QtWidgets.QSizePolicy.Minimum), 2, 0, 1, 2)
+        self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Policy.Expanding,
+                                               QtWidgets.QSizePolicy.Policy.Minimum), 2, 0, 1, 2)
         self.automatic_peak_num_inc_cb = QtWidgets.QCheckBox('automatic increase')
         self.automatic_peak_num_inc_cb.setChecked(True)
         self._layout.addWidget(self.automatic_peak_num_inc_cb, 2, 2, 1, 2)
@@ -193,8 +193,8 @@ class PeakSelectionGroupBox(QtWidgets.QGroupBox):
         self.search_size_sb.setValue(10)
         self.search_size_sb.setMaximumWidth(50)
         self._layout.addWidget(self.search_size_sb, 5, 3, 1, 2)
-        #self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Expanding,
-        #                                       QtWidgets.QSizePolicy.Minimum), 4, 3, 1, 2)
+        #self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Policy.Expanding,
+        #                                       QtWidgets.QSizePolicy.Policy.Minimum), 4, 3, 1, 2)
 
         self.undo_peaks_btn = FlatButton("Undo")
         self.clear_peaks_btn = FlatButton("Clear All Peaks")
@@ -326,7 +326,7 @@ class RefinementOptionsGroupBox(QtWidgets.QGroupBox):
         self.update_btn = FlatButton('update')
         self._layout.addWidget(self.update_btn, 10, 0, 1, 4)
 
-        self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding),
+        self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding),
                              11, 0, 1, 4)
 
         self.setLayout(self._layout)'''
@@ -390,7 +390,7 @@ class RefinementOptionsGroupBox(QtWidgets.QGroupBox):
         self.update_btn = FlatButton('update')
         self._layout.addWidget(self.update_btn, 10, 0, 1, 4)
 
-        self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding),
+        self._layout.addItem(QtWidgets.QSpacerItem(0, 0, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding),
                              11, 0, 1, 4)
 
         self.setLayout(self._layout)'''

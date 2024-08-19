@@ -12,7 +12,7 @@ class spacerWidget(QtWidgets.QWidget):
         super( ).__init__()
         spacer_widget_layout = QtWidgets.QVBoxLayout()
         spacer_widget_layout.setContentsMargins(0,0,0,0)
-        spacer_widget_layout.addSpacerItem(QtWidgets.QSpacerItem(width, height, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed))
+        spacer_widget_layout.addSpacerItem(QtWidgets.QSpacerItem(width, height, QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed))
         self.setLayout(spacer_widget_layout)
 
 class PeriodicTable(QWidget):

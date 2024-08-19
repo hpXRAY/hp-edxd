@@ -241,21 +241,21 @@ class cosmicsimage:
         # This is a list of the indices of cosmic affected pixels.
         # print cosmicindices
 
-        # We put cosmic ray pixels to np.Inf to flag them :
-        self.cleanarray[mask] = np.Inf
+        # We put cosmic ray pixels to np.inf to flag them :
+        self.cleanarray[mask] = np.inf
 
         # Now we want to have a 2 pixel frame of Inf padding around our image.
         w = self.cleanarray.shape[0]
         h = self.cleanarray.shape[1]
-        padarray = np.zeros((w + 4, h + 4)) + np.Inf
+        padarray = np.zeros((w + 4, h + 4)) + np.inf
         # that copy is important, we need 2 independent arrays
         padarray[2:w + 2, 2:h + 2] = self.cleanarray.copy()
 
-        # The medians will be evaluated in this padarray, skipping the np.Inf.
+        # The medians will be evaluated in this padarray, skipping the np.inf.
         # Now in this copy called padarray, we also put the saturated stars to
-        # np.Inf, if available :
+        # np.inf, if available :
         if self.satstars is not None:
-            padarray[2:w + 2, 2:h + 2][self.satstars] = np.Inf
+            padarray[2:w + 2, 2:h + 2][self.satstars] = np.inf
             # Viva python, I tested this one, it works...
 
         # A loop through every cosmic pixel :
@@ -265,9 +265,9 @@ class cosmicsimage:
             # remember the shift due to the padding !
             cutout = padarray[x:x + 5, y:y + 5].ravel()
             # print cutout
-            # Now we have our 25 pixels, some of them are np.Inf, and we want
+            # Now we have our 25 pixels, some of them are np.inf, and we want
             # to take the median
-            goodcutout = cutout[cutout != np.Inf]
+            goodcutout = cutout[cutout != np.inf]
             # print np.alen(goodcutout)
 
             if np.alen(goodcutout) >= 25:

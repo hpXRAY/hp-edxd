@@ -25,7 +25,7 @@ Created:        Sept. 18, 2002
 Modifications:  MLR, Sept. 20, 2002.  Numerous bug fixes.
                 Ross Hrubiak, Oct. 14, 2018  
                     - re-done for Python 3
-                    - computational routines changed from Numeric, MLab to numpy
+                    - computational routines changed from np, MLab to numpy
                     - GUI re-written, changed from tkinter and Pmw to PyQt6
                     - plotting library changed from BltPlot to pyqtgraph
                     - changes to MCA calibration model: channel_to_energy, etc. moved to the mcaCalibration class
@@ -38,13 +38,13 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 
 import copy
-import numpy as Numeric
+import numpy as np
 import math
 
-import utilities.CARSMath as CARSMath
+#import utilities.CARSMath as CARSMath
 import functools
 import hpm.models.jcpds as jcpds
-import utilities.centroid as centroid
+#import utilities.centroid as centroid
 
 ############################################################
 class mcaCalibrate2theta_widgets(object):
@@ -125,8 +125,8 @@ class mcaCalibrate2theta(QtWidgets.QWidget):
             
             return 
         
-        self.fwhm_chan   = Numeric.zeros(self.nrois, Numeric.float)
-        self.two_theta   = Numeric.zeros(self.nrois, Numeric.float)
+        self.fwhm_chan   = np.zeros(self.nrois, float)
+        self.two_theta   = np.zeros(self.nrois, float)
         self.widgets     = mcaCalibrate2theta_widgets(self.nrois)
         
 
@@ -160,9 +160,9 @@ class mcaCalibrate2theta(QtWidgets.QWidget):
         for key, col in header.items():
             t = QtWidgets.QLabel(self.groupBox)
             t.setText(key)
-            t.setAlignment(QtCore.Qt.AlignHCenter)
+            t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
             t.setMinimumSize(QtCore.QSize(60, 0))
-            self.gridLayout.addWidget(t, row, col, QtCore.Qt.AlignHCenter)
+            self.gridLayout.addWidget(t, row, col, QtCore.Qt.AlignmentFlag.AlignHCenter)
 
         #### display rois parameters
 
@@ -171,28 +171,28 @@ class mcaCalibrate2theta(QtWidgets.QWidget):
             
             t = QtWidgets.QLabel(self.groupBox)
             t.setText(str(i))
-            t.setAlignment(QtCore.Qt.AlignHCenter)
-            self.gridLayout.addWidget(t, row, 0, QtCore.Qt.AlignHCenter)  
+            t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
+            self.gridLayout.addWidget(t, row, 0, QtCore.Qt.AlignmentFlag.AlignHCenter)  
 
             self.widgets.use_flag[i] = t = QtWidgets.QCheckBox(self.groupBox)
             t.setChecked(self.roi[i].use==1)
             t.toggled.connect(functools.partial(self.menu_use, i)) # lambda expression didn't work so using functools.partial instead
-            self.gridLayout.addWidget(t, row, 1, QtCore.Qt.AlignHCenter)
+            self.gridLayout.addWidget(t, row, 1, QtCore.Qt.AlignmentFlag.AlignHCenter)
 
             self.widgets.label[i] = t = QtWidgets.QLineEdit(self.groupBox)
             t.setText(self.roi[i].label)
             t.setFixedWidth(70)
-            t.setAlignment(QtCore.Qt.AlignHCenter)
+            t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
             self.widgets.label[i].returnPressed.connect(functools.partial(self.menu_label, i))
-            self.gridLayout.addWidget(t, row, 2, QtCore.Qt.AlignHCenter)
+            self.gridLayout.addWidget(t, row, 2, QtCore.Qt.AlignmentFlag.AlignHCenter)
             
             
             '''
             self.widgets.fwhm[i] = t =  QtWidgets.QLineEdit(self.groupBox)
             t.setText('%.3f' % self.roi[i].fwhm)
             t.setFixedWidth(70)
-            t.setAlignment(QtCore.Qt.AlignHCenter)
-            self.gridLayout.addWidget(t, row, 3, QtCore.Qt.AlignHCenter)
+            t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
+            self.gridLayout.addWidget(t, row, 3, QtCore.Qt.AlignmentFlag.AlignHCenter)
             '''
 
             # try to use the label to lookup d spacing
@@ -204,29 +204,29 @@ class mcaCalibrate2theta(QtWidgets.QWidget):
             self.widgets.d_spacing[i] = t = QtWidgets.QLineEdit(self.groupBox)
             t.setText('%.4f' % self.roi[i].d_spacing)
             t.setFixedWidth(70)
-            t.setAlignment(QtCore.Qt.AlignHCenter)
+            t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
             t.editingFinished.connect(functools.partial(self.menu_d_spacing, i))
-            self.gridLayout.addWidget(t, row, 3, QtCore.Qt.AlignHCenter)
+            self.gridLayout.addWidget(t, row, 3, QtCore.Qt.AlignmentFlag.AlignHCenter)
             
             self.widgets.energy[i] = t = QtWidgets.QLineEdit(self.groupBox)
             t.setText('%.3f' % self.roi[i].energy)
             t.setFixedWidth(70)
-            t.setAlignment(QtCore.Qt.AlignHCenter)
+            t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
             t.editingFinished.connect(functools.partial(self.menu_energy, i))
-            self.gridLayout.addWidget(t, row, 4, QtCore.Qt.AlignHCenter)
+            self.gridLayout.addWidget(t, row, 4, QtCore.Qt.AlignmentFlag.AlignHCenter)
 
 
             self.widgets.two_theta[i] = t = QtWidgets.QLineEdit(self.groupBox)
             t.setText('%.4f' % 0.0)
             t.setFixedWidth(70)
-            t.setAlignment(QtCore.Qt.AlignHCenter)
-            self.gridLayout.addWidget(t, row, 5, QtCore.Qt.AlignHCenter)
+            t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
+            self.gridLayout.addWidget(t, row, 5, QtCore.Qt.AlignmentFlag.AlignHCenter)
 
             self.widgets.two_theta_diff[i] = t = QtWidgets.QLineEdit(self.groupBox)
             t.setText('%.4f' % 0.0)
             t.setFixedWidth(70)
-            t.setAlignment(QtCore.Qt.AlignHCenter)
-            self.gridLayout.addWidget(t, row, 6, QtCore.Qt.AlignHCenter)
+            t.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
+            self.gridLayout.addWidget(t, row, 6, QtCore.Qt.AlignmentFlag.AlignHCenter)
 
         self.verticalLayout_4.addWidget(self.groupBox)
 
@@ -254,14 +254,14 @@ class mcaCalibrate2theta(QtWidgets.QWidget):
         self.lbltwo_theta_fit = t = QtWidgets.QLabel(self.groupBox_2)
         t.setText(f'2\N{GREEK SMALL LETTER THETA}')
         t.setFixedWidth(70)
-        t.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        t.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.horizontalLayout.addWidget(t)
 
         self.widgets.two_theta_fit = t = QtWidgets.QLineEdit(self.groupBox_2)
         t.setText('%.5f' % self.calibration.two_theta)
         self.horizontalLayout.addWidget(t)
 
-        self.horizontalLayout.setAlignment(QtCore.Qt.AlignHCenter)
+        self.horizontalLayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter)
 
         self.verticalLayout_3.addLayout(self.horizontalLayout)
         self.verticalLayout_4.addWidget(self.groupBox_2)
@@ -285,12 +285,12 @@ class mcaCalibrate2theta(QtWidgets.QWidget):
         self.groupBox.setTitle("Defined regions")
         self.setFixedSize(self.verticalLayout_4.sizeHint())  
 
-        #self.setWindowFlags(QtCore.Qt.Tool)
+        #self.setWindowFlags(QtCore.Qt.WindowType.Tool)
         #self.setAttribute(QtCore.Qt.WA_MacAlwaysShowToolWindow)     
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 
@@ -360,8 +360,8 @@ class mcaCalibrate2theta(QtWidgets.QWidget):
             two_theta=[]
             for u in use:
                 two_theta.append(self.two_theta[u])
-            self.calibration.two_theta = Numeric.mean(two_theta)
-            sdev = Numeric.std(two_theta)
+            self.calibration.two_theta = np.mean(two_theta)
+            sdev = np.std(two_theta)
             self.widgets.two_theta_fit.setText(
                                         ('%.5f' % self.calibration.two_theta)
                                         + ' +/- ' + ('%.5f' % sdev))
@@ -371,8 +371,8 @@ class mcaCalibrate2theta(QtWidgets.QWidget):
         else:
 
             msg_box = QtWidgets.QMessageBox(self)
-            msg_box.setIcon(QtWidgets. QMessageBox.Information) 
-            msg_box.setStandardButtons(QtWidgets. QMessageBox.Ok )
+            msg_box.setIcon(QtWidgets. QMessageBox.Icon.Information) 
+            msg_box.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok )
             msg_box.setWindowTitle("Phase not recognized")
             msg_box.setText(self.phase_name + ' phase file not found. For automatic calibration, please close this \nwindow and load the corresponding phase file (.jcpds) first. Or manually enter d-spacing values for each hkl line.')
             msg_box.show()

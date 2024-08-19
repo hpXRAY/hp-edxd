@@ -112,6 +112,6 @@ def main():
 
     
 
-    return app.exec_()
+    return app.exec()
 
 

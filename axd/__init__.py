@@ -38,11 +38,7 @@ aEDXD = os.path.join(resources_path, 'aEDXD')
 
 def main():
     
-    if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
-        PyQt6.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-    if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
-        PyQt6.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
-    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
+    
     app = QApplication(sys.argv)
     app.aboutToQuit.connect(app.deleteLater)
     from axd.controllers.aEDXD_controller import aEDXDController
@@ -51,6 +47,6 @@ def main():
     Fe_test=  os.path.normpath( os.path.join(aEDXD,'P3.3-GPa-T1950-408psa-Fe-scan_ab5.cfg'))
     controller.config_controller.load_config_file(filename=Fe_test)
 
-    app.exec_()
+    app.exec()
     del app
     

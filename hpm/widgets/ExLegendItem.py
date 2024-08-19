@@ -77,7 +77,7 @@ class LegendItem(GraphicsWidget, GraphicsWidgetAnchor):
 
         GraphicsWidget.__init__(self)
         GraphicsWidgetAnchor.__init__(self)
-        self.setFlag(self.ItemIgnoresTransformations)
+        self.setFlag(self.GraphicsItemFlag.ItemIgnoresTransformations)
         self.layout = QtWidgets.QGraphicsGridLayout()
         self.layout.setVerticalSpacing(verSpacing)
         self.layout.setHorizontalSpacing(horSpacing)
@@ -239,10 +239,10 @@ class LegendItem(GraphicsWidget, GraphicsWidgetAnchor):
             p.drawRect(self.boundingRect())
 
     def hoverEvent(self, ev):
-        ev.acceptDrags(QtCore.Qt.LeftButton)
+        ev.acceptDrags(QtCore.Qt.MouseButton.LeftButton)
 
     def mouseDragEvent(self, ev):
-        if ev.button() == QtCore.Qt.LeftButton:
+        if ev.button() == QtCore.Qt.MouseButton.LeftButton:
             dpos = ev.pos() - ev.lastPos()
             self.autoAnchor(self.pos() + dpos)
 

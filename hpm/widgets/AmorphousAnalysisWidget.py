@@ -292,9 +292,9 @@ class AmorphousAnalysisWidget(QtWidgets.QWidget):
         self.win.addItem(self.hist)
         
 
-        self.vLine = pg.InfiniteLine(movable=False, pen=pg.mkPen(color=(0, 255, 0), width=2 , style=QtCore.Qt.DashLine))
-        self.hLine = pg.InfiniteLine(movable=False, angle = 0, pen=pg.mkPen(color=(200, 200, 200), width=2 , style=QtCore.Qt.DashLine))
-        self.hLineFast = pg.InfiniteLine(movable=False,angle = 0, pen=pg.mkPen({'color': '606060', 'width': 1, 'style':QtCore.Qt.DashLine}))
+        self.vLine = pg.InfiniteLine(movable=False, pen=pg.mkPen(color=(0, 255, 0), width=2 , style=QtCore.Qt.PenStyle.DashLine))
+        self.hLine = pg.InfiniteLine(movable=False, angle = 0, pen=pg.mkPen(color=(200, 200, 200), width=2 , style=QtCore.Qt.PenStyle.DashLine))
+        self.hLineFast = pg.InfiniteLine(movable=False,angle = 0, pen=pg.mkPen({'color': '606060', 'width': 1, 'style':QtCore.Qt.PenStyle.DashLine}))
         self.proxy = pg.SignalProxy(self.win.scene().sigMouseMoved, rateLimit=20, slot=self.fastCursorMove)
 
         #self.vLine.sigPositionChanged.connect(self.cursor_dragged)
@@ -333,9 +333,9 @@ class AmorphousAnalysisWidget(QtWidgets.QWidget):
                 self.plotMouseMoveSignal.emit(index)
 
     def customMouseClickEvent(self, ev):
-        if ev.button() == QtCore.Qt.RightButton:
+        if ev.button() == QtCore.Qt.MouseButton.RightButton:
             self.view.enableAutoRange(enable=1) 
-        elif ev.button() == QtCore.Qt.LeftButton: 
+        elif ev.button() == QtCore.Qt.MouseButton.LeftButton: 
             pos = ev.pos()  ## using signal proxy turns original arguments into a tuple
             mousePoint = self.view.mapSceneToView(pos)
             index= mousePoint.y()
@@ -404,7 +404,7 @@ class AmorphousAnalysisWidget(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 

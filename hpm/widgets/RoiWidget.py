@@ -100,7 +100,7 @@ class RoiWidget(QtWidgets.QWidget):
     
 
     def style_widgets(self):
-        self.roi_tw.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        self.roi_tw.setSizePolicy(QtWidgets.QSizePolicy.Policy.MinimumExpanding, QtWidgets.QSizePolicy.Policy.MinimumExpanding)
         self.roi_tw.setMinimumWidth(400)
         self.roi_tw.setMinimumHeight(110)
         self.roi_sets_tw.setMaximumWidth(170)
@@ -117,7 +117,7 @@ class RoiWidget(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 
@@ -135,14 +135,14 @@ class roiTableWidget(ListTableWidget):
         self.centroid_items = []
         self.name_items = []
         self.index_items = []
-        header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self)
+        header_view = QtWidgets.QHeaderView(QtCore.Qt.Orientation.Horizontal, self)
         self.setHorizontalHeader(header_view)
 
         # first column size fixed, the rest are strechable
-        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
         for i in range(len(self.default_header))[2:]:
-            header_view.setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
+            header_view.setSectionResizeMode(i, QtWidgets.QHeaderView.ResizeMode.Stretch)
         
         self.header = copy.deepcopy(self.default_header)
         self.setHorizontalHeaderLabels(self.header)
@@ -157,8 +157,8 @@ class roiTableWidget(ListTableWidget):
 
         index_item = QtWidgets.QTableWidgetItem(str(ind))
         #index_item.setText(str(ind))
-        index_item.setFlags(index_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        index_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        index_item.setFlags(index_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        index_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 0, index_item)
         self.index_items.append(index_item)
 
@@ -173,15 +173,15 @@ class roiTableWidget(ListTableWidget):
 
         name_item = QtWidgets.QTableWidgetItem(name)
         name_item.setText(name)
-        #name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        name_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        #name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        name_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 2, name_item)
         self.name_items.append(name_item)
 
         #centroid_item = QtWidgets.QTableWidgetItem(centroid)
         centroid_item = QtWidgets.QLabel(centroid)
-        #centroid_item.setFlags(centroid_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        centroid_item.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        #centroid_item.setFlags(centroid_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        centroid_item.setAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         if fit_ok:
             ssheet = "color: #00ff00; background-color: transparent"
         else:
@@ -191,13 +191,13 @@ class roiTableWidget(ListTableWidget):
         self.centroid_items.append(centroid_item)
 
         counts_item = QtWidgets.QTableWidgetItem(counts)
-        counts_item.setFlags(counts_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        counts_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        counts_item.setFlags(counts_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        counts_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 4, counts_item)
 
         fwhm_item = QtWidgets.QTableWidgetItem(fwhm)
-        fwhm_item.setFlags(fwhm_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        fwhm_item.setTextAlignment(QtCore.Qt.AlignHCenter| QtCore.Qt.AlignVCenter)
+        fwhm_item.setFlags(fwhm_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        fwhm_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter| QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 5, fwhm_item)
 
         '''self.setColumnWidth(0, 25)
@@ -297,13 +297,13 @@ class roiSetsTableWidget(ListTableWidget):
         self.roi_show_cbs = []
         self.name_items = []
         #self.index_items = []
-        header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self)
+        header_view = QtWidgets.QHeaderView(QtCore.Qt.Orientation.Horizontal, self)
         self.setHorizontalHeader(header_view)
 
-        #header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+        #header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
         for i in range(len(self.default_header))[1:]:
-            header_view.setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
+            header_view.setSectionResizeMode(i, QtWidgets.QHeaderView.ResizeMode.Stretch)
         
         self.header = copy.deepcopy(self.default_header)
         self.setHorizontalHeaderLabels(self.header)
@@ -318,8 +318,8 @@ class roiSetsTableWidget(ListTableWidget):
 
         '''index_item = QtWidgets.QTableWidgetItem(str(ind))
         #index_item.setText(str(ind))
-        index_item.setFlags(index_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        index_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        index_item.setFlags(index_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        index_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 0, index_item)
         self.index_items.append(index_item)'''
 
@@ -335,24 +335,24 @@ class roiSetsTableWidget(ListTableWidget):
 
         name_item = QtWidgets.QTableWidgetItem(name)
         name_item.setText(name)
-        #name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        name_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        #name_item.setFlags(name_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        name_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 1, name_item)
         self.name_items.append(name_item)
 
         '''tth_item = QtWidgets.QTableWidgetItem(tth)
-        tth_item.setFlags(tth_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        tth_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        tth_item.setFlags(tth_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        tth_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 2, tth_item)'''
 
         '''counts_item = QtWidgets.QTableWidgetItem(counts)
-        counts_item.setFlags(counts_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        counts_item.setTextAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        counts_item.setFlags(counts_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        counts_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 3, counts_item)
 
         fwhm_item = QtWidgets.QTableWidgetItem(fwhm)
-        fwhm_item.setFlags(fwhm_item.flags() & ~QtCore.Qt.ItemIsEditable)
-        fwhm_item.setTextAlignment(QtCore.Qt.AlignHCenter| QtCore.Qt.AlignVCenter)
+        fwhm_item.setFlags(fwhm_item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
+        fwhm_item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignHCenter| QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.setItem(current_rows, 4, fwhm_item)'''
 
         '''self.setColumnWidth(0, 25)
@@ -456,7 +456,7 @@ class plotFitWindow(QtWidgets.QWidget):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 

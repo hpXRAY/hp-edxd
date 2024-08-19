@@ -59,7 +59,7 @@ class aEDXDController(QObject):
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()  
 
@@ -141,12 +141,12 @@ class aEDXDController(QObject):
         Overrides the closeEvent of the main display widget.
         '''
         qm = QtWidgets.QMessageBox
-        ret = qm.Yes
+        ret = qm.StandardButton.Yes
         progress_saved = self.is_progress_saved()
         save_as_enabled = self.display_window.save_as_btn.isEnabled()
         if not progress_saved and save_as_enabled:
-            ret = qm.question(self.display_window,'', "If you exit without saving the project your progress will be lost. Exit?", qm.Yes | qm.No)
-        if ret == qm.Yes or progress_saved:
+            ret = qm.question(self.display_window,'', "If you exit without saving the project your progress will be lost. Exit?", qm.StandardButton.Yes | qm.No)
+        if ret == qm.StandardButton.Yes or progress_saved:
             QCloseEvent.accept()
             self.app.closeAllWindows()
         else:

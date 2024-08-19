@@ -94,7 +94,7 @@ def predict_gaussian_spectrum(fit, peaks):
    """
    MAX_SIGMA=5.
    SIGMA_TO_FWHM = 2.35482
-   predicted = Numeric.zeros(fit.nchans, Numeric.Float)
+   predicted = Numeric.zeros(fit.nchans, float)
    energy_range = fit.energy_offset + Numeric.arange(fit.nchans)*fit.energy_slope
    for peak in peaks:
       sigma = peak.fwhm/SIGMA_TO_FWHM

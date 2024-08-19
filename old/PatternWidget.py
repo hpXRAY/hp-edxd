@@ -62,7 +62,7 @@ class PatternWidget(QtCore.QObject):
                                          pen=pg.mkPen(color=(255, 255, 255), width=2))
         self.pattern_plot.addItem(self.plot_item)
         self.bkg_item = pg.PlotDataItem([], [],
-                                        pen=pg.mkPen(color=(255, 0, 0), width=2, style=QtCore.Qt.DashLine))
+                                        pen=pg.mkPen(color=(255, 0, 0), width=2, style=QtCore.Qt.PenStyle.DashLine))
         self.pattern_plot.addItem(self.bkg_item)
         self.legend.addItem(self.plot_item, '')
         self.plot_name = ''
@@ -87,7 +87,7 @@ class PatternWidget(QtCore.QObject):
             self.update_graph_range()
 
     def create_pos_line(self):
-        self.pos_line = pg.InfiniteLine(pen=pg.mkPen(color=(0, 255, 0), width=1.5, style=QtCore.Qt.DashLine))
+        self.pos_line = pg.InfiniteLine(pen=pg.mkPen(color=(0, 255, 0), width=1.5, style=QtCore.Qt.PenStyle.DashLine))
         self.pattern_plot.addItem(self.pos_line)
 
     def deactivate_pos_line(self):
@@ -265,7 +265,7 @@ class PatternWidget(QtCore.QObject):
             self.phases_vlines[0].set_data(positions, name)
         else:
             self.phases_vlines.append(PhaseLinesPlot(self.pattern_plot, positions,
-                                                     pen=pg.mkPen(color=(200, 50, 50), style=QtCore.Qt.SolidLine)))
+                                                     pen=pg.mkPen(color=(200, 50, 50), style=QtCore.Qt.PenStyle.SolidLine)))
 
     def show_linear_region(self):
         self.pattern_plot.addItem(self.linear_region_item)
@@ -332,8 +332,8 @@ class PatternWidget(QtCore.QObject):
         self.last_view_range = np.array(self.view_box.viewRange())
 
     def myMouseClickEvent(self, ev):
-        if ev.button() == QtCore.Qt.RightButton or \
-                (ev.button() == QtCore.Qt.LeftButton and
+        if ev.button() == QtCore.Qt.MouseButton.RightButton or \
+                (ev.button() == QtCore.Qt.MouseButton.LeftButton and
                          ev.modifiers() & QtCore.Qt.ControlModifier):
             view_range = np.array(self.view_box.viewRange()) * 2
             curve_data = self.plot_item.getData()
@@ -344,7 +344,7 @@ class PatternWidget(QtCore.QObject):
                 self.auto_range = False
                 self.view_box.scaleBy(2)
             self.emit_sig_range_changed()
-        elif ev.button() == QtCore.Qt.LeftButton:
+        elif ev.button() == QtCore.Qt.MouseButton.LeftButton:
             pos = self.view_box.mapFromScene(ev.pos())
             pos = self.plot_item.mapFromScene(2 * ev.pos() - pos)
             x = pos.x()
@@ -353,7 +353,7 @@ class PatternWidget(QtCore.QObject):
         ev.accept()
 
     def myMouseDoubleClickEvent(self, ev):
-        if (ev.button() == QtCore.Qt.RightButton) or (ev.button() == QtCore.Qt.LeftButton and
+        if (ev.button() == QtCore.Qt.MouseButton.RightButton) or (ev.button() == QtCore.Qt.MouseButton.LeftButton and
                                                               ev.modifiers() & QtCore.Qt.ControlModifier):
             self.auto_range = True
             self.emit_sig_range_changed()
@@ -366,8 +366,8 @@ class PatternWidget(QtCore.QObject):
         dif = pos - lastPos
         dif *= -1
 
-        if ev.button() == QtCore.Qt.RightButton or \
-                (ev.button() == QtCore.Qt.LeftButton and
+        if ev.button() == QtCore.Qt.MouseButton.RightButton or \
+                (ev.button() == QtCore.Qt.MouseButton.LeftButton and
                          ev.modifiers() & QtCore.Qt.ControlModifier):
             # determine the amount of translation
             tr = dif
@@ -425,7 +425,7 @@ class PatternWidget(QtCore.QObject):
 
 class PhaseLinesPlot(object):
     def __init__(self, plot_item, positions=None, name='Dummy',
-                 pen=pg.mkPen(color=(120, 120, 120), style=QtCore.Qt.DashLine)):
+                 pen=pg.mkPen(color=(120, 120, 120), style=QtCore.Qt.PenStyle.DashLine)):
         self.plot_item = plot_item
         self.peak_positions = []
         self.line_items = []
@@ -461,7 +461,7 @@ class PhasePlot(object):
         self.pattern_x_range = []
         self.index = PhasePlot.num_phases
         self.color = calculate_color(self.index + 9)
-        self.pen = pg.mkPen(color=self.color, width=0.9, style=QtCore.Qt.SolidLine)
+        self.pen = pg.mkPen(color=self.color, width=0.9, style=QtCore.Qt.PenStyle.SolidLine)
         self.ref_legend_line = pg.PlotDataItem(pen=self.pen)
         self.name = ''
         PhasePlot.num_phases += 1
@@ -525,7 +525,7 @@ class PhasePlot(object):
                         self.line_visible[ind] = False
 
     def set_color(self, color):
-        self.pen = pg.mkPen(color=color, width=1.3, style=QtCore.Qt.SolidLine)
+        self.pen = pg.mkPen(color=color, width=1.3, style=QtCore.Qt.PenStyle.SolidLine)
         for line_item in self.line_items:
             line_item.setPen(self.pen)
         self.ref_legend_line.setPen(self.pen)

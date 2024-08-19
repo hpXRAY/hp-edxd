@@ -69,7 +69,7 @@ class multiangleModel(QStandardItemModel):
         header = self.header
         super().__init__(0, len(header), parent)
         for ind, h in enumerate(header):
-            self.setHeaderData(ind, Qt.Horizontal, h)
+            self.setHeaderData(ind, Qt.Orientation.Horizontal, h)
         self.itemChanged.connect(self.on_item_changed)
         self.det_slit_distance = 600.
         self.tip_slit_distance = 60.

@@ -166,7 +166,7 @@ class aEDXDFilesController(QObject):
         
         filename = open_file_dialog(
             self.files_window, "Load multiangle scan settings", directory=directory)
-        if filename is not '':
+        if filename != '':
             if filename.endswith('.json') or filename.endswith('.scan'):
                 settings = self.load_settings(filename)
                 self.clear_clicked()
@@ -180,8 +180,8 @@ class aEDXDFilesController(QObject):
         row_count = len(self.spectra_model.tth)
         if row_count>0:
             qm = QtWidgets.QMessageBox()
-            ret = qm.question(self.files_window,'Warning', "Clear current scan?", qm.Yes | qm.No)
-            if ret == qm.Yes:
+            ret = qm.question(self.files_window,'Warning', "Clear current scan?", qm.StandardButton.Yes | qm.No)
+            if ret == qm.StandardButton.Yes:
                 self.clear_clicked()
 
   

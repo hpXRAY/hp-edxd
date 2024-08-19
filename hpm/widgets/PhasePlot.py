@@ -57,9 +57,9 @@ class PhasePlot(object):
     def set_line_style(self, style):
         # takes style input as 'solid' or 'dashed'
         if style == 'dash':
-            self.line_style = QtCore.Qt.DashLine
+            self.line_style = QtCore.Qt.PenStyle.DashLine
         elif style == 'solid':   
-            self.line_style = QtCore.Qt.SolidLine
+            self.line_style = QtCore.Qt.PenStyle.SolidLine
         self.pen = pg.mkPen(color=self.color, width=self.width, style=self.line_style)     
 
     def create_items(self, positions, intensities, name=None, baseline=1):

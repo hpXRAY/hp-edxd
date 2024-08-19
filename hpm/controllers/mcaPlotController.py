@@ -273,7 +273,7 @@ class plotController(QObject):
             xLabel += ' (%s)' %(self.horzBins[2]) 
         xAxis = self.horzBins[0]
         if self.logMode[1]:
-            data = np.clip(data,self.LogClip,np.Inf)
+            data = np.clip(data,self.LogClip,np.inf)
         if rois is not None:
             nrois = len(rois)
             [roiHorz, roiData, data, xAxis] = self.plotROI(rois, data, xAxis, self.logMode)

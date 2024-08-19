@@ -1,2 +1,3 @@
 pip install burnman==0.9.0
 pip install PyCifRW
+pip install scikit-image

@@ -94,7 +94,7 @@ def create_treeWidget(name, ncolumn):
         item = QTreeWidgetItem(root, ["{}-{}".format(name, letter)])
         QTreeWidgetItem(item, ["{}-{}-{}".format(name, letter, i) for i in range(ncolumn)])
     treeWidget.expandAll()
-    treeWidget.setSelectionMode(QAbstractItemView.MultiSelection)
+    treeWidget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
     treeWidget.setDragEnabled(True)
     treeWidget.viewport().setAcceptDrops(True)
     treeWidget.setDropIndicatorShown(True)

@@ -45,7 +45,7 @@ class aEDXDFilesWidget(QWidget):
    
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()    
     
@@ -85,12 +85,12 @@ class aEDXDFilesWidget(QWidget):
         self.button_widget.setLayout(self._button_layout)
         self._body_layout = QtWidgets.QHBoxLayout()
         '''self.file_tw = ListTableWidget(columns=4)
-        header_view = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, self.file_tw)
+        header_view = QtWidgets.QHeaderView(QtCore.Qt.Orientation.Horizontal, self.file_tw)
         self.file_tw.setHorizontalHeader(header_view)
-        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
-        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        header_view.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)'''
+        header_view.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        header_view.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        header_view.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeMode.Stretch)
+        header_view.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)'''
         self.file_trw = treeWidget()
         
         #self.file_trw.setHeaderLabels([' ' + f'  2\N{GREEK SMALL LETTER THETA}'])
@@ -99,7 +99,7 @@ class aEDXDFilesWidget(QWidget):
         #self.file_trw.setItemDelegate(NoRectDelegate())
         
         header = self.file_trw.header()
-        header.setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        header.setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Fixed)
         self._body_layout.addWidget(self.file_trw )
         
         self._layout.addWidget(self.button_widget)
@@ -157,7 +157,7 @@ class aEDXDFilesWidget(QWidget):
     
 
     def style_widgets(self):
-        #self.file_trw.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.MinimumExpanding)
+        #self.file_trw.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.MinimumExpanding)
         #self.file_trw.setMinimumWidth(405)
         
         #self.file_trw.setMinimumHeight(120)
@@ -194,7 +194,7 @@ class treeWidget(QtWidgets.QTreeWidget):
         super().__init__()
         self.setAcceptDrops(True) 
         self.expandAll()
-        #self.setSelectionMode(QAbstractItemView.MultiSelection)
+        #self.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
         self.setDragEnabled(True)
         #self.viewport().setAcceptDrops(True)
  

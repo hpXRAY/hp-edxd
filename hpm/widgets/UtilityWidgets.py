@@ -74,11 +74,11 @@ class selectDetectorDialog(QtWidgets.QDialog):
         """
         Makes everything pretty and set Double validators for the line edits.
         """
-        self.detetor_lbl.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-        #self.detetor_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.detetor_lbl.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
+        #self.detetor_txt.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.detetor_txt.setMaximumWidth(100)
         #self.detetor_txt.setValidator(QtGui.QIntValidator())
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
 
     def _connect_widgets(self):
         """
@@ -148,11 +148,11 @@ class xyPatternParametersDialog(QtWidgets.QDialog):
         """
         Makes everything pretty and set Double validators for the line edits.
         """
-        self.xray_wavelength_lbl.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-        self.xray_wavelength_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.xray_wavelength_lbl.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.xray_wavelength_txt.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.xray_wavelength_txt.setMaximumWidth(100)
         self.xray_wavelength_txt.setValidator(QtGui.QDoubleValidator())
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
 
     def _connect_widgets(self):
         """
@@ -223,17 +223,17 @@ class CifConversionParametersDialog(QtWidgets.QDialog):
         """
         Makes everything pretty and set Double validators for the line edits.
         """
-        self.int_cutoff_lbl.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-        self.int_cutoff_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.int_cutoff_lbl.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.int_cutoff_txt.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.int_cutoff_txt.setMaximumWidth(40)
-        self.min_d_spacing_lbl.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-        self.min_d_spacing_txt.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.min_d_spacing_lbl.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
+        self.min_d_spacing_txt.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.min_d_spacing_txt.setMaximumWidth(40)
 
         self.int_cutoff_txt.setValidator(QtGui.QDoubleValidator())
         self.min_d_spacing_txt.setValidator(QtGui.QDoubleValidator())
 
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
+        self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
 
         #file = open("stylesheet.qss")
         #stylesheet = file.read()
@@ -292,12 +292,12 @@ class FileInfoWidget(QtWidgets.QWidget):
             }"""
         )
         self.setLayout(self._layout)
-        self.setWindowFlags(QtCore.Qt.Tool | QtCore.Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowFlags(QtCore.Qt.WindowType.Tool | QtCore.Qt.MSWindowsFixedSizeDialogHint)
         self.setAttribute(QtCore.Qt.WA_MacAlwaysShowToolWindow)
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 

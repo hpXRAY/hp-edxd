@@ -186,9 +186,9 @@ class JcpdsEditorWidget(QtWidgets.QWidget):
         self.lattice_ratio_step_txt.setMaximumWidth(60)
 
         self.reflection_table_view.setShowGrid(False)
-        self.reflection_table_view.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.reflection_table_view.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
         self.reflection_table_view.setItemDelegate(TextDoubleDelegate())
-        self.reflection_table_view.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        self.reflection_table_view.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
 
         self.eos_gb.setMaximumWidth(200)
         self.eos_gb.setStyleSheet("""
@@ -198,14 +198,14 @@ class JcpdsEditorWidget(QtWidgets.QWidget):
         """)
 
         self.reflection_table_view.verticalHeader().setDefaultSectionSize(20)
-        self.reflection_table_view.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        self.reflection_table_view.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Fixed)
 
-        self.setWindowFlags(QtCore.Qt.Tool)
+        self.setWindowFlags(QtCore.Qt.WindowType.Tool)
         self.setAttribute(QtCore.Qt.WA_MacAlwaysShowToolWindow)
 
     def raise_widget(self):
         self.show()
-        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowMinimized | QtCore.Qt.WindowActive)
+        self.setWindowState(self.windowState() & ~QtCore.Qt.WindowState.WindowMinimized | QtCore.Qt.WindowState.WindowActive)
         self.activateWindow()
         self.raise_()
 
@@ -404,7 +404,7 @@ class JcpdsEditorWidget(QtWidgets.QWidget):
 
 class NoRectDelegate(QtWidgets.QItemDelegate):
     def drawFocus(self, painter, option, rect):
-        option.state &= ~QtWidgets.QStyle.State_HasFocus
+        option.state &= ~QtWidgets.QStyle.StateFlag.State_HasFocus
         QtWidgets.QItemDelegate.drawFocus(self, painter, option, rect)
 
 
@@ -413,7 +413,7 @@ class TextDoubleDelegate(NoRectDelegate):
         self.editor = QtWidgets.QLineEdit(parent)
         self.editor.setFrame(False)
         self.editor.setValidator(QtGui.QDoubleValidator())
-        self.editor.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.editor.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter)
         return self.editor
 
 
@@ -436,11 +436,11 @@ class ReflectionTableModel(QtCore.QAbstractTableModel):
     def columnCount(self, *_):
         return 10
 
-    def data(self, index, role=QtCore.Qt.DisplayRole):
+    def data(self, index, role=QtCore.Qt.ItemDataRole.DisplayRole):
         col = index.column()
-        if role == QtCore.Qt.TextAlignmentRole:
-            return QtCore.Qt.AlignCenter
-        if role == QtCore.Qt.DisplayRole:
+        if role == QtCore.Qt.ItemDataRole.TextAlignmentRole:
+            return QtCore.Qt.AlignmentFlag.AlignCenter
+        if role == QtCore.Qt.ItemDataRole.DisplayRole:
             if col < 4:
                 format_str = '{0:g}'
             else:
@@ -491,15 +491,15 @@ class ReflectionTableModel(QtCore.QAbstractTableModel):
         self.modelReset.emit()
 
     def headerData(self, section: int, orientation: QtCore.Qt.Orientation, role: int = ...):
-        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+        if orientation == QtCore.Qt.Orientation.Horizontal and role == QtCore.Qt.ItemDataRole.DisplayRole:
             return self.header_labels[section]
-        if orientation == QtCore.Qt.Vertical and role == QtCore.Qt.DisplayRole:
+        if orientation == QtCore.Qt.Orientation.Vertical and role == QtCore.Qt.ItemDataRole.DisplayRole:
             return section + 1
 
     def flags(self, index):
         col = index.column()
         ans = QtCore.QAbstractTableModel.flags(self, index)
         if col <= 3:
-            return QtCore.Qt.ItemIsEditable | ans
+            return QtCore.Qt.ItemFlag.ItemIsEditable | ans
         else:
             return ans
