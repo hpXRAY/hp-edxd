@@ -365,11 +365,11 @@ class MultipleDatasetsController(QObject):
 
         self.widget.set_spectral_data(view)
         self.widget.set_linear_regions(self.multi_spectra_model.alignment_rois, self.widget.show_roi_btn.isChecked())
-        #if len(scratch_view):
-        #    self.widget.scratch_widget.plot_image(scratch_view)
-        #self.mask_controller.mask_model._img_data = view
-        #self.mask_controller.update_mask_dimension()
-        self.widget.set_image_scale(scale, r)
+        
+        
+        width= view.shape[1]
+        height= view.shape[0]
+        self.widget.set_image_scale(scale, r, width, height)
         
         self.scale = scale
         

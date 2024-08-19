@@ -45,8 +45,8 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         super().__init__()
         self._layout = QtWidgets.QVBoxLayout()  
 
-        self.p1 : pg.PlotWidget
-        self.win:pg.GraphicsLayoutWidget
+
+        self.pg_widget:pg.GraphicsLayoutWidget
         self.setWindowTitle('Multiple spectra view')
         self.button_widget = QtWidgets.QWidget(self)
         self.button_widget.setMaximumHeight(40)
@@ -130,7 +130,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self._plot_widget_layout = QtWidgets.QVBoxLayout(self.plot_widget)
         self._plot_widget_layout.setContentsMargins(0,0,0,0)
 
-        self._plot_widget_layout.addWidget( self.win)
+        self._plot_widget_layout.addWidget( self.pg_widget)
 
         self.HorizontalScaleWidget = QtWidgets.QWidget()
         self.HorizontalScaleLayout = QtWidgets.QHBoxLayout(self.HorizontalScaleWidget)
@@ -258,13 +258,13 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         for lr in self.alignment_rois:
             if not visible:
                 try:
-                    self.p1.removeItem(lr)
+                    self.pg_img_item.removeItem(lr)
                 except:
                     pass
             else:
             
                 try:
-                    self.p1.addItem(lr)
+                    self.pg_img_item.addItem(lr)
                 except:
                     pass
 
@@ -324,16 +324,16 @@ class MultiSpectraWidget(QtWidgets.QWidget):
             img_data_negative[img_data_negative<.5] = 0'''
             img_data = img_data_positive + img_data_negative
             
-            self.img.setImage(img_data.T)
+            self.pg_img_item.setImage(img_data.T)
             #self.mask_widget.img_widget.plot_image(img_data, auto_level=True)
         else:
-            self.img.clear()
+            self.pg_img_item.clear()
 
     def set_linear_regions(self, rois, show:False):
         lr : pg.LinearRegionItem
         if len(self.alignment_rois):
             for lr in self.alignment_rois:
-                self.p1.removeItem(lr)
+                self.pg_img_item.removeItem(lr)
                 lr.sigRegionChangeFinished.disconnect(self.lr_moved)
             self.alignment_rois = []
         for roi in rois:
@@ -350,7 +350,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
 
         if show:
             
-            self.p1.addItem(lr)
+            self.pg_img_item.addItem(lr)
 
     def lr_moved(self):
         lr : pg.LinearRegionItem
@@ -371,29 +371,30 @@ class MultiSpectraWidget(QtWidgets.QWidget):
     def select_value(self, val):
         self.set_cursor_pos(None, val)
 
-    def set_image_scale(self, label, scale):
+    def set_image_scale(self, label, scale, width, height):
         
         current_label = self.current_scale['label']
         current_translate = self.current_scale['scale'][1]
         current_scale = self.current_scale['scale'][0]
 
         if current_translate != scale[1] or current_scale != scale[0] or current_label != label:
-            inverse_translate = -1*current_translate
-            inverse_scale =  1/current_scale
-            self.img.scale(inverse_scale, 1)
-            self.img.translate(inverse_translate, 0)
-            
-            self.img.translate(scale[1], 0)
-            self.img.scale(scale[0], 1)
+            x = scale[1]
+            y = self.current_row_scale['scale'][1]
+            w = scale[1]* width
+            h = self.current_row_scale['scale'][1] *height
 
-            bins = np.linspace(0,4095, 4096)
-            e = bins* scale[0]+ scale[1]
-            ind = get_partial_index(e,68.792)
-            
+            self.set_image_calibration([x,y,w,h])
             self.current_scale['label'] = label
             self.current_scale['scale'] = scale
             
-            self.p1.setLabel(axis='bottom', text=label)
+            self.bottom_axis.setLabel(text=label)
+
+    def set_image_calibration(self, rectangle):
+        # rectangle=  [x,y,w,h]
+        if self.rectangle != rectangle:
+            self.rectangle = rectangle
+            self.pg_img_item.setRect(*rectangle)
+            self.bottom_axis.setRange(rectangle[0], rectangle[0]+rectangle[1])
 
 
     def set_image_row_scale(self, row_label, row_scale):
@@ -406,61 +407,65 @@ class MultiSpectraWidget(QtWidgets.QWidget):
             inverse_row_translate = -1*current_row_translate
             inverse_row_scale =  1/current_row_scale
             
-            self.img.scale(1, inverse_row_scale)
-            self.img.translate(0, inverse_row_translate)
+            self.pg_img_item.scale(1, inverse_row_scale)
+            self.pg_img_item.translate(0, inverse_row_translate)
             
-            self.img.translate(0, row_scale[1])
-            self.img.scale(1, row_scale[0])
+            self.pg_img_item.translate(0, row_scale[1])
+            self.pg_img_item.scale(1, row_scale[0])
 
             self.current_row_scale['label'] = row_label
             self.current_row_scale['scale'] = row_scale
             
-            self.p1.setLabel(axis='left', text=row_label)
+            self.left_axis.setLabel(text=row_label)
       
     def make_img_plot(self):
         ## Create window with GraphicsView widget
         
-        self.win = pg.GraphicsLayoutWidget(parent=self)
-        self.p1 = self.win.addPlot()
-        self.p1.setLabel(axis='left', text='Spectrum index')
-        self.p1.setLabel(axis='bottom', text='Channel')
+        self.pg_widget = pg.GraphicsLayoutWidget(parent=self)
+        self.pg_layout = self.pg_widget.ci
 
-        #self.plot = pg.PlotItem(self.win)
-        self.view = self.p1.getViewBox()
-        self.view.setMouseMode(pg.ViewBox.RectMode)
-        self.view.setAspectLocked(False)
-        ## Create image item
-        self.img = pg.ImageItem(border='w')
+        self.pg_layout.setContentsMargins(0, 10, 15, 0)
+        self.pg_viewbox = self.pg_layout.addViewBox(1, 1, lockAspect=False)
+        self.pg_viewbox.invertY(True)
+
+        self.bottom_axis = pg.AxisItem('bottom',  linkView=self.pg_viewbox)
+        self.bottom_axis.setLabel('&lambda; (nm)')
+        self.left_axis = pg.AxisItem('left', linkView=self.pg_viewbox)
+
+        self.pg_layout.addItem(self.bottom_axis, 2, 1)
+        self.pg_layout.addItem(self.left_axis, 1, 0)
+
+        self.pg_viewbox.setMouseMode(pg.ViewBox.RectMode)
+
+        self.pg_img_item = pg.ImageItem(border='w')
+        self.rectangle = None
 
 
-
-        #self.img.setScaledMode() 
-        self.view.addItem(self.img)
+        self.pg_viewbox.addItem(self.pg_img_item)
 
         color = (255,0,0)
         opacity=255
         sb = (color[0], color[1],color[2],opacity)
 
-        
-      
         self.p_scatter = pg.PlotDataItem([], [], title="",
                  pen=None, symbol='o', \
                                 symbolPen=None, symbolSize=7, \
                                 symbolBrush=sb)
         
-        self.view.addItem(self.p_scatter)
+
+        self.pg_viewbox.addItem(self.p_scatter)
         
 
         # Contrast/color control
         self.hist = pg.HistogramLUTItem()
-        self.hist.setImageItem(self.img)
-        self.win.addItem(self.hist)
+        self.hist.setImageItem(self.pg_img_item)
+        self.pg_widget.addItem(self.hist)
         
 
         self.vLine = pg.InfiniteLine(movable=False, pen=pg.mkPen(color=(0, 255, 0), width=2 , style=QtCore.Qt.PenStyle.DashLine))
         self.hLine = pg.InfiniteLine(movable=False, angle = 0, pen=pg.mkPen(color=(200, 200, 200), width=2 , style=QtCore.Qt.PenStyle.DashLine))
         self.hLineFast = pg.InfiniteLine(movable=False,angle = 0, pen=pg.mkPen({'color': '#606060', 'width': 1, 'style':QtCore.Qt.PenStyle.DashLine}))
-        self.proxy = pg.SignalProxy(self.win.scene().sigMouseMoved, rateLimit=20, slot=self.fastCursorMove)
+        self.proxy = pg.SignalProxy(self.pg_widget.scene().sigMouseMoved, rateLimit=20, slot=self.fastCursorMove)
 
         #self.vLine.sigPositionChanged.connect(self.cursor_dragged)
         
@@ -468,16 +473,16 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         # self.cursorPoints = [(cursor.index, cursor.channel),(fast.index, fast.channel)]
         self.cursorPoints = [[0,0],[0,0]]
         
-        self.view.addItem(self.vLine, ignoreBounds=True)
-        self.view.addItem(self.hLine, ignoreBounds=True)
-        self.view.addItem(self.hLineFast, ignoreBounds=True)
-        self.view.mouseClickEvent = self.customMouseClickEvent
+        self.pg_viewbox.addItem(self.vLine, ignoreBounds=True)
+        self.pg_viewbox.addItem(self.hLine, ignoreBounds=True)
+        self.pg_viewbox.addItem(self.hLineFast, ignoreBounds=True)
+        self.pg_viewbox.mouseClickEvent = self.customMouseClickEvent
 
 
     def fastCursorMove(self, evt):
         pos = evt[0]  ## using signal proxy turns original arguments into a tuple
-        if self.view.sceneBoundingRect().contains(pos):
-            mousePoint = self.view.mapSceneToView(pos)
+        if self.pg_viewbox.sceneBoundingRect().contains(pos):
+            mousePoint = self.pg_viewbox.mapSceneToView(pos)
             index = round(mousePoint.y(),5)
             if index >= 0:
                 self.hLineFast.setPos(index)
@@ -486,10 +491,10 @@ class MultiSpectraWidget(QtWidgets.QWidget):
 
     def customMouseClickEvent(self, ev):
         if ev.button() == QtCore.Qt.MouseButton.RightButton:
-            self.view.enableAutoRange(enable=1) 
+            self.pg_viewbox.enableAutoRange(enable=1) 
         elif ev.button() == QtCore.Qt.MouseButton.LeftButton: 
             pos = ev.pos()  ## using signal proxy turns original arguments into a tuple
-            mousePoint = self.view.mapToView(pos)
+            mousePoint = self.pg_viewbox.mapToView(pos)
             index= mousePoint.y()
             y_scale = self.current_row_scale['scale']
             index_scaled = (index - y_scale[1])/ y_scale[0]
@@ -500,13 +505,6 @@ class MultiSpectraWidget(QtWidgets.QWidget):
                 self.set_cursor_pos(index_scaled, scale_point)
                 self.plotMouseCursorSignal.emit([index_scaled, scale_point])  
         ev.accept()
-
-    '''def set_cursorFast_pos(self, index, E):
-        self.hLine.blockSignals(True)
-        
-        self.hLine.setPos(int(index)+0.5)
-        self.cursorPoints[1] = (index,E)
-        self.hLineFast.blockSignals(False)'''
 
 
     def set_cursor_pos(self, index = None, E=None):
