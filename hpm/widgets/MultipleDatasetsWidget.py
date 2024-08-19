@@ -380,8 +380,8 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         if current_translate != scale[1] or current_scale != scale[0] or current_label != label:
             x = scale[1]
             y = self.current_row_scale['scale'][1]
-            w = scale[1]* width
-            h = self.current_row_scale['scale'][1] *height
+            w = scale[0]* width
+            h = self.current_row_scale['scale'][0] *height
 
             self.set_image_calibration([x,y,w,h])
             self.current_scale['label'] = label
@@ -404,14 +404,8 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         current_row_scale = self.current_row_scale['scale'][0]
 
         if current_row_translate != row_scale[1] or current_row_scale != row_scale[0] or current_row_label != row_label:
-            inverse_row_translate = -1*current_row_translate
-            inverse_row_scale =  1/current_row_scale
             
-            self.pg_img_item.scale(1, inverse_row_scale)
-            self.pg_img_item.translate(0, inverse_row_translate)
             
-            self.pg_img_item.translate(0, row_scale[1])
-            self.pg_img_item.scale(1, row_scale[0])
 
             self.current_row_scale['label'] = row_label
             self.current_row_scale['scale'] = row_scale
