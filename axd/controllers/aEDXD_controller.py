@@ -16,7 +16,7 @@
 
 import os.path, sys
 from PyQt6 import uic, QtWidgets,QtCore, QtGui
-from  PyQt6.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel
+#from  PyQt6.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel
 from PyQt6.QtCore import QObject, pyqtSignal, Qt
 import numpy as np
 from functools import partial
@@ -42,8 +42,8 @@ from .. import style_path
 class aEDXDController(QObject):
     def __init__(self, app, theme):
         super().__init__()
-        self.app = app
-        self.style_path = style_path
+        #self.app = app
+        #self.style_path = style_path
 
         self.model = aEDXD_model()
         self.display_window = aEDXDWidget(app)
@@ -52,10 +52,9 @@ class aEDXDController(QObject):
         self.create_connections()
         self.display_window.raise_widget()
         self.progress_bar.setValue(0)
-        self.setStyle(theme)
+        #self.setStyle(theme)
 
-    '''def closeEvent(self, QCloseEvent, *event):
-        self.app.closeAllWindows()'''
+    
 
     def raise_widget(self):
         self.show()
@@ -446,7 +445,7 @@ class aEDXDController(QObject):
     def show_rois(self):
         self.config_controller.show_rois()
 
-    def setStyle(self, Style):
+    '''def setStyle(self, Style):
         #print('style:  ' + str(Style))
         if Style==1:
             WStyle = 'plastique'
@@ -459,4 +458,4 @@ class aEDXDController(QObject):
             WStyle = "windowsvista"
             self.app.setStyleSheet(" ")
             #self.app.setPalette(self.win_palette)
-            self.app.setStyle(WStyle)
+            self.app.setStyle(WStyle)'''

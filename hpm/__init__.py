@@ -55,12 +55,7 @@ epics_sync = False
 from pathlib import Path
 home_path = str(Path.home())
 
-def make_dpi_aware():
-    _platform = platform.system()
-    if _platform == 'Windows':
-      if int(platform.release()) >= 8:
-          import ctypes
-          ctypes.windll.shcore.SetProcessDpiAwareness(True)
+
 
 def main():
   

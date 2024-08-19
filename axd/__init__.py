@@ -12,14 +12,14 @@ import pyqtgraph
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QApplication
 from PyQt6 import QtWidgets
-
+import qdarktheme 
 
 
 '''0) Redo spline functionality
 1) g(r) -> coordination #'s
             - implement all options
 2) option to pick lorch damping/lp filter
-    lowpall_FIR.py (devel, Tyler), Fig. 3.1 in report
+    lowpass_FIR.py (devel, Tyler), Fig. 3.1 in report
     * make sure input params are clear
 3)Kaplow-style low-r correction (lok for Yu Shu code?)
                         |--> Tyler code
@@ -38,8 +38,12 @@ aEDXD = os.path.join(resources_path, 'aEDXD')
 
 def main():
     
-    
-    app = QApplication(sys.argv)
+    qdarktheme.enable_hi_dpi()
+   
+    app = QtWidgets.QApplication([])
+    # Apply the complete dark theme to your Qt App.
+    qdarktheme.setup_theme("dark", custom_colors={"primary": "#4DDECD"}) 
+
     app.aboutToQuit.connect(app.deleteLater)
     from axd.controllers.aEDXD_controller import aEDXDController
     controller = aEDXDController(app,1)
