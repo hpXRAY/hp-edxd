@@ -406,7 +406,7 @@ class parametersTableWidget(QtWidgets.QTableWidget):
     def keyPressEvent(self, event):
         
         super().keyPressEvent(event)
-        if event.key() == Qt.Key_C and (event.modifiers() & Qt.ControlModifier):
+        if event.key() == Qt.Key.Key_C and (event.modifiers() & Qt.ControlModifier):
             copied_cells = sorted(self.selectedIndexes())
 
             copy_text = ''

@@ -137,11 +137,11 @@ class plotWindow(QtWidgets.QWidget):
 class CustomViewBox(pg.ViewBox):  
     plotMouseCursorSignal = pyqtSignal(float)
     plotMouseCursor2Signal = pyqtSignal(float)  
-    viewBoxScrollSingal = pyqtSignal(float)
+    viewBoxScrollSignal = pyqtSignal(float)
     cursor_y_signal = pyqtSignal(float)
     def __init__(self, *args, **kwds):
         super().__init__()
-        
+        self.scrollModifierEnabled = True
         self.cursor_signals = [self.plotMouseCursorSignal, self.plotMouseCursor2Signal]
         self.vLine = myVLine(movable=False, pen=pg.mkPen(color=(0, 255, 0), width=2 , style=QtCore.Qt.PenStyle.DashLine))
         
@@ -185,15 +185,12 @@ class CustomViewBox(pg.ViewBox):
         ev.accept()   
 
     def wheelEvent(self, ev, axis=None):
-        '''
-        Don't scroll if the control key is down
-        '''
         if ev.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier and self.scrollModifierEnabled:
-            # Handle the wheel event angle delta for vertical scrolling
-            delta = ev.angleDelta().y() / 120  # PyQt6 uses angleDelta, which returns a QPoint
+            # Using delta() for QGraphicsSceneWheelEvent
+            delta = ev.delta() / 120
             self.viewBoxScrollSignal.emit(float(delta))
         else:
-            return super().wheelEvent(ev)  # In PyQt6, super().wheelEvent() typically does not need the 'axis' parameter
+            super().wheelEvent(ev)
 
 class myLegendItem(LegendItem):
     def __init__(self, size=None, offset=None, horSpacing=25, verSpacing=0, box=True, labelAlignment='center', showLines=True):

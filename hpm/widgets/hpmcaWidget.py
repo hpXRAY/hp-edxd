@@ -125,19 +125,19 @@ class hpMCAWidget(QMainWindow, Ui_hpMCA):
 
     def keyPressEvent(self, e):
         sig = None
-        if e.key() == Qt.Key_Up:
+        if e.key() == Qt.Key.Key_Up:
             sig = 'up'
-        if e.key() == Qt.Key_Down:
+        if e.key() == Qt.Key.Key_Down:
             sig = 'down'                
-        if e.key() == Qt.Key_Delete:
+        if e.key() == Qt.Key.Key_Delete:
             sig = 'delete'
-        if e.key() == Qt.Key_Right:
+        if e.key() == Qt.Key.Key_Right:
             sig = 'right'   
-        if e.key() == Qt.Key_Left:
+        if e.key() == Qt.Key.Key_Left:
             sig = 'left'   
-        if e.key() == Qt.Key_Backspace:
+        if e.key() == Qt.Key.Key_Backspace:
             sig = 'delete'  
-        if e.key() == Qt.Key_Shift:
+        if e.key() == Qt.Key.Key_Shift:
             sig = 'shift_press'     
          
         if sig is not None:
@@ -147,7 +147,7 @@ class hpMCAWidget(QMainWindow, Ui_hpMCA):
 
     def keyReleaseEvent(self, e):
         sig = None
-        if e.key() == Qt.Key_Shift:
+        if e.key() == Qt.Key.Key_Shift:
             sig = 'shift_release' 
         if sig is not None:
             self.key_signal.emit(sig)

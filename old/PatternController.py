@@ -382,7 +382,7 @@ class PatternController(object):
         return tth_str, d_str, q_str, azi_str
 
     def key_press_event(self, ev):
-        if (ev.key() == QtCore.Qt.Key_Left) or (ev.key() == QtCore.Qt.Key_Right):
+        if (ev.key() == QtCore.Qt.Key.Key_Left) or (ev.key() == QtCore.Qt.Key.Key_Right):
             pos = self.widget.pattern_widget.get_pos_line()
             step = np.min(np.diff(self.model.pattern.data[0]))
             if ev.modifiers() & QtCore.Qt.ControlModifier:
@@ -391,9 +391,9 @@ class PatternController(object):
                 step *= 10
             if self.integration_unit == 'd_A':
                 step *= -1
-            if ev.key() == QtCore.Qt.Key_Left:
+            if ev.key() == QtCore.Qt.Key.Key_Left:
                 new_pos = pos - step
-            elif ev.key() == QtCore.Qt.Key_Right:
+            elif ev.key() == QtCore.Qt.Key.Key_Right:
                 new_pos = pos + step
             self.set_line_position(new_pos)
             self.update_image_widget_line_position()
