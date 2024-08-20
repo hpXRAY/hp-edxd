@@ -32,7 +32,7 @@ from PyQt6 import QtCore
 
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QApplication
-
+import qdarktheme 
 
 resources_path = os.path.join(os.path.dirname(__file__), 'resources')
 calibrants_path = os.path.join(resources_path, 'calibrants')
@@ -44,8 +44,12 @@ from pathlib import Path
 home_path = str(Path.home())
 
 def main():
-    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
-    app = QApplication(sys.argv)
+
+    qdarktheme.enable_hi_dpi()
+   
+    app = QtWidgets.QApplication([])
+    # Apply the complete dark theme to your Qt App.
+    qdarktheme.setup_theme("dark", custom_colors={"primary": "#4DDECD"}) 
 
     from sxdm.controllers.sxdmController import sxdmController
     app.aboutToQuit.connect(app.deleteLater)
@@ -54,4 +58,4 @@ def main():
     controller.showWindow()
 
    
-    app.exec_()
+    app.exec()

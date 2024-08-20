@@ -18,16 +18,10 @@
 # Copyright (C) 2018-2019 ANL, Lemont, USA
 
 
-import sys
-from PyQt6.QtGui import QIcon
-from PyQt6 import QtCore
- 
-from PyQt6.QtCore import (QDate, QDateTime, QRegExp, QSortFilterProxyModel, Qt,
-            QTime)
+
+from PyQt6.QtCore import  Qt
 from PyQt6.QtGui import QStandardItemModel
-from PyQt6.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
-            QGroupBox, QHBoxLayout, QLabel, QLineEdit, QTreeView, QVBoxLayout,
-            QWidget)
+
 from multiangle.models.colimation_depth import get_collimation_depth
 
 class multiangleModel(QStandardItemModel):
@@ -116,7 +110,7 @@ class multiangleModel(QStandardItemModel):
         d = {**d,**cd}
         for i in d:
             self.setData(self.index(rows, self.display_order[i]), d[i])
-        self.sort(1, Qt.AscendingOrder)
+        self.sort(1, Qt.SortOrder.AscendingOrder)
         rows = self.rowCount() 
         for r in range(rows):
             ind = r+1

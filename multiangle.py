@@ -24,23 +24,19 @@
 
 # TODO grab current values for slits when clicking add button
 
-
-
 from multiangle.controllers.multiangle_controller import multiangleController
-from PyQt6.QtWidgets import QApplication
-from PyQt6 import QtCore
-import sys
+from PyQt6 import QtWidgets
+import qdarktheme 
 
 def run():
-    QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
-    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
-    app = QApplication(sys.argv)
-    app.aboutToQuit.connect(app.deleteLater)
-    controller = multiangleController(app,1)
-    return app.exec_()
-
-if __name__ == '__main__':
-    sys.exit(run())
+    qdarktheme.enable_hi_dpi()
+    app = QtWidgets.QApplication([])
+    # Apply the complete dark theme to your Qt App.
+    qdarktheme.setup_theme("dark", custom_colors={"primary": "#4DDECD"}) 
     
+    controller = multiangleController()
+    controller.widget.show()
+    return app.exec()
 
 
+run()

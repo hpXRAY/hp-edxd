@@ -33,11 +33,11 @@ from .. import home_path
 class sxdmController(QObject):
     def __init__(self, app=None):
         super().__init__()
-        self.app = app
+        '''self.app = app
         global Theme
         self.Theme = Theme
         self.style_path = style_path
-        self.setStyle(self.Theme)
+        self.setStyle(self.Theme)'''
         self.multi_spectra_model = MultipleSpectraModel()
         self.window = sxdmWidget()
         

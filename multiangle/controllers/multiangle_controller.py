@@ -46,9 +46,9 @@ from multiangle.widgets.multiangle_widget import QCoverageWidget
 ############################################################
 
 class multiangleController(QObject):
-    def __init__(self, app, theme):
+    def __init__(self):
         super().__init__()
-        self.app = app
+        
         self.model = multiangleModel(self)
         self.sweep_controller = MultiangleSweep(self)
         self.widget = multiangleWidget(self.model)
@@ -56,10 +56,10 @@ class multiangleController(QObject):
         self.plot_widget = QCoverageWidget(self.model)
         
         self.create_connections()
-        self.setStyle(theme)
+        
         self.working_directories = mcaUtil.restore_folder_settings()
         self.epics_roi_monitor = epicsRoiMonitor(record_name='16bmb:aim_adc1')
-        self.widget.show()
+        
 
     def main_widget_closed_callback(self):
         self.app.closeAllWindows()
@@ -226,16 +226,4 @@ class multiangleController(QObject):
         self.plot_widget.update()
         
         
-    def setStyle(self, Style):
-        if Style==1:
-            WStyle = 'plastique'
-            file = open(os.path.join('resources', "stylesheet.qss"))
-            stylesheet = file.read()
-            self.app.setStyleSheet(stylesheet)
-            file.close()
-            self.app.setStyle(WStyle)
-        else:
-            WStyle = "windowsvista"
-            self.app.setStyleSheet(" ")
-            #self.app.setPalette(self.win_palette)
-            self.app.setStyle(WStyle)
+    

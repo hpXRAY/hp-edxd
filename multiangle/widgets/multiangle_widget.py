@@ -15,7 +15,7 @@
 
 
 # Principal author: R. Hrubiak (hrubiak@anl.gov)
-# Copyright (C) 2018-2019 ANL, Lemont, USA
+# Copyright (C) 2018-2024 ANL, Lemont, USA
 
 
 
@@ -24,7 +24,7 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 import copy
 from multiangle.utilities.utilities import optimize_tth, tth_e_to_d, d_to_q
 import time
-
+from multiangle.models.multiangle_model import multiangleModel
 from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, VerticalSpacerItem, NoRectDelegate, \
     HorizontalSpacerItem, ListTableWidget, VerticalLine, DoubleMultiplySpinBoxAlignRight, HorizontalLine
 
@@ -118,14 +118,7 @@ class parameterWidget(QtWidgets.QWidget):
         d['q_low']= low_q
         d['q_high']= high_q
 
-        '''
-        print(str(t))
-        print('n = '+ str(int(n)))
-        print('overlap = '+ str(overlap_fract*100))
-        print('q start = '+ str(low_q)+ '; q end = '+ str(high_q))
-        print("tth optimized --- %s seconds ---" % (timer))
-        '''
-        
+     
         self.overlap_lbl.setText('n: ' + str(int(n)) + '\nOverlap %: ' +str(round(overlap_fract*100,3)))
         self.sequence_changed_signal.emit(d)
 
@@ -141,8 +134,10 @@ class multiangleWidget(QtWidgets.QWidget):
     widget_closed = QtCore.pyqtSignal()
     fract_item_changed_signal = QtCore.pyqtSignal(int, float)
   
-    def __init__(self,multiangle_model):
+    def __init__(self,multiangle_model:multiangleModel):
         super().__init__()
+        self.multiangle_model: multiangleModel
+        self.tth_tv: QtWidgets.QTreeView
         self.multiangle_model = multiangle_model
         self.parameter_widget = parameterWidget()
         self._layout = QtWidgets.QVBoxLayout()  
@@ -168,16 +163,12 @@ class multiangleWidget(QtWidgets.QWidget):
         self._button_layout.addWidget(self.plot_btn)
         
         self._button_layout.addSpacerItem(HorizontalSpacerItem())
-        '''
-        self._button_layout.addWidget(VerticalLine())
-        self._button_layout.addWidget(VerticalLine())
-        self._button_layout.addWidget(self.save_btn)
-        '''
+        
         self.button_widget.setLayout(self._button_layout)
         self._layout.addWidget(self.button_widget)
         self._body_layout = QtWidgets.QHBoxLayout()
         self.tth_tv = QtWidgets.QTreeView()
-        self.tth_tv.sortByColumn(0, 0)
+        self.tth_tv.sortByColumn(0, QtCore.Qt.SortOrder.AscendingOrder)
         self.tth_tv.setSortingEnabled(True)
         self.tth_tv.setModel(self.multiangle_model)
 
@@ -207,9 +198,8 @@ class multiangleWidget(QtWidgets.QWidget):
         self.setup_btn = FlatButton('Setup')
         self._button_2_layout.addWidget(self.setup_btn,0)
         
-        #self._button_2_layout.addWidget(VerticalLine())
         self._button_2_layout.addSpacerItem(HorizontalSpacerItem())
-        #self._button_2_layout.addWidget(VerticalLine())
+     
         self.button_2_widget.setLayout(self._button_2_layout)
         self._layout.addWidget(HorizontalLine())
         self._layout.addWidget(self.button_2_widget)
@@ -218,7 +208,6 @@ class multiangleWidget(QtWidgets.QWidget):
         self.style_widgets()
         
         self.show_parameter_in_pattern = True
-        #self.tth_tv.setItemDelegate(NoRectDelegate())
         columns = self.multiangle_model.columnCount()
         self.tth_tv.resizeColumnToContents(0)
         header = self.tth_tv.header()
@@ -258,7 +247,7 @@ class multiangleWidget(QtWidgets.QWidget):
         self._beam_parameter_layout.addWidget(QtWidgets.QLabel('Tip size'), 1, 0)
         self._beam_parameter_layout.addWidget(QtWidgets.QLabel('Tip distance'), 2, 0)
         self._beam_parameter_layout.addWidget(QtWidgets.QLabel('Detector distance'), 3, 0)
-        #self._beam_parameter_layout.addWidget(QtWidgets.QLabel('mm'), 1, 3)
+ 
         self._beam_parameter_layout.addWidget(self.tip_size_sb, 1, 1)
         self._beam_parameter_layout.addWidget(self.tip_distance_sb, 2, 1)
         self._beam_parameter_layout.addWidget(self.det_distance_sb, 3, 1)
@@ -270,7 +259,7 @@ class multiangleWidget(QtWidgets.QWidget):
         
 
     def make_connections(self):
-        #self.tth_tv.itemChanged.connect(self.fract_item_changed)
+      
         self.new_btn.clicked.connect(self.new_callback)
 
     def new_callback(self):
@@ -302,7 +291,8 @@ class multiangleWidget(QtWidgets.QWidget):
         # Overrides close event to let controller know that widget was closed by user
         self.widget_closed.emit()
         
-    def select_tth(self, ind):
+    def select_tth(self, ind): 
+        
         self.tth_tv.selectRow(ind)
         
     def get_selected_tth_row(self):
