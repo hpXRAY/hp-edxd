@@ -22,7 +22,7 @@ class CollapsibleBox(QtWidgets.QWidget):
         
         self.toggle_button.setIconSize(icon_size)
         #self.toggle_button.setArrowType(QtCore.Qt.NoArrow)
-        self.toggle_button.setFixedWidth(205)
+        self.toggle_button.setFixedWidth(225)
         self.toggle_button.setStyleSheet(''' QToolButton { border-top: 1px solid #ADADAD; 
                                             font: normal 14px;}''')
         self.toggle_button.setToolButtonStyle(

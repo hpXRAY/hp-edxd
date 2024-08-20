@@ -65,11 +65,11 @@ class Ui_hpMCA(object):
 
 
         self.groupBoxElapsed = QtWidgets.QGroupBox()
-        self.groupBoxElapsed.setMaximumWidth(205)
+        self.groupBoxElapsed.setMaximumWidth(225)
         self._groupBoxElapsedLayout = QtWidgets.QGridLayout(self.groupBoxElapsed)
         self._groupBoxElapsedLayout.setSpacing(2)
         self._groupBoxElapsedLayout.setContentsMargins(12,12,7,7)
-        self.groupBoxAcq.setMaximumWidth(205)
+        self.groupBoxAcq.setMaximumWidth(225)
 
         self.lblLiveTime_lbl = QtWidgets.QLabel(self.groupBoxElapsed)
         self.lblLiveTime_lbl.setMaximumWidth(40)
@@ -183,8 +183,8 @@ class Ui_hpMCA(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBoxROIs.sizePolicy().hasHeightForWidth())
         self.groupBoxROIs.setSizePolicy(sizePolicy)
-        self.groupBoxROIs.setMinimumSize(QtCore.QSize(205, 0))
-        self.groupBoxROIs.setMaximumSize(QtCore.QSize(205, 120))
+        self.groupBoxROIs.setMinimumSize(QtCore.QSize(225, 0))
+        self.groupBoxROIs.setMaximumSize(QtCore.QSize(225, 140))
         self.groupBoxROIs.setObjectName("groupBoxROIs")
         self.verticalLayout_8 = QtWidgets.QVBoxLayout(self.groupBoxROIs)
         self.verticalLayout_8.setObjectName("verticalLayout_8")
@@ -246,8 +246,8 @@ class Ui_hpMCA(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBoxXRF.sizePolicy().hasHeightForWidth())
         self.groupBoxXRF.setSizePolicy(sizePolicy)
-        self.groupBoxXRF.setMinimumSize(QtCore.QSize(205, 0))
-        self.groupBoxXRF.setMaximumSize(QtCore.QSize(205, 16777215))
+        self.groupBoxXRF.setMinimumSize(QtCore.QSize(225, 0))
+        self.groupBoxXRF.setMaximumSize(QtCore.QSize(225, 16777215))
         self.groupBoxXRF.setObjectName("groupBoxXRF")
         self.verticalLayout_6 = QtWidgets.QVBoxLayout(self.groupBoxXRF)
         self.verticalLayout_6.setObjectName("verticalLayout_6")
@@ -278,8 +278,8 @@ class Ui_hpMCA(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBoxVerticalScale.sizePolicy().hasHeightForWidth())
         self.groupBoxVerticalScale.setSizePolicy(sizePolicy)
-        self.groupBoxVerticalScale.setMinimumSize(QtCore.QSize(205, 0))
-        self.groupBoxVerticalScale.setMaximumSize(QtCore.QSize(205, 16777215))
+        self.groupBoxVerticalScale.setMinimumSize(QtCore.QSize(225, 0))
+        self.groupBoxVerticalScale.setMaximumSize(QtCore.QSize(225, 16777215))
         self.groupBoxVerticalScale.setObjectName("groupBoxVerticalScale")
         self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.groupBoxVerticalScale)
         self.verticalLayout_7.setObjectName("verticalLayout_7")
@@ -310,7 +310,7 @@ class Ui_hpMCA(object):
         self.groupBoxHorizontalScale = QtWidgets.QGroupBox()
         
         self.groupBoxHorizontalScale.setMinimumSize(QtCore.QSize(0, 0))
-        self.groupBoxHorizontalScale.setMaximumSize(QtCore.QSize(205, 400))
+        self.groupBoxHorizontalScale.setMaximumSize(QtCore.QSize(225, 400))
         self.groupBoxHorizontalScale.setObjectName("groupBoxHorizontalScale")
         self._groupBoxHorizontalScale_layout = QtWidgets.QVBoxLayout(self.groupBoxHorizontalScale)
         self._groupBoxHorizontalScale_layout.setObjectName("_groupBoxHorizontalScale_layout")
@@ -354,7 +354,7 @@ class Ui_hpMCA(object):
         # Save data file
         
         self.groupBoxSaveDataFile = QtWidgets.QGroupBox()
-        self.groupBoxSaveDataFile.setMaximumWidth(205)
+        self.groupBoxSaveDataFile.setMaximumWidth(225)
         self._groupBoxSaveDataFileLayout = QtWidgets.QVBoxLayout(self.groupBoxSaveDataFile)
         self._groupBoxSaveDataFileLayout.setContentsMargins(12,7,7,7)
         self._groupBoxSaveDataFileLayout.setSpacing(7)
@@ -393,7 +393,7 @@ class Ui_hpMCA(object):
         ## naming options
 
         self.groupBoxFileNamingOptions = QtWidgets.QGroupBox()
-        self.groupBoxFileNamingOptions.setMaximumWidth(205)
+        self.groupBoxFileNamingOptions.setMaximumWidth(225)
         self._groupBoxFileNamingOptionsLayout = QtWidgets.QVBoxLayout(self.groupBoxFileNamingOptions)
         self._groupBoxFileNamingOptionsLayout.setContentsMargins(12,7,7,7)
         self._groupBoxFileNamingOptionsLayout.setSpacing(3)
@@ -560,7 +560,7 @@ class Ui_hpMCA(object):
         # scroll area stuff
         self.scroll = QtWidgets.QScrollArea()
         self.scroll.setStyleSheet("QScrollArea { border: 0px;}")
-        self.scroll.setMaximumWidth(225)
+        self.scroll.setMaximumWidth(245)
         
         self.content = QtWidgets.QWidget()
         self.scroll.setWidget(self.content)
@@ -723,7 +723,7 @@ class Ui_hpMCA(object):
         '''self.pg = PltWidget(self.plot_widget,
                         toolbar_widgets=[self.plot_toolbar_right_widget,
                                         self.plot_toolbar_top_widget])
-        self.pg.setMinimumSize(QtCore.QSize(205, 100))
+        self.pg.setMinimumSize(QtCore.QSize(225, 100))
         self.pg.setObjectName("pg")
 
         self._plot_widget_layout.addWidget(self.pg)

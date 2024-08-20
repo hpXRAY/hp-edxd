@@ -69,7 +69,7 @@ def main():
     app.aboutToQuit.connect(app.deleteLater)
 
     # autoload a file, using for debugging
-    #pattern = os.path.normpath(os.path.join(resources_path,'20181010-Au-wire-50um-15deg.hpmca'))
+    pattern = os.path.normpath(os.path.join(resources_path,'20181010-Au-wire-50um-15deg.hpmca'))
     #pattern2 = os.path.normpath(os.path.join(resources_path,'20181001 Energy Calibration.000'))
     #jcpds1 = os.path.normpath(os.path.join(resources_path,'au.jcpds'))
     #jcpds2 = os.path.normpath(os.path.join(resources_path,'mgo.jcpds'))
@@ -89,7 +89,7 @@ def main():
     controller = hpmcaController(app)
     controller.widget.show()
 
-    #controller.file_save_controller.openFile(filename=multi_element)
+    controller.file_save_controller.openFile(filename=pattern)
     #controller.file_save_controller.openFolder(foldername=multi_spectra4)
     #controller.load_calibration(filename=multi_element)
     #controller.multiple_datasets_controller.set_unit('E')
