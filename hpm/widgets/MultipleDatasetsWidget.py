@@ -24,10 +24,7 @@ import numpy as np
 import pyqtgraph as pg
 from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, VerticalSpacerItem, NoRectDelegate, \
     HorizontalSpacerItem, ListTableWidget, VerticalLine, DoubleMultiplySpinBoxAlignRight
-from hpm.widgets.PltWidget import PltWidget
-from hpm.widgets.MaskWidget import MaskWidget
-from hpm.widgets.plot_widgets import ImgWidget2
-from utilities.HelperModule import get_partial_index
+
 
 class MultiSpectraWidget(QtWidgets.QWidget):
 
@@ -188,16 +185,8 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self.file_view_tabs.addTab(self.plot_widget, 'Spectra')
 
         self.file_list_view = QtWidgets.QListWidget()
-        #self.mask_widget = MaskWidget()
+
         self.file_view_tabs.addTab(self.file_list_view, 'Files')
-
-        '''self.scratch_widget = ImgWidget2()
-        self.file_view_tabs.addTab(self.scratch_widget, 'Scratch')
-
-        self.line_plot_widget = PltWidget()
-        self.line_plot_widget.set_log_mode(False,False)
-       
-        self.file_view_tabs.addTab(self.line_plot_widget, 'Plot')'''
 
         self._body_layout.addWidget(self.file_view_tabs)
         
@@ -289,8 +278,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
             btn = self.scales_btns[unit]
             btn.setChecked(True)
 
-    '''def plot_data(self, x=[],y=[]):
-        self.line_plot_widget.plotData(x, y)'''
+
 
     def get_selected_row(self):
         selected  = self.file_list_view.selectionModel().selectedRows()
@@ -333,7 +321,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         lr : pg.LinearRegionItem
         if len(self.alignment_rois):
             for lr in self.alignment_rois:
-                self.pg_img_item.removeItem(lr)
+                self.pg_viewbox.removeItem(lr)
                 lr.sigRegionChangeFinished.disconnect(self.lr_moved)
             self.alignment_rois = []
         for roi in rois:
@@ -350,7 +338,7 @@ class MultiSpectraWidget(QtWidgets.QWidget):
 
         if show:
             
-            self.pg_img_item.addItem(lr)
+            self.pg_viewbox.addItem(lr)
 
     def lr_moved(self):
         lr : pg.LinearRegionItem
@@ -418,12 +406,12 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         self.pg_widget = pg.GraphicsLayoutWidget(parent=self)
         self.pg_layout = self.pg_widget.ci
 
-        self.pg_layout.setContentsMargins(0, 10, 15, 0)
+        #self.pg_layout.setContentsMargins(0, 10, 15, 0)
         self.pg_viewbox = self.pg_layout.addViewBox(1, 1, lockAspect=False)
-        self.pg_viewbox.invertY(True)
+        #self.pg_viewbox.invertY(True)
 
         self.bottom_axis = pg.AxisItem('bottom',  linkView=self.pg_viewbox)
-        self.bottom_axis.setLabel('&lambda; (nm)')
+        self.bottom_axis.setLabel('Channel')
         self.left_axis = pg.AxisItem('left', linkView=self.pg_viewbox)
 
         self.pg_layout.addItem(self.bottom_axis, 2, 1)
@@ -451,9 +439,9 @@ class MultiSpectraWidget(QtWidgets.QWidget):
         
 
         # Contrast/color control
-        self.hist = pg.HistogramLUTItem()
-        self.hist.setImageItem(self.pg_img_item)
-        self.pg_widget.addItem(self.hist)
+        self.pg_hist_item = pg.HistogramLUTItem()
+        self.pg_hist_item.setImageItem(self.pg_img_item)
+        self.pg_layout.addItem(self.pg_hist_item, 1, 2, 1, 3)
         
 
         self.vLine = pg.InfiniteLine(movable=False, pen=pg.mkPen(color=(0, 255, 0), width=2 , style=QtCore.Qt.PenStyle.DashLine))
