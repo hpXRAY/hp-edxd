@@ -25,6 +25,15 @@ import numpy as np
 from scipy import interpolate
 from scipy.special import erfc
 from scipy.optimize import curve_fit
+import matplotlib.pyplot as plt
+import random
+import scipy.signal as signal
+from scipy.signal import firwin, filtfilt, lfilter
+from scipy.fft import fft
+from scipy.fftpack import fftfreq
+from scipy import integrate
+from scipy.optimize import fsolve
+import scipy.special
 import json
 
 def fversion():
@@ -163,7 +172,6 @@ def I_inc_new(s, param):
                      ab[8]*np.exp(-ab[9]*s**2))
 
     return mean_I_inc
-
     
 def find_Iq_scale(Iq,sq_base):
     return np.linalg.solve(Iq,sq_base)
@@ -171,8 +179,6 @@ def find_Iq_scale(Iq,sq_base):
 # to resolve py2exe error, from http://www.pyinstaller.org/ticket/596
 def dependencies_for_myprogram():
     from scipy.sparse.csgraph import _validation
-
-
 
 def is_e(val):
     
@@ -182,3 +188,87 @@ def is_e(val):
         return True
     return False
 
+######### Lowpass filter for removing termination ripples ##########
+def lowpass(q,r,G,numtaps,cutoff,width):
+    # filter parameters
+    rmax = max(r) # sampling period (instead of time, this is in r-spacing)
+    fs = len(G)/rmax # sampling frequency (samples/Å)
+    nyq = fs/2 # nyquist frequency
+    # numtaps = 401 # number of coefficients (filter order + 1)
+    period = 2*np.pi/(q[-1] - q[0]) # theoretical period of the termination ripples
+    # cutoff =  0.85*(1/period) # needs to be slightly less than 1/period
+    # width =  1 # width of the transition region 
+
+    # obtain filter coefficients
+    coeff = firwin(numtaps,cutoff,width, fs = fs) # firwin is an FIR (finite impulse response) filter
+    
+    # COMMENT TO ROSS: if desired, we can allow users to plot the filter response 
+    # plot the filter response
+    w, h = signal.freqz(coeff)
+    plt.figure(0)
+    plt.plot(w*fs/(2*np.pi),20 * np.log10(abs(h)),'k')
+    plt.axvline(cutoff,color = 'green',label = 'Cutoff freq.')
+    plt.axvline(1/period,color = 'blue',label = "Theoretical ripple freq.")
+    plt.xlabel('Frequency (cycles/Å)')
+    plt.ylabel('Amplitude (dB)')
+    plt.legend(loc = 'best')
+    plt.show()
+
+    # filter and return the PDF
+    Gfilt = filtfilt(coeff,1,G) # the FIR filter only needs numerator coefficients, denominator coefficients (2nd argument) are set to 1
+
+    # COMMENT TO ROSS: we can also allow users to plot the frequency distribution of the PDF before and after filtering
+    Y = fft(G)
+    Yfilt = fft(Gfilt)
+    freq = fftfreq(len(r),r[1] - r[0])
+
+    plt.figure(1)
+    plt.plot(freq,np.abs(Y),'k',label = 'Original')
+    plt.plot(freq, np.abs(Yfilt),'r',label = 'Filtered')
+    plt.xlim((0,3*(1/period)))
+    plt.axvline(1/period,color = 'b',linestyle = '--',label = 'Theoretical ripple freq.')
+    plt.axvline(cutoff,color = 'g',linestyle = '--',label = 'Cutoff freq.')
+    plt.xlabel('Frequency (1/Å)')
+    plt.ylabel('Power')
+    plt.legend(loc = 'best')
+    plt.show()
+
+    # Return the filtered G(r)
+    return Gfilt
+
+
+
+
+
+
+
+######## Structure factor reliability check using Rahman's method #######
+
+# COMMENT FOR ROSS: still some work needed to understand the limitations and uses of this method, but the algorithm is working and we can implement
+# this as an option in aEDXD
+
+def rahman_check(q,Sq,rho0,L,mu):
+
+    # Initiate arrays
+    LHS = []; RHS = []; cfactor = []
+
+    for i in range(len(mu)):
+        mu_temp = mu[i]
+        
+        # calculate left hand side (LHS)
+        j1 = np.sin(mu_temp*L)/(mu_temp*L)**2 - np.cos(mu_temp*L)/(mu_temp*L) # 1st order bessel function
+        LHS.append(4*np.pi*rho0*L**3*j1/(mu_temp*L))
+        
+        # calculate right hand side (RHS)
+        A = q*(Sq - 1)
+        B = np.sin((q + mu_temp)*L) / ((q + mu_temp)*L) # 2nd order bessel function
+        C = np.sin((q - mu_temp)*L) / ((q - mu_temp)*L) # 2nd order bessel function
+        integrand = A*(B - C)
+        RHS.append((L/(np.pi*mu_temp))*integrate.simpson(integrand,q))
+        
+        # solve for the correction factor
+        def func(x):
+            return LHS[i] - L/(np.pi*mu_temp)*integrate.simpson(q*(x*Sq - 1)*(B - C),q)
+        cfactor.append(fsolve(func,1)) # the 2nd argument is the initial guess, set to 1 b/c we assume the correction factor should be within a few % of that
+
+    return LHS, RHS, cfactor

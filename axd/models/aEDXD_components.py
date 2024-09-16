@@ -284,7 +284,6 @@ class structureFactor(Calculator):
         self.out_params['q_even'] = q_even
         self.out_params['sq_even'] = sq_even
         self.out_params['sq_even_err'] = sq_even_err
-        
     
     def save_structure_factor(self, filename):
         try:
@@ -333,40 +332,57 @@ class Pdf(Calculator):
         rmax = self.params['rmax']
         
         
-
         # restrict the qmax by the user input
         q_max_indx = np.abs(q_even - qmax).argmin()
         self.out_params['qq'] = qcalc = q_even[:q_max_indx]
         self.out_params['sq'] = sqcalc = sq_even[:q_max_indx]
         self.out_params['sq_err'] = sqcalc_err = sq_even_err[:q_max_indx]
         
-        
-
-        gr = []; gr_err = []
+        lorch = False # COMMENT TO ROSS: convert this to a user-defined setting in the GUI
+        lp_filter = True # COMMENT TO ROSS: convert this to a user-defined setting in the GUI (users should be able to select only 1 option at a time)
+        gr = []; gr_filt = []; gr_err = []
         r = np.arange(r_spacing,rmax,r_spacing) 
         del_r = np.pi/qcalc[-1]
         for i in range(len(r)):
-            gri = 2.0/np.pi/r[i]*sum(
-                qcalc*r[i]*(sqcalc-1.0)*np.sin(qcalc*r[i])*q_spacing*\
-                np.sin(qcalc*del_r)/(qcalc*del_r))
-            gr.append(gri)
-            gr_erri = 2.0/np.pi/r[i]*\
-                np.sqrt(sum((qcalc*r[i]*np.sin(qcalc*r[i])*q_spacing*\
-                             np.sin(qcalc*del_r)/(qcalc*del_r)*sqcalc_err)**2))
-            gr_err.append(gr_erri)
-            
+            if lorch == True: # apply Lorch resolution broadening function
+                gri = 2.0/np.pi/r[i]*sum(
+                    qcalc*r[i]*(sqcalc-1.0)*np.sin(qcalc*r[i])*q_spacing*\
+                    np.sin(qcalc*del_r)/(qcalc*del_r))
+                gr.append(gri)
+                gr_erri = 2.0/np.pi/r[i]*\
+                    np.sqrt(sum((qcalc*r[i]*np.sin(qcalc*r[i])*q_spacing*\
+                                np.sin(qcalc*del_r)/(qcalc*del_r)*sqcalc_err)**2))
+                gr_err.append(gr_erri) 
+            elif lp_filter == True:
+                gri_filt = 2.0/np.pi/r[i]*sum(
+                    qcalc*r[i]*(sqcalc-1.0)*np.sin(qcalc*r[i])*q_spacing)
+                gr_filt.append(gri_filt)
+                gr_erri = 2.0/np.pi/r[i]*\
+                    np.sqrt(sum((qcalc*r[i]*np.sin(qcalc*r[i])*q_spacing*sqcalc_err)**2))
+                gr_err.append(gr_erri)
+            elif lorch == False: # do not apply Lorch function
+                gri = 2.0/np.pi/r[i]*sum(
+                    qcalc*r[i]*(sqcalc-1.0)*np.sin(qcalc*r[i])*q_spacing)
+                gr.append(gri)
+                gr_erri = 2.0/np.pi/r[i]*\
+                    np.sqrt(sum((qcalc*r[i]*np.sin(qcalc*r[i])*q_spacing*sqcalc_err)**2))
+                gr_err.append(gr_erri)
+
+        # Apply lowpass filter if desired
+        if lp_filter == True:
+            num_coefficients = 400; cutoff = 1/(2*np.pi/(qcalc[-1] - qcalc[0]))*0.9; width = 1
+            gr = lowpass(qcalc,r,gr_filt,num_coefficients,cutoff,width)
+
+        # output PDF information
         gr = np.array(gr)
         gr_err = np.array(gr_err)
-        
         #r_save = r
         self.out_params['r'] = copy.copy(r)
         #gr_save = gr
         self.out_params['gr'] = copy.copy(gr)
         #gr_err_save = gr_err
         self.out_params['gr_err'] = copy.copy(gr_err)
-        
-        
-
+    
     def save_pdf(self, filename):
         try:
             outfilename = filename
@@ -498,8 +514,22 @@ class PdfInverse(Calculator):
         self.out_params['sq_inv'] = sq_inv = 1.0+np.array(sq_inv)
         self.out_params['sq_inv_err'] = sq_inv_err = sqcalc_err # enforce original errors
 
-        
-        
+        ##### Rahman reliability check (see Rahman (1965) and Waseda and Tamaki (1975)) #####
+        # COMMENT TO ROSS: L, mu, and rho0 need to come from the user. The rho0 value can just be taken from the existing value under the PDF pulldown menu, although we should allow for more decimal places
+        L = 1; mu = np.array([0.5, 1, 1.5, 2, 2.5, 3])
+        LHS, RHS, cfactor = rahman_check(q_inv,sq_inv,rho,L,mu)
+        # COMMENT TO ROSS: LHS, RHS, and cfactor can be displayed in the gui instead of printing them here
+        print('LHS = ' + str(np.round(LHS,4)))
+        print('RHS = ' + str(np.round(RHS,4)))
+        print('Correction factor = ' + str(np.round(cfactor,4)))
+        # COMMENT TO ROSS: we could give the option to plot the correction factor as a function of mu (for a given L)
+        plt.figure(100)
+        plt.scatter(mu,cfactor)
+        plt.xlabel('$\mu$ (1/Å)', fontweight = 'bold')
+        plt.ylabel('Correction Factor', fontweight = 'bold')
+        plt.title('L = ' + str(L), fontweight = 'bold')
+        plt.show()
+
 
     def save_sf_inverse(self, outfilename):
         try:
