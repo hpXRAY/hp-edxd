@@ -25,7 +25,7 @@ class MultiChoiceDialog(QDialog):
 
 def display_multi_choice_dialog(choices):
     dialog = MultiChoiceDialog(choices)
-    if dialog.exec_():
+    if dialog.exec():
         return dialog.choice
     return None
 

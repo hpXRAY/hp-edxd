@@ -85,5 +85,5 @@ if __name__ == "__main__":
     ui = Ui_aEDXDWidget()
     ui.setupUi(aEDXDWidget)
     aEDXDWidget.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 

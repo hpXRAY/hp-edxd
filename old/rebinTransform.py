@@ -69,4 +69,4 @@ p4.plot(R, R_vals, pen=(200,200,200), symbolBrush=(255,0,0), symbolSize = 3, sym
 if __name__ == '__main__':
     import sys
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        QtGui.QApplication.instance().exec_()
+        QtGui.QApplication.instance().exec()

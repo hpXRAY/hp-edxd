@@ -238,4 +238,4 @@ class EliderLabel(QtWidgets.QLabel):
     vlay.addStretch()
     w.resize(640, 480)
     w.show()
-    sys.exit(app.exec_())'''
+    sys.exit(app.exec())'''

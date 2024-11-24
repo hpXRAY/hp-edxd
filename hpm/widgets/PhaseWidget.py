@@ -426,4 +426,4 @@ class PhaseWidget(QtWidgets.QWidget):
         msg_box.setWindowTitle('Error')
         msg_box.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
         msg_box.setDefaultButton(QtWidgets.QMessageBox.StandardButton.Ok)
-        msg_box.exec_()
+        msg_box.exec()

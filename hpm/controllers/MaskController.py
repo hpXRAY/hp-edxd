@@ -501,4 +501,4 @@ class MaskController(object):
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     controller = MaskController()
-    app.exec_()
+    app.exec()

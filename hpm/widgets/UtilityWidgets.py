@@ -93,7 +93,7 @@ class selectDetectorDialog(QtWidgets.QDialog):
     @classmethod
     def showDialog(cls,n_detectors):
         dialog = cls(n_detectors)
-        dialog.exec_()
+        dialog.exec()
         out = copy.deepcopy(dialog.out)
         dialog.deleteLater()
         return out
@@ -167,7 +167,7 @@ class xyPatternParametersDialog(QtWidgets.QDialog):
     @classmethod
     def showDialog(cls,filename,unit,value):
         dialog = cls(filename,unit,value)
-        dialog.exec_()
+        dialog.exec()
         out = copy.deepcopy(dialog.out)
         dialog.deleteLater()
         return out
@@ -266,7 +266,7 @@ class CifConversionParametersDialog(QtWidgets.QDialog):
         """
         #parent_center = self._parent.window().mapToGlobal(self._parent.window().rect().center())
         #self.move(parent_center.x() - 101, parent_center.y() - 48)
-        super(CifConversionParametersDialog, self).exec_()
+        super(CifConversionParametersDialog, self).exec()
 
 
 class FileInfoWidget(QtWidgets.QWidget):

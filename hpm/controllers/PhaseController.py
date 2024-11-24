@@ -275,7 +275,7 @@ class PhaseController(object):
         if filename.endswith("jcpds"):
             self.phase_model.add_jcpds(filename)
         elif filename.endswith(".cif"):
-            self.cif_conversion_dialog.exec_()
+            self.cif_conversion_dialog.exec()
             self.phase_model.add_cif(filename,
                                             self.cif_conversion_dialog.int_cutoff,
                                             self.cif_conversion_dialog.min_d_spacing)

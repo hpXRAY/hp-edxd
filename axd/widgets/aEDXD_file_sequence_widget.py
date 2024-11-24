@@ -28,14 +28,14 @@ class FileSequenceDialog(QtWidgets.QDialog):
         self._layout.addWidget(self.table_widget)
         self.setLayout(self._layout)
         self.setWindowTitle('Choose an atom')
-        self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint )
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
         self.ok = ''
         self.table_widget.sequence_accepted_signal.connect(self.button_press)
         
     @classmethod
     def showDialog(cls,options = []):
         dialog = cls( options)
-        dialog.exec_()
+        dialog.exec()
         ok = copy.deepcopy(dialog.ok)
         dialog.deleteLater()
         return ok

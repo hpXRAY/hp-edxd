@@ -71,4 +71,4 @@ p1.plot(bin_centers,bin_weighted_averages, pen=(100,100,100), symbolBrush=(0,0,2
 if __name__ == '__main__':
     import sys
     if sys.flags.interactive != 1 or not hasattr(QtCore, 'PYQT_VERSION'):
-        pg.QtGui.QApplication.exec_()
+        pg.QtGui.QApplication.exec()

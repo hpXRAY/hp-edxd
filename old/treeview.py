@@ -54,4 +54,4 @@ if __name__ == '__main__':
     window = Window(data)
     window.setGeometry(600, 50, 400, 250)
     window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

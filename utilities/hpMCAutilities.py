@@ -178,7 +178,7 @@ class mcaFilePreferences(QtWidgets.QDialog):
          self.options = copy.deepcopy(options)
       self._layout = QtWidgets.QVBoxLayout()  
       self.setWindowTitle('File Preferences')
-      self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint )
+      self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
       self.opts = {"warn_overwrite" :["Warning when overwriting file:", self.options.warn_overwrite, None] ,
                    "warn_erase"     :["Warning when erasing unsaved data:", self.options.warn_erase, None],
                    #"inform_save"    :["Informational popup after saving file:", self.options.inform_save, None],
@@ -208,7 +208,7 @@ class mcaFilePreferences(QtWidgets.QDialog):
    @classmethod
    def showDialog(cls, parent, options_in):
       dialog = cls(parent, options_in)
-      dialog.exec_()
+      dialog.exec()
       ok = copy.deepcopy(dialog.ok)
       dialog.deleteLater()
       return ok
@@ -490,7 +490,7 @@ class mcaControlPresets(QtWidgets.QDialog):
          self.presets = copy.deepcopy(presets)
       self._layout = QtWidgets.QVBoxLayout()  
       self.setWindowTitle('Presets')
-      self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint )
+      self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
       self.opts = {"real_time"   :["Real time:", self.presets.real_time, None],
                    "live_time"   :["Live time:", self.presets.live_time, None],
                    "total_counts":["Total counts:", self.presets.total_counts, None],
@@ -522,7 +522,7 @@ class mcaControlPresets(QtWidgets.QDialog):
    @classmethod
    def showDialog(cls, parent, presets_in):
       dialog = cls(parent, presets_in)
-      dialog.exec_()
+      dialog.exec()
       return dialog.ok
 
    ############################################################

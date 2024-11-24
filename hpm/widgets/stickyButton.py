@@ -50,4 +50,4 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     button = StickyButton('Test Button')
     button.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

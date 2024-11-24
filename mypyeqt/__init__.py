@@ -54,5 +54,5 @@ def main():
     #controller.showWindow()
 
    
-    app.exec_()
+    app.exec()
 '''

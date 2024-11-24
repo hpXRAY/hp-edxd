@@ -690,7 +690,7 @@ if __name__ == '__main__':
     widget.show_jcpds(test_phase, 0.31)
     widget.show()
     widget.raise_()
-    app.exec_()
+    app.exec()
 
 
 class TextDoubleDelegate(NoRectDelegate):

@@ -110,4 +110,4 @@ if __name__ == '__main__':
     w2 = create_treeWidget("tree2", 3)
     w1.show()
     w2.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

@@ -127,4 +127,4 @@ if __name__=="__main__":
     w.resize(800, 600)    
     w.show()
     w.raise_()
-    exit(a.exec_())
+    exit(a.exec())
