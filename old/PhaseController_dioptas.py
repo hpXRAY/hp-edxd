@@ -243,7 +243,7 @@ class PhaseController(object):
             temperature_sb.setSingleStep(self.phase_widget.temperature_step_msb.value())
 
     def color_btn_clicked(self, ind, button):
-        previous_color = button.palette().color(1)
+        previous_color = button.palette().color(QPalette.ColorRole.Button)
         new_color = QtWidgets.QColorDialog.getColor(previous_color, self.integration_widget)
         if new_color.isValid():
             color = new_color.toRgb()

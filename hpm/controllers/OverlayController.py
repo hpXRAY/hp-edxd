@@ -19,7 +19,7 @@
 # Based on code from Dioptas - GUI program for fast processing of 2D X-ray diffraction data
 
 import os
-
+from PyQt6.QtGui import QPalette
 import numpy as np
 from PyQt6 import QtWidgets
 from hpm.widgets.UtilityWidgets import open_files_dialog
@@ -258,7 +258,7 @@ class OverlayController(object):
         :param ind: overlay ind
         :param button: button to color
         """
-        previous_color = button.palette().color(1)
+        previous_color = button.palette().color(QPalette.ColorRole.Button)
         new_color = QtWidgets.QColorDialog.getColor(previous_color, self.overlay_widget)
         if new_color.isValid():
             color = str(new_color.name())

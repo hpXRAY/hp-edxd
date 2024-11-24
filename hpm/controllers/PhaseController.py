@@ -22,6 +22,7 @@ from enum import auto
 import os
 import numpy as np
 from PyQt6 import QtWidgets, QtCore
+from PyQt6.QtGui import QPalette
 import copy
 from hpm.models.PhaseModel import PhaseLoadError
 from utilities.HelperModule import get_base_name
@@ -459,7 +460,7 @@ class PhaseController(object):
             self.phase_widget.temperature_step_msb.setDisabled(True)
 
     def color_btn_clicked(self, ind, button):
-        previous_color = button.palette().color(1)
+        previous_color = button.palette().color(QPalette.ColorRole.Button)
         new_color = QtWidgets.QColorDialog.getColor(previous_color, self.pattern_widget)
         if new_color.isValid():
             color = new_color.toRgb()

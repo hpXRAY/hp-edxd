@@ -22,6 +22,7 @@
 
 from functools import partial
 from PyQt6 import QtWidgets, QtCore
+from PyQt6.QtGui import QPalette
 from PyQt6.QtWidgets import QItemDelegate, QTreeView
 
 
@@ -364,7 +365,7 @@ class ButtonDelegate(QItemDelegate):
         editor.blockSignals(False)
         
     def setModelData(self, editor, model, index):
-        previous_color = editor.palette().color(1)
+        previous_color = editor.palette().color(QPalette.ColorRole.Button)
         new_color = QtWidgets.QColorDialog.getColor(previous_color, self.parent)
         if new_color.isValid():
             color = str(new_color.name())

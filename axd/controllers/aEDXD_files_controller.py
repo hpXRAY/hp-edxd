@@ -18,6 +18,7 @@ import os.path, sys
 from PyQt6 import uic, QtWidgets,QtCore, QtGui
 from  PyQt6.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel
 from PyQt6.QtCore import QObject, pyqtSignal, Qt
+from PyQt6.QtGui import QPalette
 import numpy as np
 from functools import partial
 import json
@@ -427,7 +428,7 @@ class aEDXDFilesController(QObject):
         self.plot_raw_one(data, tth, filename)
 
     def color_btn_clicked(self, ind, button):
-        previous_color = button.palette().color(1)
+        previous_color = button.palette().color(QPalette.ColorRole.Button)
         tth = self.spectra_model.tth[ind]
         new_color = QtWidgets.QColorDialog.getColor(previous_color, self.files_window)
         if new_color.isValid():

@@ -18,6 +18,7 @@
 # Copyright (C) 2018-2019 ANL, Lemont, USA
 
 from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtGui import QPalette
 
 from  PyQt6.QtWidgets import QMainWindow, QApplication, QInputDialog, QWidget, QLabel
 from hpm.widgets.CustomWidgets import FlatButton, DoubleSpinBoxAlignRight, VerticalSpacerItem, NoRectDelegate, \
@@ -129,7 +130,8 @@ class DisplayPreferencesWidget(QWidget):
         """)
 
     def color_btn_clicked(self, btn):
-        previous_color = btn.palette().color(1)
+        previous_color = btn.palette().color(QPalette.ColorRole.Button)
+        #previous_color = btn.palette().color(QPalette.ColorRole.Button)
         new_color = QtWidgets.QColorDialog.getColor(previous_color, self)
         if new_color.isValid():
             color = str(new_color.name())
@@ -161,7 +163,8 @@ class DisplayPreferencesWidget(QWidget):
         for opt in of:
             desc = of[opt]['desc']
             if desc == 'color':
-                val =  oc[opt]['control'].palette().color(1)
+                
+                val =  oc[opt]['control'].palette().color(QPalette.ColorRole.Button)
                 color = (val.red(), val.green(), val.blue())
                 color = rgb2hex(*color)
                 params[opt]= color
